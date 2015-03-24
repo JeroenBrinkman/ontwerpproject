@@ -10,6 +10,12 @@ public abstract class Component {
 	private int id;
 	protected String[] keyList;
 
+	protected class DatabaseEntry {
+		public Date date;
+		public String key;
+		public int value;
+	}
+
 	public Component(String ip, int id) {
 		this.id = id;
 		try {
@@ -18,11 +24,28 @@ public abstract class Component {
 			System.out.println("invalid ip on component : " + id);
 		}
 	}
-	protected abstract void update(String type, int value, Date da);//hoeft wss geen abstraact te blijven
-	
-	public abstract void update(String message);//hoeft wss geen abstraact te blijven
-	
-	public abstract void parseInput();//waarschijnlijkt een array return
-	
-	public abstract void compressDatabase();//hoeft wss geen abstraact te blijven
+
+	public int getID() {
+		return id;
+	}
+
+	public InetAddress getInet() {
+		return adr;
+	}
+
+	public abstract void compressDatabase();// hoeft wss geen abstraact te
+											// blijven
+
+	public void update(String message) {
+		DatabaseEntry[] entries = parseInput(message);
+		for (DatabaseEntry a : entries) {
+			update(a);
+		}
+	}
+
+	protected void update(DatabaseEntry a) {
+		System.out.println("updaten bitch");
+	}
+
+	protected abstract DatabaseEntry[] parseInput(String message);
 }

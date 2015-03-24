@@ -2,7 +2,7 @@ package model;
 
 import java.util.Date;
 
-public class Database extends Component{
+public class Database extends Component {
 
 	public Database(String ip, int id) {
 		super(ip, id);
@@ -10,27 +10,21 @@ public class Database extends Component{
 	}
 
 	@Override
-	public void parseInput() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void update(String type, int value, Date da) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void update(String message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void compressDatabase() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	protected DatabaseEntry[] parseInput(String message) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
