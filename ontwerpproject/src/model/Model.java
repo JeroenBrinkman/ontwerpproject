@@ -54,7 +54,6 @@ public class Model {
 				se.printStackTrace();
 			}// end finally try
 		}// end try
-		System.out.println("Goodbye!");
 	}
 	public static void main(String[] args){
 		Model model = new Model();
