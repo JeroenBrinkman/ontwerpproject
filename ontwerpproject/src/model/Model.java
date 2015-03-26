@@ -6,8 +6,8 @@ public class Model {
 
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	static final String DB_URL = "jdbc:mysql://localhost/";
-	static final String USER = "username";
-	static final String PASS = "password";
+	static final String USER = "henk";
+	static final String PASS = "henk";
 
 	private Component[] components;
 
