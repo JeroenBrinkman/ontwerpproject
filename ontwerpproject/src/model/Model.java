@@ -2,6 +2,8 @@ package model;
 
 import java.sql.*;
 
+import global.Globals;
+
 public class Model {
 
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -14,6 +16,21 @@ public class Model {
 	public Model() {
 		createConnection();
 
+	}
+	
+	public void checkDatabase(Connection con) throws SQLException{
+		DatabaseMetaData dbm = con.getMetaData();
+		for(String a: Globals.componentTypes){
+			ResultSet tables = dbm.getTables(null, null, a, null);
+			if (tables.next()) {
+				// Table exists, check collums
+			}
+			else {
+				//Table doesnt exist, print error and quit
+				System.out.println("SQLERROR:Table doesnt exist : " + a);
+				System.exit(0);
+			}
+		}
 	}
 
 	public void createConnection() {
