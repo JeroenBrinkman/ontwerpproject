@@ -5,7 +5,7 @@ public class Globals {
 	public static final String[] workerKeys = { "key1", "key2" };
 	
 	/**
-	 * Array indices
+	 * Array indices test
 	 */
 	public static final int UPDATE_COMP = 0;
 	public static final int UPDATE_TIME = 1;
