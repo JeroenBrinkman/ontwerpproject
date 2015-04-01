@@ -6,11 +6,6 @@ import global.Globals;
 
 public class Model {
 
-	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	static final String DB_URL = "jdbc:mysql://localhost/";
-	static final String USER = "henk";
-	static final String PASS = "henk";
-
 	private Component[] components;
 
 	public Model() {
@@ -38,17 +33,17 @@ public class Model {
 		Statement stmt = null;
 		try {
 			// STEP 2: Register JDBC driver
-			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName(Globals.JDBC_DRIVER);
 
 			// STEP 3: Open a connection
 			System.out.println("Connecting to database...");
-			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			conn = DriverManager.getConnection(Globals.DB_URL_DETAIL, Globals.USER, Globals.PASS);
 
 			// STEP 4: Execute a query
 			System.out.println("Creating database...");
 			stmt = conn.createStatement();
 
-			String sql = "CREATE DATABASE STUDENTS";
+			String sql = "CREATE DATABASE test";
 			stmt.executeUpdate(sql);
 			System.out.println("Database created successfully...");
 		} catch (SQLException se) {

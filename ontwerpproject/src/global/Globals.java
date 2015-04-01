@@ -21,5 +21,10 @@ public class Globals {
 			return r;
 		}
 	}
+	//database shizzle
+	public static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+	public static final String DB_URL_DETAIL = "jdbc:mysql://localhost/detail";
+	public static final String USER = "henk";
+	public static final String PASS = "henk";
 
 }
