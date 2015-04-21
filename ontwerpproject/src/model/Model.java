@@ -14,14 +14,14 @@ public class Model {
 
 	}
 
-	public void removeComponent(Component c){
+	public void removeComponent(Component c) {
 		components.remove(c);
 	}
-	
-	public Component[] getComponents(){
+
+	public Component[] getComponents() {
 		return (Component[]) components.toArray();
 	}
-	
+
 	public void addComponent(Component c) {
 		Connection conn = createConnection();
 		Statement st = null;
@@ -37,7 +37,7 @@ public class Model {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}finally{
+		} finally {
 			closeConnection(conn);
 			try {
 				if (st != null)
@@ -46,23 +46,9 @@ public class Model {
 				se.printStackTrace();
 			}
 		}
-		
+
 		components.add(c);
 		// TODO RRD implementation
-	}
-
-	public void checkDatabase(Connection con) throws SQLException {
-		DatabaseMetaData dbm = con.getMetaData();
-		for (String a : Globals.componentTypes) {
-			ResultSet tables = dbm.getTables(null, null, a, null);
-			if (tables.next()) {
-				// Table exists, check collums
-			} else {
-				// Table doesnt exist, print error and quit
-				System.out.println("SQLERROR:Table doesnt exist : " + a);
-				System.exit(0);
-			}
-		}
 	}
 
 	public Connection createConnection() {
@@ -95,7 +81,7 @@ public class Model {
 	}
 
 	public static void main(String[] args) {
-		//Model model = new Model();
+		// Model model = new Model();
 	}
 
 }
