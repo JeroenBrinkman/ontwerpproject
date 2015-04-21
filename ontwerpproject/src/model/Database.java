@@ -1,9 +1,15 @@
 package model;
 
+import java.net.InetAddress;
+
 public class Database extends Component {
 
-	public Database(String ip, int id) {
-		super(ip, id);
+	public Database(String ip, int id, Model mod) {
+		super(ip, id, mod);
+	}
+	
+	public Database(InetAddress ip, int id, Model mod) {
+		super(ip, id, mod);
 	}
 
 	@Override

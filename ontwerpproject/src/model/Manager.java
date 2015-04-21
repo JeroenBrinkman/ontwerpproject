@@ -1,9 +1,15 @@
 package model;
 
+import java.net.InetAddress;
+
 public class Manager extends Component {
 
-	public Manager(String ip, int id) {
-		super(ip, id);
+	public Manager(String ip, int id, Model mod) {
+		super(ip, id, mod);
+	}
+	
+	public Manager(InetAddress ip, int id, Model mod) {
+		super(ip, id, mod);
 	}
 
 	@Override

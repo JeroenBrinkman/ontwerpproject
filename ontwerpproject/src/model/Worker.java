@@ -1,9 +1,15 @@
 package model;
 
+import java.net.InetAddress;
+
 public class Worker extends Component {
 
-	public Worker(String ip, int id) {
-		super(ip, id);
+	public Worker(String ip, int id, Model mod) {
+		super(ip, id, mod);
+	}
+	
+	public Worker(InetAddress ip, int id, Model mod) {
+		super(ip, id, mod);
 	}
 
 	@Override

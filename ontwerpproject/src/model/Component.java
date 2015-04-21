@@ -9,6 +9,7 @@ public abstract class Component {
 	protected InetAddress adr;
 	protected int id;
 	protected String[] keyList;
+	protected Model model;
 
 	protected class DatabaseEntry {
 		public Date date;
@@ -16,8 +17,9 @@ public abstract class Component {
 		public int value;
 	}
 
-	public Component(String ip, int id) {
+	public Component(String ip, int id, Model mod) {
 		this.id = id;
+		model = mod;
 		try {
 			adr = InetAddress.getByName(ip);
 		} catch (UnknownHostException e) {
@@ -25,9 +27,10 @@ public abstract class Component {
 		}
 	}
 
-	public Component(InetAddress ip, int id) {
+	public Component(InetAddress ip, int id, Model mod) {
 		this.id = id;
 		adr = ip;
+		model = mod;
 	}
 
 	public int getID() {
@@ -41,6 +44,7 @@ public abstract class Component {
 	public abstract String createTableSQL();
 
 	public void compressSQLDatabase(){
+		
 
 	}
 
