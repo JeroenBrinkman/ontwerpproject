@@ -85,7 +85,16 @@ public abstract class Component {
 	 * @ensure result != null && \result is valid
 	 * @pure
 	 */
-	public abstract String createTableSQL();
+	public String createTableSQL(){
+		String sql = "CREATE TABLE " + this.adr.toString()
+				+ " (date DATE not NULL, ";
+		for (String a : collumnList) {
+			sql += a + " INTEGER, ";
+		}
+
+		sql += " PRIMARY KEY ( date ))";
+		return sql;
+	}
 
 	/**
 	 * Compresses the database by removing everything before a certain date.
