@@ -2,37 +2,34 @@ package model;
 
 import java.net.InetAddress;
 
+/**
+ * Represents a database in the query system
+ * @author Jeroen
+ *
+ */
 public class Database extends Component {
 
-	public Database(String ip, int id, Model mod) {
-		super(ip, id, mod);
-	}
-	
-	public Database(InetAddress ip, int id, Model mod) {
-		super(ip, id, mod);
+	public Database(String ip, Model mod) {
+		super(ip, mod);
 	}
 
-	@Override
-	public void update(String message) {
-		// TODO Auto-generated method stub
-
+	public Database(InetAddress ip, Model mod) {
+		super(ip, mod);
 	}
 
 	@Override
-	protected DatabaseEntry[] parseInput(String message) {
+	protected String[] parseInput(String message) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String createTableSQL() {
-		//TODO add missing collumns
-		String sql ="CREATE TABLE " + this.adr.toString() +
-                " (date DATE not NULL, " +
-                " cpu INTEGER, " + 
-                " mem INTEGER, " + 
-                " disk INTEGER, " + 
-                " PRIMARY KEY ( date ))";
+		// TODO add missing collumns
+		String sql = "CREATE TABLE " + this.adr.toString()
+				+ " (date DATE not NULL, " + " cpu INTEGER, "
+				+ " mem INTEGER, " + " disk INTEGER, "
+				+ " PRIMARY KEY ( date ))";
 		return sql;
 	}
 
