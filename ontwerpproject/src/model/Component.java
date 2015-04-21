@@ -40,8 +40,10 @@ public abstract class Component {
 
 	public abstract String createTableSQL();
 
-	public abstract void compressSQLDatabase();// hoeft wss geen abstraact te
-											// blijven
+	public void compressSQLDatabase(){
+
+	}
+
 
 	public void update(String message) {
 		DatabaseEntry[] entries = parseInput(message);

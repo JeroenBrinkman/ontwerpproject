@@ -4,17 +4,10 @@ public class Manager extends Component {
 
 	public Manager(String ip, int id) {
 		super(ip, id);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void update(String message) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void compressSQLDatabase() {
 		// TODO Auto-generated method stub
 
 	}
