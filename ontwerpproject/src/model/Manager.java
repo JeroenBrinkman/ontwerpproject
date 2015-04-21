@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Date;
-
 public class Manager extends Component {
 
 	public Manager(String ip, int id) {
@@ -16,7 +14,7 @@ public class Manager extends Component {
 	}
 
 	@Override
-	public void compressDatabase() {
+	public void compressSQLDatabase() {
 		// TODO Auto-generated method stub
 
 	}
@@ -25,6 +23,18 @@ public class Manager extends Component {
 	protected DatabaseEntry[] parseInput(String message) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String createTableSQL() {
+		//TODO add missing collumns
+		String sql ="CREATE TABLE " + this.adr.toString() +
+                " (date DATE not NULL, " +
+                " cpu INTEGER, " + 
+                " mem INTEGER, " + 
+                " disk INTEGER, " + 
+                " PRIMARY KEY ( date ))";
+		return sql;
 	}
 
 }

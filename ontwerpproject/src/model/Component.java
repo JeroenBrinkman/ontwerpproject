@@ -6,8 +6,8 @@ import java.lang.String;
 import java.util.Date;
 
 public abstract class Component {
-	private InetAddress adr;
-	private int id;
+	protected InetAddress adr;
+	protected int id;
 	protected String[] keyList;
 
 	protected class DatabaseEntry {
@@ -25,6 +25,11 @@ public abstract class Component {
 		}
 	}
 
+	public Component(InetAddress ip, int id) {
+		this.id = id;
+		adr = ip;
+	}
+
 	public int getID() {
 		return id;
 	}
@@ -33,7 +38,9 @@ public abstract class Component {
 		return adr;
 	}
 
-	public abstract void compressDatabase();// hoeft wss geen abstraact te
+	public abstract String createTableSQL();
+
+	public abstract void compressSQLDatabase();// hoeft wss geen abstraact te
 											// blijven
 
 	public void update(String message) {
