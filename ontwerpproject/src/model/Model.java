@@ -134,6 +134,14 @@ public class Model {
 			se.printStackTrace();
 		}
 	}
+	
+	//TODO sjavadoc
+	public void compressAll(){
+		//TODO add check for components currently not active
+		for(Component c:components){
+			c.compressSQLDatabase();
+		}
+	}
 
 	// TODO remove test main after im done with testing
 	public static void main(String[] args) {

@@ -34,5 +34,6 @@ public class Globals {
 	public static final String DB_URL_RRD = "jdbc:mysql://localhost/detail";
 	public static final String USER = "henk";
 	public static final String PASS = "henk";
+	public static final long MYSQLMAXTIME = 3 * 31 * 24 * 60 * 60 * 1000; // 3 * 1 maand * 1dag * 1 uur * 1 minuut * 1 seconde * milliseconden
 
 }

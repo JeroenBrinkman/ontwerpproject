@@ -11,6 +11,8 @@ public class Worker extends Component {
 
 	public Worker(String ip, Model mod) {
 		super(ip, mod);
+		String[] temp = {"cpu", "disk", "mem"};
+		collumnList = temp;
 	}
 
 	public Worker(InetAddress ip, Model mod) {

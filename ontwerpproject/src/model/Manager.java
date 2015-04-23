@@ -12,6 +12,9 @@ public class Manager extends Component {
 
 	public Manager(String ip, Model mod) {
 		super(ip, mod);
+		//TODO temp currently placeholder
+		String[] temp = {"cpu", "disk", "mem"};
+		collumnList = temp;
 	}
 
 	public Manager(InetAddress ip, Model mod) {

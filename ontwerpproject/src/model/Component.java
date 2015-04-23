@@ -1,8 +1,13 @@
 package model;
 
+import global.Globals;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.lang.String;
+import java.sql.Statement;
 
 /**
  * The abstract superclass for all components. represents a component in the
@@ -27,8 +32,7 @@ public abstract class Component {
 	 * 
 	 * @invariant collumnList != null
 	 */
-	// TODO fill this list
-	protected String[] collumnList;
+	protected String[] collumnList = {"notinitialisedakacomponentincorrect"};
 	/**
 	 * Pointer to the model for database connections
 	 * 
@@ -87,11 +91,10 @@ public abstract class Component {
 	 */
 	public String createTableSQL(){
 		String sql = "CREATE TABLE " + this.adr.toString()
-				+ " (date DATE not NULL, ";
+				+ " (date BIGINT, ";
 		for (String a : collumnList) {
 			sql += a + " INTEGER, ";
 		}
-
 		sql += " PRIMARY KEY ( date ))";
 		return sql;
 	}
@@ -105,13 +108,29 @@ public abstract class Component {
 	 * @ensures \oldDatabase.size >= \newDatabase.size
 	 */
 	public void compressSQLDatabase() {
-
+		Connection conn = model.createConnection();
+		Statement st = null;
+		long delb4  = System.currentTimeMillis() - Globals.MYSQLMAXTIME;
+		try {
+			st = conn.createStatement();
+			String sql = "DELETE * FROM " + adr.toString() + " WHERE date < " + delb4;
+			st.executeUpdate(sql);
+		} catch (SQLException e){
+			e.printStackTrace();
+		}finally{
+			try {
+				st.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			model.closeConnection(conn);
+		}
 	}
 
 	/**
 	 * Updates the database with a new entry, parsed from the String[]
 	 * 
-	 * @requires message != null && message.length == collumnList.length
+	 * @requires message != null && message.length == collumnList.length +1
 	 */
 	public void update(String[] message) {
 		// TODO make this, maybe abstract?
@@ -122,7 +141,7 @@ public abstract class Component {
 	 * entered into the database
 	 * 
 	 * @require message != null
-	 * @ensure \result != null && result.length == collumnList.length
+	 * @ensure \result != null && result.length == collumnList.length +1
 	 */
 	protected abstract String[] parseInput(String message);
 }
