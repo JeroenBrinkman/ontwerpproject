@@ -90,13 +90,14 @@ public abstract class Component {
 	 * @pure
 	 */
 	public String createTableSQL(){
-		String sql = "CREATE TABLE " + this.adr.toString()
-				+ " (date BIGINT, ";
+		String sql = "CREATE TABLE " + Globals.getTableName(this.adr.toString())
+				+ " (date BIGINT(64) not NULL, ";
 		for (String a : collumnList) {
 			sql += a + " INTEGER, ";
 		}
-		sql += " PRIMARY KEY ( date ))";
+		sql += "PRIMARY KEY ( date))";
 		return sql;
+
 	}
 
 	/**
@@ -113,7 +114,7 @@ public abstract class Component {
 		long delb4  = System.currentTimeMillis() - Globals.MYSQLMAXTIME;
 		try {
 			st = conn.createStatement();
-			String sql = "DELETE * FROM " + adr.toString() + " WHERE date < " + delb4;
+			String sql = "DELETE * FROM " + Globals.getTableName(adr.toString()) + " WHERE date < " + delb4;
 			st.executeUpdate(sql);
 		} catch (SQLException e){
 			e.printStackTrace();

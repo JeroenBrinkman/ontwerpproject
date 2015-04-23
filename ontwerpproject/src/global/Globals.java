@@ -29,6 +29,12 @@ public class Globals {
 	}
 	
 	//database shizzle
+	public static String getTableName(String ipline){
+		String out = "c" + ipline;
+		out = out.replace(".", "");
+		out = out.replace("/", "");
+		return out;
+	}
 	public static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	public static final String DB_URL_DETAIL = "jdbc:mysql://localhost/detail";
 	public static final String DB_URL_RRD = "jdbc:mysql://localhost/detail";

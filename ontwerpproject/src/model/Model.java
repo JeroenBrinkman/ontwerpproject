@@ -11,8 +11,7 @@ import global.Globals;
  * can be added and removed at any time. every component has an database entry,
  * one such entry can not be removed, but will eventually be removed after
  * enough time has passed. (automatic database compression, called from the
- * scheduler).
- * This class also manages connections to the mysql database.
+ * scheduler). This class also manages connections to the mysql database.
  * 
  * @author Jeroen
  *
@@ -69,7 +68,7 @@ public class Model {
 		try {
 			DatabaseMetaData dbm = conn.getMetaData();
 			ResultSet tables = dbm.getTables(null, null,
-					c.getInet().toString(), null);
+					Globals.getTableName(c.getInet().toString()), null);
 			if (!tables.next()) {
 				// no table for this address
 				st = conn.createStatement();
@@ -134,18 +133,21 @@ public class Model {
 			se.printStackTrace();
 		}
 	}
-	
-	//TODO sjavadoc
-	public void compressAll(){
-		//TODO add check for components currently not active
-		for(Component c:components){
+
+	// TODO sjavadoc
+	public void compressAll() {
+		// TODO add check for components currently not active
+		for (Component c : components) {
 			c.compressSQLDatabase();
 		}
 	}
 
 	// TODO remove test main after im done with testing
 	public static void main(String[] args) {
-		// Model model = new Model();
+		Model model = new Model();
+		Worker w = new Worker("192.192.192.192", model);
+		model.addComponent(w);
+		model.compressAll();
 	}
 
 }
