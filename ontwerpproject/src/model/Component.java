@@ -114,7 +114,7 @@ public abstract class Component {
 		long delb4  = System.currentTimeMillis() - Globals.MYSQLMAXTIME;
 		try {
 			st = conn.createStatement();
-			String sql = "DELETE * FROM " + Globals.getTableName(adr.toString()) + " WHERE date < " + delb4;
+			String sql = "DELETE FROM " + Globals.getTableName(adr.toString()) + " WHERE date < " + delb4;
 			st.executeUpdate(sql);
 		} catch (SQLException e){
 			e.printStackTrace();
