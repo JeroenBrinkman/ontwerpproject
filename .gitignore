@@ -1,2 +1,4 @@
-.metadata/
-.recommenders/
+.metadata\
+.recommenders\
+ontwerpproject\.settings\
+ontwerpproject\.classpath

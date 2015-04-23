@@ -1,3 +1,5 @@
+package clienttest;
+
 import java.net.URL;
 
 import de.timroes.axmlrpc.XMLRPCClient;
@@ -8,7 +10,7 @@ public class Client {
 	public static void main(String[] args) {
 		try {
 			System.out.println("Creating client...");
-		    XMLRPCClient client = new XMLRPCClient(new URL("http://130.89.181.251:8000"));
+		    XMLRPCClient client = new XMLRPCClient(new URL("http://localhost:8000"));
 
 		    System.out.println("Calling client: \"isServerOk\"");
 		    Boolean b = (Boolean)client.call("isServerOk");
