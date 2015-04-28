@@ -109,10 +109,10 @@ public class Model {
 					Globals.USER, Globals.PASS);
 
 		} catch (SQLException se) {
-			// Handle errors for JDBC
+			// TODO Handle errors for JDBC
 			se.printStackTrace();
 		} catch (Exception e) {
-			// Handle errors for Class.forName
+			// TODO Handle errors for Class.forName
 			e.printStackTrace();
 		}
 		return conn;

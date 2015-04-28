@@ -5,6 +5,8 @@ import global.Globals;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.lang.String;
 import java.sql.Statement;
@@ -91,7 +93,8 @@ public abstract class Component {
 	 */
 	public String createTableSQL(){
 		String sql = "CREATE TABLE " + Globals.getTableName(this.adr.toString())
-				+ " (date BIGINT(64) not NULL, ";
+				+ " (date BIGINT(64) not NULL, "
+				+ " tag CHAR(1) not NULL , ";
 		for (String a : collumnList) {
 			sql += a + " INTEGER, ";
 		}
@@ -134,7 +137,39 @@ public abstract class Component {
 	 * @requires message != null && message.length == collumnList.length +1
 	 */
 	public void update(String[] message) {
-		// TODO make this, maybe abstract?
+		// TODO make this
+		Connection conn = model.createConnection();
+		//fix de roundrobin
+		try {
+			PreparedStatement st1;
+			String sql = "SELECT AMOUNT(*) FROM "
+					+ Globals.getTableName(adr.toString())
+					+ " WHERE tag = ?";
+			st1 = conn.prepareStatement(sql);
+			//tags are Seconds -> Minutes -> Hours -> Days -> Weeks -> Other
+			// aka S->M->H->D->W->O
+			st1.setString(1, "S");
+			ResultSet v = st1.executeQuery();
+			if(v.getInt(0)==12){
+				//TODO compress shit
+			}else{
+				//TODO make compress for other tags aswell
+			}
+			Statement st2 = conn.createStatement();
+			sql = "INSERT INTO " + Globals.getTableName(adr.toString()) 
+					+ " VALUES( " + System.currentTimeMillis() + ", "
+					+ " S";
+			for(int i=0; i<message.length;++i){
+				sql += ", " + message[i] ;
+			}
+			sql+= ")";
+			st2.executeUpdate(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	/**
