@@ -40,7 +40,7 @@ public abstract class Component {
 	 * 
 	 * @invariant model != null
 	 */
-	protected Model model;
+	protected Model model; //TODO make connection shared
 
 	/**
 	 * Creates a new component, tries to parse an inetadress from the given
@@ -142,43 +142,85 @@ public abstract class Component {
 		Connection conn = model.createConnection();
 		// fix de roundrobin
 		try {
+			
 			PreparedStatement st1;
-			String sql = "SELECT AMOUNT(*) FROM "
-					+ Globals.getTableName(adr.toString()) + " WHERE tag = ?";
+			String sql = "SELECT COUNT(*) FROM "
+					+ Globals.getTableName(adr.toString())
+					+ " WHERE tag =  ? ";
 			st1 = conn.prepareStatement(sql);
 			// tags are Seconds -> Minutes -> Hours -> Days -> Weeks -> Other
 			// aka S->M->H->D->W->O
-			st1.setString(1, "S");
+						st1.setString(1, "S");
 			ResultSet v = st1.executeQuery();
-			if (v.getInt(0) == Globals.SQLMAXsec) {
-				// TODO compress shit
+			Statement st3 = null;
+			PreparedStatement st4 = null;
+			sql = "DELETE FROM " + Globals.getTableName(adr.toString())
+					+ " WHERE tag =  ?  AND date = ?";
+			st4 = conn.prepareStatement(sql);
+			//do minutes
+			if (v.next() && v.getInt(1) == Globals.SQLMAXsec) {
+				int a = (60 * 1000) / Globals.POLLINGINTERVAL; // amount of
+																// entries per
+																// minute
+				int[] b = new int[collumnList.length];
+				sql = "SELECT * FROM " + Globals.getTableName(adr.toString())
+						+ " WHERE tag = \'S\' ORDER BY date ASC LIMIT " + a;
+				st3 = conn.createStatement();
+				st4.setString(1, "S");
+				
+				ResultSet r = st3.executeQuery(sql);
+				long newdate = 0;
+				while (r.next()) {
+					for (int i = 0; i < b.length; ++i) {
+						// start at 3,because date and tag do not have to be
+						// averaged and are not relevant
+						b[i] += r.getInt(i+3);
+					}
+					st4.setString(2, r.getString(1));
+					st4.executeUpdate();
+					newdate = Long.parseLong(r.getString(1)) -3000;
+				}
+				// insert new minute record
+				sql = "INSERT INTO " + Globals.getTableName(adr.toString()) + " VALUES ( " + newdate + ", 'M' ";
+				
+				for(int i = 0; i<b.length; ++i){
+					sql += ", " + (b[i]/a);
+				}
+				sql += ")";
+				st3.executeUpdate(sql);
 			}
 			st1.setString(1, "M");
 			v = st1.executeQuery();
-			if (v.getInt(0) == Globals.SQLMAXmin) {
+			/**if (v.getInt(1) == Globals.SQLMAXmin) {
 				// TODO compress shit
 			}
 			st1.setString(1, "H");
 			v = st1.executeQuery();
-			if (v.getInt(0) == Globals.SQLMAXhour) {
+			if (v.getInt(1) == Globals.SQLMAXhour) {
 				// TODO compress shit
 			}
 			st1.setString(1, "D");
 			v = st1.executeQuery();
-			if (v.getInt(0) == Globals.SQLMAXday) {
+			if (v.getInt(1) == Globals.SQLMAXday) {
 				// TODO compress shit
 			}
 			st1.setString(1, "W");
 			v = st1.executeQuery();
-			if (v.getInt(0) == Globals.SQLMAXweek) {
+			if (v.getInt(1) == Globals.SQLMAXweek) {
 				// TODO compress shit
-			}
-			
-			
-			
+			}**/
+
+			// actual insert
 			Statement st2 = conn.createStatement();
 			sql = "INSERT INTO " + Globals.getTableName(adr.toString())
-					+ " VALUES( " + System.currentTimeMillis() + ", " + " S";
+					+ " VALUES( " + System.currentTimeMillis() + ", " + " 'S'"; // TODO
+																				// choose
+																				// between
+																				// system
+																				// time
+																				// or
+																				// worker
+																				// time
 			for (int i = 0; i < message.length; ++i) {
 				sql += ", " + message[i];
 			}
@@ -187,6 +229,8 @@ public abstract class Component {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			model.closeConnection(conn);
 		}
 
 	}

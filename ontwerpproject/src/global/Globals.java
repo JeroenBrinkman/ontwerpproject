@@ -1,7 +1,7 @@
 package global;
 
 public class Globals {
-	public static long POLLINGINTERVAL = 5000; // 5 seconds for now
+	public static int POLLINGINTERVAL = 5000; // 5 seconds for now
 	
 	public static final String[] componentTypes = { "swag", "yolo" };
 	public static final String[] workerKeys = { "key1", "key2" };

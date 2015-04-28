@@ -148,6 +148,14 @@ public class Model {
 		Worker w = new Worker("192.192.192.192", model);
 		model.addComponent(w);
 		model.compressAll();
+		long start = System.currentTimeMillis();
+		int i = 0;
+		while (System.currentTimeMillis()-start < 60000) {
+			String[] message = { "15", "8","2" };
+			w.update(message);
+			i++;
+		}
+		System.out.println(i);
 	}
 
 }
