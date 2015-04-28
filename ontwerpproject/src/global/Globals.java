@@ -1,6 +1,8 @@
 package global;
 
 public class Globals {
+	public static long POLLINGINTERVAL = 5000; // 5 seconds for now
+	
 	public static final String[] componentTypes = { "swag", "yolo" };
 	public static final String[] workerKeys = { "key1", "key2" };
 	
@@ -41,5 +43,11 @@ public class Globals {
 	public static final String USER = "henk";
 	public static final String PASS = "henk";
 	public static final long MYSQLMAXTIME = 3 * 31 * 24 * 60 * 60 * 1000; // 3 * 1 maand * 1dag * 1 uur * 1 minuut * 1 seconde * milliseconden
+	//amount of records in the database of a certain type
+	public static final int SQLMAXsec = 12;//minimum = 12
+	public static final int SQLMAXmin = 60;//minimum = 60
+	public static final int SQLMAXhour = 24;//minimum = 24
+	public static final int SQLMAXday = 7;// minimum = 7
+	public static final int SQLMAXweek = 4;//minimum = 4
 
 }

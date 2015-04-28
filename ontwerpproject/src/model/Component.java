@@ -34,7 +34,7 @@ public abstract class Component {
 	 * 
 	 * @invariant collumnList != null
 	 */
-	protected String[] collumnList = {"notinitialisedakacomponentincorrect"};
+	protected String[] collumnList = { "notinitialisedakacomponentincorrect" };
 	/**
 	 * Pointer to the model for database connections
 	 * 
@@ -91,10 +91,10 @@ public abstract class Component {
 	 * @ensure result != null && \result is valid
 	 * @pure
 	 */
-	public String createTableSQL(){
-		String sql = "CREATE TABLE " + Globals.getTableName(this.adr.toString())
-				+ " (date BIGINT(64) not NULL, "
-				+ " tag CHAR(1) not NULL , ";
+	public String createTableSQL() {
+		String sql = "CREATE TABLE "
+				+ Globals.getTableName(this.adr.toString())
+				+ " (date BIGINT(64) not NULL, " + " tag CHAR(1) not NULL , ";
 		for (String a : collumnList) {
 			sql += a + " INTEGER, ";
 		}
@@ -114,14 +114,15 @@ public abstract class Component {
 	public void compressSQLDatabase() {
 		Connection conn = model.createConnection();
 		Statement st = null;
-		long delb4  = System.currentTimeMillis() - Globals.MYSQLMAXTIME;
+		long delb4 = System.currentTimeMillis() - Globals.MYSQLMAXTIME;
 		try {
 			st = conn.createStatement();
-			String sql = "DELETE FROM " + Globals.getTableName(adr.toString()) + " WHERE date < " + delb4;
+			String sql = "DELETE FROM " + Globals.getTableName(adr.toString())
+					+ " WHERE date < " + delb4;
 			st.executeUpdate(sql);
-		} catch (SQLException e){
+		} catch (SQLException e) {
 			e.printStackTrace();
-		}finally{
+		} finally {
 			try {
 				st.close();
 			} catch (SQLException e) {
@@ -139,37 +140,55 @@ public abstract class Component {
 	public void update(String[] message) {
 		// TODO make this
 		Connection conn = model.createConnection();
-		//fix de roundrobin
+		// fix de roundrobin
 		try {
 			PreparedStatement st1;
 			String sql = "SELECT AMOUNT(*) FROM "
-					+ Globals.getTableName(adr.toString())
-					+ " WHERE tag = ?";
+					+ Globals.getTableName(adr.toString()) + " WHERE tag = ?";
 			st1 = conn.prepareStatement(sql);
-			//tags are Seconds -> Minutes -> Hours -> Days -> Weeks -> Other
+			// tags are Seconds -> Minutes -> Hours -> Days -> Weeks -> Other
 			// aka S->M->H->D->W->O
 			st1.setString(1, "S");
 			ResultSet v = st1.executeQuery();
-			if(v.getInt(0)==12){
-				//TODO compress shit
-			}else{
-				//TODO make compress for other tags aswell
+			if (v.getInt(0) == Globals.SQLMAXsec) {
+				// TODO compress shit
 			}
+			st1.setString(1, "M");
+			v = st1.executeQuery();
+			if (v.getInt(0) == Globals.SQLMAXmin) {
+				// TODO compress shit
+			}
+			st1.setString(1, "H");
+			v = st1.executeQuery();
+			if (v.getInt(0) == Globals.SQLMAXhour) {
+				// TODO compress shit
+			}
+			st1.setString(1, "D");
+			v = st1.executeQuery();
+			if (v.getInt(0) == Globals.SQLMAXday) {
+				// TODO compress shit
+			}
+			st1.setString(1, "W");
+			v = st1.executeQuery();
+			if (v.getInt(0) == Globals.SQLMAXweek) {
+				// TODO compress shit
+			}
+			
+			
+			
 			Statement st2 = conn.createStatement();
-			sql = "INSERT INTO " + Globals.getTableName(adr.toString()) 
-					+ " VALUES( " + System.currentTimeMillis() + ", "
-					+ " S";
-			for(int i=0; i<message.length;++i){
-				sql += ", " + message[i] ;
+			sql = "INSERT INTO " + Globals.getTableName(adr.toString())
+					+ " VALUES( " + System.currentTimeMillis() + ", " + " S";
+			for (int i = 0; i < message.length; ++i) {
+				sql += ", " + message[i];
 			}
-			sql+= ")";
+			sql += ")";
 			st2.executeUpdate(sql);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 
 	/**
