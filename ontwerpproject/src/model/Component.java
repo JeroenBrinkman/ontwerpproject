@@ -96,6 +96,25 @@ public abstract class Component {
 	}
 
 	/**
+	 * Closes an active connection, if the database is not running this will
+	 * generate SQL errors. will also close all statements
+	 * 
+	 * @requires Database is running && Connection != null
+	 * @ensures Connection is closed
+	 */
+	public void CloseConnection() {
+		try {
+			check.close();
+			insert.close();
+			delete.close();
+			getlimit.close();
+			conn.close();
+		} catch (SQLException se) {
+			se.printStackTrace();
+		}
+	}
+
+	/**
 	 * Getter for the ip
 	 * 
 	 * @ensure \result = adr
@@ -178,11 +197,12 @@ public abstract class Component {
 		}
 	}
 
+	// helpfunction for update
 	private void compressWEntries() throws SQLException {
 		int[] b = new int[collumnList.length];
 		delete.setString(1, "W");
 		getlimit.setString(1, "W");
-		getlimit.setInt(2, 28); //1 month = 4 weeks
+		getlimit.setInt(2, 28); // 1 month = 4 weeks
 		ResultSet r = getlimit.executeQuery();
 		long newdate = 0;
 		while (r.next()) {
@@ -193,7 +213,8 @@ public abstract class Component {
 			}
 			delete.setString(2, r.getString(1));
 			delete.executeUpdate();
-			newdate = Long.parseLong(r.getString(1)) - ((int)(14*7 * 24 * 60 * 6000));
+			newdate = Long.parseLong(r.getString(1))
+					- ((int) (14 * 7 * 24 * 60 * 6000));
 		}
 		insert.setString(1, Long.toString(newdate));
 		insert.setString(2, "O");
@@ -203,6 +224,7 @@ public abstract class Component {
 		insert.executeUpdate();
 	}
 
+	// helpfunction for update
 	private void compressDEntries() throws SQLException {
 		int[] b = new int[collumnList.length];
 		delete.setString(1, "D");
@@ -218,7 +240,8 @@ public abstract class Component {
 			}
 			delete.setString(2, r.getString(1));
 			delete.executeUpdate();
-			newdate = Long.parseLong(r.getString(1)) - ((int)(3.5 * 24 * 60 * 6000));
+			newdate = Long.parseLong(r.getString(1))
+					- ((int) (3.5 * 24 * 60 * 6000));
 		}
 		insert.setString(1, Long.toString(newdate));
 		insert.setString(2, "W");
@@ -228,6 +251,7 @@ public abstract class Component {
 		insert.executeUpdate();
 	}
 
+	// help function for update
 	private void compressHEntries() throws SQLException {
 		int[] b = new int[collumnList.length];
 		delete.setString(1, "H");
@@ -254,6 +278,7 @@ public abstract class Component {
 		insert.executeUpdate();
 	}
 
+	// help function for update
 	private void compressMEntries() throws SQLException {
 		int[] b = new int[collumnList.length];
 		delete.setString(1, "M");
@@ -279,8 +304,9 @@ public abstract class Component {
 		insert.executeUpdate();
 	}
 
+	// help function for update
 	private void compressSEntries() throws SQLException {
-		int a = (60 * 1000) / Globals.POLLINGINTERVAL; 
+		int a = (60 * 1000) / Globals.POLLINGINTERVAL;
 		int[] b = new int[collumnList.length];
 		delete.setString(1, "S");
 		getlimit.setString(1, "S");

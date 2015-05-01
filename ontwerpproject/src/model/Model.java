@@ -78,10 +78,10 @@ public class Model {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			closeConnection(conn);
 			try {
 				if (st != null)
 					st.close();
+				conn.close();
 			} catch (SQLException se) {
 				se.printStackTrace();
 			}
@@ -115,22 +115,6 @@ public class Model {
 			e.printStackTrace();
 		}
 		return conn;
-	}
-
-	/**
-	 * Closes an active connection, if the database is not running this will
-	 * generate SQL errors
-	 * 
-	 * @requires Database is running
-	 * @ensures Connection is closed
-	 */
-	public void closeConnection(Connection conn) {
-		try {
-			if (conn != null)
-				conn.close();
-		} catch (SQLException se) {
-			se.printStackTrace();
-		}
 	}
 
 	// TODO remove test main after im done with testing
