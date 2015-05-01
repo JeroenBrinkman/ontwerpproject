@@ -88,7 +88,6 @@ public class Model {
 		}
 
 		components.add(c);
-		// TODO RRD implementation
 	}
 
 	/**
@@ -134,24 +133,15 @@ public class Model {
 		}
 	}
 
-	// TODO sjavadoc
-	public void compressAll() {
-		// TODO add check for components currently not active
-		for (Component c : components) {
-			c.compressSQLDatabase();
-		}
-	}
-
 	// TODO remove test main after im done with testing
 	public static void main(String[] args) {
 		Model model = new Model();
-		Worker w = new Worker("192.192.192.192", model);
+		Worker w = new Worker("192.192.192.192", model.createConnection());
 		model.addComponent(w);
-		model.compressAll();
 		long start = System.currentTimeMillis();
 		int i = 0;
-		while (System.currentTimeMillis()-start < 60000) {
-			String[] message = { "15", "8","2" };
+		while (System.currentTimeMillis() - start < 1000) {
+			String[] message = { "15", "8", "2" };
 			w.update(message);
 			i++;
 		}
