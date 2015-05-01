@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.lang.String;
-import java.sql.Statement;
 
 /**
  * The abstract superclass for all components. represents a component in the
@@ -138,46 +137,33 @@ public abstract class Component {
 			// aka S->M->H->D->W->O
 			check.setString(1, "S");
 			ResultSet v = check.executeQuery();
-			// do minutes
 			if (v.next() && v.getInt(1) == Globals.SQLMAXsec) {
-				int a = (60 * 1000) / Globals.POLLINGINTERVAL; // amount of
-																// entries per
-																// minute
-				int[] b = new int[collumnList.length];
-				delete.setString(1, "S");
-				getlimit.setString(1, "S");
-				getlimit.setInt(2, a);
-				ResultSet r = getlimit.executeQuery();
-				long newdate = 0;
-				while (r.next()) {
-					for (int i = 0; i < b.length; ++i) {
-						// start at 3,because date and tag do not have to be
-						// averaged and are not relevant
-						b[i] += r.getInt(i + 3);
-					}
-					delete.setString(2, r.getString(1));
-					delete.executeUpdate();
-					newdate = Long.parseLong(r.getString(1)) - 3000;
-				}
-				// insert new minute record
-				insert.setString(1, Long.toString(newdate));
-				insert.setString(2, "m");
-				for (int i = 0; i < b.length; ++i) {
-					insert.setString(i + 3, Integer.toString(b[i] / a));
-				}
-				insert.executeUpdate();
+				compressSEntries();
 			}
+
 			check.setString(1, "M");
 			v = check.executeQuery();
-			/**
-			 * if (v.getInt(1) == Globals.SQLMAXmin) { // TODO compress shit }
-			 * st1.setString(1, "H"); v = st1.executeQuery(); if (v.getInt(1) ==
-			 * Globals.SQLMAXhour) { // TODO compress shit } st1.setString(1,
-			 * "D"); v = st1.executeQuery(); if (v.getInt(1) ==
-			 * Globals.SQLMAXday) { // TODO compress shit } st1.setString(1,
-			 * "W"); v = st1.executeQuery(); if (v.getInt(1) ==
-			 * Globals.SQLMAXweek) { // TODO compress shit }
-			 **/
+			if (v.getInt(1) == Globals.SQLMAXmin) {
+				compressMEntries();
+			}
+
+			check.setString(1, "H");
+			v = check.executeQuery();
+			if (v.getInt(1) == Globals.SQLMAXhour) {
+				compressHEntries();
+			}
+
+			check.setString(1, "D");
+			v = check.executeQuery();
+			if (v.getInt(1) == Globals.SQLMAXday) {
+				compressDEntries();
+			}
+
+			check.setString(1, "W");
+			v = check.executeQuery();
+			if (v.getInt(1) == Globals.SQLMAXweek) {
+				compressWEntries();
+			}
 
 			// actual insert
 			insert.setString(1, Long.toString(System.currentTimeMillis()));
@@ -190,6 +176,133 @@ public abstract class Component {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private void compressWEntries() throws SQLException {
+		int[] b = new int[collumnList.length];
+		delete.setString(1, "W");
+		getlimit.setString(1, "W");
+		getlimit.setInt(2, 28); //1 month = 4 weeks
+		ResultSet r = getlimit.executeQuery();
+		long newdate = 0;
+		while (r.next()) {
+			for (int i = 0; i < b.length; ++i) {
+				// start at 3,because date and tag do not have to be
+				// averaged and are not relevant
+				b[i] += r.getInt(i + 3);
+			}
+			delete.setString(2, r.getString(1));
+			delete.executeUpdate();
+			newdate = Long.parseLong(r.getString(1)) - ((int)(14*7 * 24 * 60 * 6000));
+		}
+		insert.setString(1, Long.toString(newdate));
+		insert.setString(2, "O");
+		for (int i = 0; i < b.length; ++i) {
+			insert.setString(i + 3, Integer.toString(b[i] / 28));
+		}
+		insert.executeUpdate();
+	}
+
+	private void compressDEntries() throws SQLException {
+		int[] b = new int[collumnList.length];
+		delete.setString(1, "D");
+		getlimit.setString(1, "D");
+		getlimit.setInt(2, 7);
+		ResultSet r = getlimit.executeQuery();
+		long newdate = 0;
+		while (r.next()) {
+			for (int i = 0; i < b.length; ++i) {
+				// start at 3,because date and tag do not have to be
+				// averaged and are not relevant
+				b[i] += r.getInt(i + 3);
+			}
+			delete.setString(2, r.getString(1));
+			delete.executeUpdate();
+			newdate = Long.parseLong(r.getString(1)) - ((int)(3.5 * 24 * 60 * 6000));
+		}
+		insert.setString(1, Long.toString(newdate));
+		insert.setString(2, "W");
+		for (int i = 0; i < b.length; ++i) {
+			insert.setString(i + 3, Integer.toString(b[i] / 7));
+		}
+		insert.executeUpdate();
+	}
+
+	private void compressHEntries() throws SQLException {
+		int[] b = new int[collumnList.length];
+		delete.setString(1, "H");
+		getlimit.setString(1, "H");
+		getlimit.setInt(2, 24);
+		ResultSet r = getlimit.executeQuery();
+		long newdate = 0;
+		while (r.next()) {
+			for (int i = 0; i < b.length; ++i) {
+				// start at 3,because date and tag do not have to be
+				// averaged and are not relevant
+				b[i] += r.getInt(i + 3);
+			}
+			delete.setString(2, r.getString(1));
+			delete.executeUpdate();
+			newdate = Long.parseLong(r.getString(1)) - (12 * 60 * 6000);
+		}
+		// insert new minute record
+		insert.setString(1, Long.toString(newdate));
+		insert.setString(2, "H");
+		for (int i = 0; i < b.length; ++i) {
+			insert.setString(i + 3, Integer.toString(b[i] / 24));
+		}
+		insert.executeUpdate();
+	}
+
+	private void compressMEntries() throws SQLException {
+		int[] b = new int[collumnList.length];
+		delete.setString(1, "M");
+		getlimit.setString(1, "M");
+		getlimit.setInt(2, 60);
+		ResultSet r = getlimit.executeQuery();
+		long newdate = 0;
+		while (r.next()) {
+			for (int i = 0; i < b.length; ++i) {
+				// start at 3,because date and tag do not have to be
+				// averaged and are not relevant
+				b[i] += r.getInt(i + 3);
+			}
+			delete.setString(2, r.getString(1));
+			delete.executeUpdate();
+			newdate = Long.parseLong(r.getString(1)) - (30 * 6000);
+		}
+		insert.setString(1, Long.toString(newdate));
+		insert.setString(2, "H");
+		for (int i = 0; i < b.length; ++i) {
+			insert.setString(i + 3, Integer.toString(b[i] / 60));
+		}
+		insert.executeUpdate();
+	}
+
+	private void compressSEntries() throws SQLException {
+		int a = (60 * 1000) / Globals.POLLINGINTERVAL; 
+		int[] b = new int[collumnList.length];
+		delete.setString(1, "S");
+		getlimit.setString(1, "S");
+		getlimit.setInt(2, a);
+		ResultSet r = getlimit.executeQuery();
+		long newdate = 0;
+		while (r.next()) {
+			for (int i = 0; i < b.length; ++i) {
+				// start at 3,because date and tag do not have to be
+				// averaged and are not relevant
+				b[i] += r.getInt(i + 3);
+			}
+			delete.setString(2, r.getString(1));
+			delete.executeUpdate();
+			newdate = Long.parseLong(r.getString(1)) - 3000;
+		}
+		insert.setString(1, Long.toString(newdate));
+		insert.setString(2, "M");
+		for (int i = 0; i < b.length; ++i) {
+			insert.setString(i + 3, Integer.toString(b[i] / a));
+		}
+		insert.executeUpdate();
 	}
 
 	/**

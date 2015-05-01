@@ -140,7 +140,7 @@ public class Model {
 		model.addComponent(w);
 		long start = System.currentTimeMillis();
 		int i = 0;
-		while (System.currentTimeMillis() - start < 1000) {
+		while (System.currentTimeMillis() - start < 60000) {
 			String[] message = { "15", "8", "2" };
 			w.update(message);
 			i++;
