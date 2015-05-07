@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.lang.String;
 
 /**
@@ -39,7 +40,7 @@ public abstract class Component {
 	 * 
 	 * @invariant model != null
 	 */
-	protected Connection conn; // TODO make connection shared
+	protected Connection conn;
 
 	/**
 	 * Creates a new component, tries to parse an inetadress from the given
@@ -76,7 +77,6 @@ public abstract class Component {
 					+ " WHERE tag =  ?  AND date = ?";
 			delete = conn.prepareStatement(sql);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -102,7 +102,7 @@ public abstract class Component {
 	 * @requires Database is running && Connection != null
 	 * @ensures Connection is closed
 	 */
-	public void CloseConnection() {
+	protected void closeConnection() {
 		try {
 			check.close();
 			insert.close();
@@ -112,6 +112,47 @@ public abstract class Component {
 		} catch (SQLException se) {
 			se.printStackTrace();
 		}
+	}
+
+	/**
+	 * aggregrates the database on this component and closes the connection.
+	 * Should be called when a component disconnects from the system. The
+	 * database will be readied for a gap in the data, no matter how big the gap
+	 * is, this will be achieved by aggregrating the data and converting the
+	 * tags to O
+	 * 
+	 * @requires Database running
+	 * @ensures Connection closed && database ready for gap in data
+	 */
+	public void shutDown() {
+		// lazy solution -> delete all S and M tags, convert all H, D and W tags
+		// to O
+		// TODO less lazy solution?
+		try {
+			// delete small amounts of data
+			Statement s = conn.createStatement();
+			String sql = "DELETE FROM " + Globals.getTableName(adr.toString())
+					+ " WHERE tag = \'S\' OR tag = \'M\'";
+			s.executeUpdate(sql);
+			sql = "SELECT COUNT(*) FROM " + Globals.getTableName(adr.toString());
+			System.out.println(sql);
+			ResultSet r = s.executeQuery(sql);
+			r.next();
+			if (r.getInt(1) == 0) {
+				//droptable if its now empty (no use keeping an empty table)
+				sql = "DROP TABLE IF EXISTS " + Globals.getTableName(adr.toString());
+			} else {
+				sql = "UPDATE "
+						+ Globals.getTableName(adr.toString())
+						+ " SET tag = \'O\' WHERE tag = \'H\' OR tag = \'D\' OR tag=\'W\'";
+				s.executeUpdate(sql);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		closeConnection();
 	}
 
 	/**
@@ -140,7 +181,6 @@ public abstract class Component {
 		}
 		sql += "PRIMARY KEY ( date))";
 		return sql;
-
 	}
 
 	/**
@@ -149,42 +189,39 @@ public abstract class Component {
 	 * @requires message != null && message.length == collumnList.length +1
 	 */
 	public void update(String[] message) {
-		// TODO make this
-		// fix de roundrobin
 		try {
 			// tags are Seconds -> Minutes -> Hours -> Days -> Weeks -> Other
 			// aka S->M->H->D->W->O
+			// nested, because only possibilty is when the previous was
+			// converted
 			check.setString(1, "S");
 			ResultSet v = check.executeQuery();
 			if (v.next() && v.getInt(1) == Globals.SQLMAXsec) {
 				compressSEntries();
-			}
-
-			check.setString(1, "M");
-			v = check.executeQuery();
-			if (v.getInt(1) == Globals.SQLMAXmin) {
-				compressMEntries();
-			}
-
-			check.setString(1, "H");
-			v = check.executeQuery();
-			if (v.getInt(1) == Globals.SQLMAXhour) {
-				compressHEntries();
-			}
-
-			check.setString(1, "D");
-			v = check.executeQuery();
-			if (v.getInt(1) == Globals.SQLMAXday) {
-				compressDEntries();
-			}
-
-			check.setString(1, "W");
-			v = check.executeQuery();
-			if (v.getInt(1) == Globals.SQLMAXweek) {
-				compressWEntries();
+				check.setString(1, "M");
+				v = check.executeQuery();
+				if (v.next() && v.getInt(1) == Globals.SQLMAXmin) {
+					compressMEntries();
+					check.setString(1, "H");
+					v = check.executeQuery();
+					if (v.next() && v.getInt(1) == Globals.SQLMAXhour) {
+						compressHEntries();
+						check.setString(1, "D");
+						v = check.executeQuery();
+						if (v.next() && v.getInt(1) == Globals.SQLMAXday) {
+							compressDEntries();
+							check.setString(1, "W");
+							v = check.executeQuery();
+							if (v.next() && v.getInt(1) == Globals.SQLMAXweek) {
+								compressWEntries();
+							}
+						}
+					}
+				}
 			}
 
 			// actual insert
+			// TODO choose between system time and component time
 			insert.setString(1, Long.toString(System.currentTimeMillis()));
 			insert.setString(2, "S");
 			for (int i = 0; i < message.length; ++i) {
@@ -192,7 +229,6 @@ public abstract class Component {
 			}
 			insert.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -336,7 +372,7 @@ public abstract class Component {
 	 * entered into the database
 	 * 
 	 * @require message != null
-	 * @ensure \result != null && result.length == collumnList.length +1
+	 * @ensure \result != null && result.length == collumnList.length
 	 */
 	protected abstract String[] parseInput(String message);
 }

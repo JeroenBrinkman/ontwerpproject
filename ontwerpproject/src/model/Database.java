@@ -16,9 +16,9 @@ public class Database extends Component {
 
 	public Database(String ip, Connection con) {
 		super(ip, con);
+		//TODO tepm currentlyplaceholder
 		String[] temp = {"cpu", "disk", "mem"};
 		collumnList = temp;
-		// TODO time from worker or system?
 		String sql = "INSERT INTO " + Globals.getTableName(adr.toString())
 				+ " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
@@ -28,20 +28,20 @@ public class Database extends Component {
 		try {
 			insert = conn.prepareStatement(sql);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	public Database(InetAddress ip, Connection con) {
 		super(ip, con);
+		//TODO temp currentlyplaceholder
 		String[] temp = {"cpu", "disk", "mem"};
 		collumnList = temp;
 	}
 
 	@Override
 	protected String[] parseInput(String message) {
-		// TODO Auto-generated method stub
+		// TODO make parser
 		return null;
 	}
 

@@ -41,6 +41,7 @@ public class Model {
 	 * @ensures components.contains(c) = false;
 	 */
 	public void removeComponent(Component c) {
+		c.shutDown();
 		components.remove(c);
 	}
 
@@ -124,12 +125,12 @@ public class Model {
 		model.addComponent(w);
 		long start = System.currentTimeMillis();
 		int i = 0;
-		while (System.currentTimeMillis() - start < 60000) {
+		while (i<100) {
 			String[] message = { "15", "8", "2" };
 			w.update(message);
 			i++;
 		}
-		System.out.println(i);
+		model.removeComponent(w);
 	}
 
 }
