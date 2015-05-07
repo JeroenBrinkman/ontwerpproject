@@ -14,7 +14,7 @@ public abstract class Intelligence {
 
 	public void errorMail(String message, String subject) {
 		// TODO make this global
-		String to = "test@test.test";//needs to be valid though
+		String to = "test@test.test";// needs to be valid though
 		String from = "monitoringontwerpproject@gmail.com";
 		final String username = "monitoringontwerpproject@gmail.com";
 		final String password = "T3st1234";
@@ -47,11 +47,14 @@ public abstract class Intelligence {
 	}
 
 	public void errorPopup() {
+		// TODO wegschrijven in textfile of in de webserver database
 
 	}
 
 	public void errorSMS() {
-
+		// TODO indien tmobile ofzo heel makkelijk, gewoon email naar
+		// \nummer/@tmobile.com en dit wordt een sms naar het nummer (kosten van
+		// ontvanger)
 	}
 
 	public abstract void checkCritical(String[] newin);
