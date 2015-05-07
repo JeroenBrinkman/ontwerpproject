@@ -148,7 +148,6 @@ public abstract class Component {
 				s.executeUpdate(sql);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

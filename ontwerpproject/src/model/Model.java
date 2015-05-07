@@ -101,18 +101,14 @@ public class Model {
 	public Connection createConnection() {
 		Connection conn = null;
 		try {
-			// STEP 2: Register JDBC driver
 			Class.forName(Globals.JDBC_DRIVER);
 
-			// STEP 3: Open a connection
 			conn = DriverManager.getConnection(Globals.DB_URL_DETAIL,
 					Globals.USER, Globals.PASS);
 
 		} catch (SQLException se) {
-			// TODO Handle errors for JDBC
 			se.printStackTrace();
 		} catch (Exception e) {
-			// TODO Handle errors for Class.forName
 			e.printStackTrace();
 		}
 		return conn;
