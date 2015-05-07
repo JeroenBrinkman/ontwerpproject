@@ -163,6 +163,13 @@ public abstract class Component {
 	public InetAddress getInet() {
 		return adr;
 	}
+	
+	/**
+	 * getter for columnlist
+	 */
+	public String[] getKeys() {
+		return this.collumnList;
+	}
 
 	/**
 	 * Abstract method, generates the sql for creating a new table for this
