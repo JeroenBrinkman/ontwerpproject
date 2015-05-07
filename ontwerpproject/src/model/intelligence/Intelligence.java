@@ -39,6 +39,7 @@ public abstract class Intelligence {
 		} catch (MessagingException mex) {
 			mex.printStackTrace();
 		}
+		//TODO try this http://www.tutorialspoint.com/javamail_api/javamail_api_gmail_smtp_server.htm
 	}
 
 	public void errorPopup() {
