@@ -123,14 +123,16 @@ public class Model {
 		model.addComponent(w);
 		long start = System.currentTimeMillis();
 		int i = 0;
-		while (i<1) {
+		while (i<(12*60+1)) {
 			String[] message = { "15", "8", "2" };
 			w.update(message);
 			i++;
+			System.out.println(i);
 		}
+		System.out.println("endtime inserts: " + (System.currentTimeMillis()-start));
 		model.removeComponent(w);
 		Intelligence test = new WorkerIntelligence(w);
-		test.errorMail(null, null);
+		//test.errorMail(null, null);
 	}
 
 }

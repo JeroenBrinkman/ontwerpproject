@@ -135,12 +135,12 @@ public abstract class Component {
 					+ " WHERE tag = \'S\' OR tag = \'M\'";
 			s.executeUpdate(sql);
 			sql = "SELECT COUNT(*) FROM " + Globals.getTableName(adr.toString());
-			System.out.println(sql);
 			ResultSet r = s.executeQuery(sql);
 			r.next();
 			if (r.getInt(1) == 0) {
 				//droptable if its now empty (no use keeping an empty table)
-				sql = "DROP TABLE IF EXISTS " + Globals.getTableName(adr.toString());
+				sql = "DROP TABLE " + Globals.getTableName(adr.toString());
+				s.executeUpdate(sql);
 			} else {
 				sql = "UPDATE "
 						+ Globals.getTableName(adr.toString())
