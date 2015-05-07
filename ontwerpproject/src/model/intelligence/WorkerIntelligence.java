@@ -1,6 +1,13 @@
 package model.intelligence;
 
-public class WorkerIntelligence implements Intelligence{
+import model.Component;
+
+public class WorkerIntelligence extends Intelligence{
+
+	public WorkerIntelligence(Component comp) {
+		super(comp);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public void checkCritical(String[] newin) {
@@ -8,22 +15,5 @@ public class WorkerIntelligence implements Intelligence{
 		
 	}
 
-	@Override
-	public void errorMail() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void errorPopup() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void errorSMS() {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

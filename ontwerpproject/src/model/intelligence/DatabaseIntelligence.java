@@ -1,27 +1,16 @@
 package model.intelligence;
 
-public class DatabaseIntelligence implements Intelligence {
+import model.Component;
+
+public class DatabaseIntelligence extends Intelligence {
+
+	public DatabaseIntelligence(Component comp) {
+		super(comp);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public void checkCritical(String[] newin) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void errorMail() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void errorPopup() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void errorSMS() {
 		// TODO Auto-generated method stub
 		
 	}

@@ -3,6 +3,8 @@ package model;
 import java.sql.*;
 import java.util.ArrayList;
 
+import model.intelligence.Intelligence;
+import model.intelligence.WorkerIntelligence;
 import global.Globals;
 
 /**
@@ -121,12 +123,14 @@ public class Model {
 		model.addComponent(w);
 		long start = System.currentTimeMillis();
 		int i = 0;
-		while (i<100) {
+		while (i<1) {
 			String[] message = { "15", "8", "2" };
 			w.update(message);
 			i++;
 		}
 		model.removeComponent(w);
+		Intelligence test = new WorkerIntelligence(w);
+		test.errorMail(null, null);
 	}
 
 }
