@@ -3,6 +3,7 @@ package model;
 import global.Globals;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,7 +29,7 @@ public abstract class Component {
 	 * 
 	 * @invariant adr != null
 	 */
-	protected InetAddress adr;
+	protected InetSocketAddress adr;
 	/**
 	 * A list with all the collumns a database of this type has
 	 * 
@@ -56,24 +57,20 @@ public abstract class Component {
 	protected PreparedStatement insert;
 	protected PreparedStatement getlimit;
 
-	public Component(String ip, Connection con) {
+	public Component(String hostname, Connection con) {
 		conn = con;
-		try {
-			adr = InetAddress.getByName(ip);
-		} catch (UnknownHostException e) {
-			System.out.println("invalid ip on component");
-		}
+		adr = new InetSocketAddress(hostname, 8000);
 
 		try {
 			String sql = "SELECT COUNT(*) FROM "
-					+ Globals.getTableName(adr.toString()) + " WHERE tag =  ? ";
+					+ Globals.getTableName(getTableName()) + " WHERE tag =  ? ";
 			check = conn.prepareStatement(sql);
 
-			sql = "SELECT * FROM " + Globals.getTableName(adr.toString())
+			sql = "SELECT * FROM " + Globals.getTableName(getTableName())
 					+ " WHERE tag = ? ORDER BY date ASC LIMIT ?";
 			getlimit = conn.prepareStatement(sql);
 
-			sql = "DELETE FROM " + Globals.getTableName(adr.toString())
+			sql = "DELETE FROM " + Globals.getTableName(getTableName())
 					+ " WHERE tag =  ?  AND date = ?";
 			delete = conn.prepareStatement(sql);
 		} catch (SQLException e) {
@@ -90,9 +87,25 @@ public abstract class Component {
 	 * @ensures model = mod
 	 * @ensures adr = ip
 	 */
-	public Component(InetAddress ip, Connection con) {
-		adr = ip;
+	public Component(InetSocketAddress addr, Connection con) {
+		adr = addr;
 		conn = con;
+		
+		try {
+			String sql = "SELECT COUNT(*) FROM "
+					+ Globals.getTableName(getTableName()) + " WHERE tag =  ? ";
+			check = conn.prepareStatement(sql);
+
+			sql = "SELECT * FROM " + Globals.getTableName(getTableName())
+					+ " WHERE tag = ? ORDER BY date ASC LIMIT ?";
+			getlimit = conn.prepareStatement(sql);
+
+			sql = "DELETE FROM " + Globals.getTableName(getTableName())
+					+ " WHERE tag =  ?  AND date = ?";
+			delete = conn.prepareStatement(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -131,19 +144,19 @@ public abstract class Component {
 		try {
 			// delete small amounts of data
 			Statement s = conn.createStatement();
-			String sql = "DELETE FROM " + Globals.getTableName(adr.toString())
+			String sql = "DELETE FROM " + Globals.getTableName(getTableName())
 					+ " WHERE tag = \'S\' OR tag = \'M\'";
 			s.executeUpdate(sql);
-			sql = "SELECT COUNT(*) FROM " + Globals.getTableName(adr.toString());
+			sql = "SELECT COUNT(*) FROM " + Globals.getTableName(getTableName());
 			ResultSet r = s.executeQuery(sql);
 			r.next();
 			if (r.getInt(1) == 0) {
 				//droptable if its now empty (no use keeping an empty table)
-				sql = "DROP TABLE " + Globals.getTableName(adr.toString());
+				sql = "DROP TABLE " + Globals.getTableName(getTableName());
 				s.executeUpdate(sql);
 			} else {
 				sql = "UPDATE "
-						+ Globals.getTableName(adr.toString())
+						+ Globals.getTableName(getTableName())
 						+ " SET tag = \'O\' WHERE tag = \'H\' OR tag = \'D\' OR tag=\'W\'";
 				s.executeUpdate(sql);
 			}
@@ -160,8 +173,12 @@ public abstract class Component {
 	 * @ensure \result = adr
 	 * @pure
 	 */
-	public InetAddress getInet() {
+	public InetSocketAddress getAddress() {
 		return adr;
+	}
+	
+	public String getTableName() {
+		return adr.getHostName() + adr.getPort();
 	}
 	
 	/**
@@ -180,7 +197,7 @@ public abstract class Component {
 	 */
 	public String createTableSQL() {
 		String sql = "CREATE TABLE "
-				+ Globals.getTableName(this.adr.toString())
+				+ Globals.getTableName(getTableName())
 				+ " (date BIGINT(64) not NULL, " + " tag CHAR(1) not NULL , ";
 		for (String a : collumnList) {
 			sql += a + " INTEGER, ";

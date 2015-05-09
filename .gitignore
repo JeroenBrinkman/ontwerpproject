@@ -1,4 +1,10 @@
+#folders that should be ignored
 .metadata/
 .recommenders/
 ontwerpproject/.settings/
 ontwerpproject/.classpath
+
+#ignore all class object
+#ignore the .gitignore from eclipse
+*.class
+*.gitignore

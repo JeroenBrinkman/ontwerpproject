@@ -71,7 +71,7 @@ public class Model {
 		try {
 			DatabaseMetaData dbm = conn.getMetaData();
 			ResultSet tables = dbm.getTables(null, null,
-					Globals.getTableName(c.getInet().toString()), null);
+					Globals.getTableName(c.getTableName()), null);
 			if (!tables.next()) {
 				// no table for this address
 				st = conn.createStatement();
@@ -119,7 +119,7 @@ public class Model {
 	// TODO remove test main after im done with testing
 	public static void main(String[] args) {
 		Model model = new Model();
-		Worker w = new Worker("192.192.192.192", model.createConnection());
+		Worker w = new Worker("localhost", model.createConnection());
 		model.addComponent(w);
 		long start = System.currentTimeMillis();
 		int i = 0;

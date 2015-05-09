@@ -3,6 +3,7 @@ package model;
 import global.Globals;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -19,7 +20,7 @@ public class Manager extends Component {
 		//TODO temp currently placeholder
 		String[] temp = {"cpu", "disk", "mem"};
 		collumnList = temp;
-		String sql = "INSERT INTO " + Globals.getTableName(adr.toString())
+		String sql = "INSERT INTO " + Globals.getTableName(getTableName())
 				+ " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
 			sql += ",  ?";
@@ -32,9 +33,9 @@ public class Manager extends Component {
 		}
 	}
 
-	public Manager(InetAddress ip, Connection con) {
-		super(ip, con);
-		//TODO temp currently placeholder
+	public Manager(InetSocketAddress addr, Connection con) {
+		super(addr, con);
+		//TODO temp currentlyplaceholder
 		String[] temp = {"cpu", "disk", "mem"};
 		collumnList = temp;
 	}

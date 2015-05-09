@@ -3,6 +3,7 @@ package model;
 import global.Globals;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -18,7 +19,7 @@ public class Worker extends Component {
 		//TODO temp currently placeholder
 		String[] temp = {"cpu", "disk", "mem"};
 		collumnList = temp;
-		String sql = "INSERT INTO " + Globals.getTableName(adr.toString())
+		String sql = "INSERT INTO " + Globals.getTableName(getTableName())
 				+ " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
 			sql += ",  ?";
@@ -31,11 +32,23 @@ public class Worker extends Component {
 		}
 	}
 
-	public Worker(InetAddress ip, Connection con) {
-		super(ip, con);
+	public Worker(InetSocketAddress addr, Connection con) {
+		super(addr, con);
 		//TODO temp currently placeholder
 		String[] temp = {"cpu", "disk", "mem"};
 		collumnList = temp;
+		
+		String sql = "INSERT INTO " + Globals.getTableName(getTableName())
+				+ " VALUES( ?,  ?";
+		for (int i = 0; i < collumnList.length; ++i) {
+			sql += ",  ?";
+		}
+		sql += ")";
+		try {
+			insert = conn.prepareStatement(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
