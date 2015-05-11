@@ -35,6 +35,7 @@ public class Globals {
 		String out = "c" + ipline;
 		out = out.replace(".", "");
 		out = out.replace("/", "");
+		out = out.replace(":", "");
 		return out;
 	}
 	public static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -49,5 +50,9 @@ public class Globals {
 	public static final int SQLMAXhour = 24;//minimum = 24
 	public static final int SQLMAXday = 7;// minimum = 7
 	public static final int SQLMAXweek = 4;//minimum = 4
+	
+	
+	/* LUUKS SHIT */
+	public static final int XMLRPC_PORT = 8000;
 
 }

@@ -68,6 +68,10 @@ public class Scheduler {
 		this.retrieverMap.get(milliseconds).addAll(rs);
 	}
 	
+	public void removeRetriever(String port, int ip) {
+		
+	}
+	
 	private void checkAndDestroy(long milliseconds) {
 		if(retrieverMap.get(milliseconds).isEmpty()) {
 			System.out.println("Retriever map is empty, destroying the thread");

@@ -17,7 +17,7 @@ public class Worker extends Component {
 	public Worker(String ip, Connection con) {
 		super(ip, con);
 		//TODO temp currently placeholder
-		String[] temp = {"cpu", "disk", "mem"};
+		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
 		String sql = "INSERT INTO " + Globals.getTableName(getTableName())
 				+ " VALUES( ?,  ?";
@@ -35,7 +35,7 @@ public class Worker extends Component {
 	public Worker(InetSocketAddress addr, Connection con) {
 		super(addr, con);
 		//TODO temp currently placeholder
-		String[] temp = {"cpu", "disk", "mem"};
+		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
 		
 		String sql = "INSERT INTO " + Globals.getTableName(getTableName())

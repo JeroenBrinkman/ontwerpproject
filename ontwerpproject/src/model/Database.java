@@ -18,7 +18,7 @@ public class Database extends Component {
 	public Database(String ip, Connection con) {
 		super(ip, con);
 		//TODO tepm currentlyplaceholder
-		String[] temp = {"cpu", "disk", "mem"};
+		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
 		String sql = "INSERT INTO " + Globals.getTableName(getTableName())
 				+ " VALUES( ?,  ?";
@@ -36,7 +36,7 @@ public class Database extends Component {
 	public Database(InetSocketAddress addr, Connection con) {
 		super(addr, con);
 		//TODO temp currentlyplaceholder
-		String[] temp = {"cpu", "disk", "mem"};
+		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
 	}
 
