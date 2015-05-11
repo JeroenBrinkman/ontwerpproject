@@ -2,7 +2,6 @@ package model;
 
 import global.Globals;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.SQLException;

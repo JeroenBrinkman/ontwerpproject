@@ -132,7 +132,7 @@ public class Model {
 		System.out.println("endtime inserts: " + (System.currentTimeMillis()-start));
 		model.removeComponent(w);
 		Intelligence test = new WorkerIntelligence(w);
-		//test.errorMail(null, null);
+		test.errorMail("ss", "er");
 	}
 
 }
