@@ -45,11 +45,7 @@ public class Database extends Component {
 
 	@Override
 	public String getTableName() {
-		String out = "d" + adr.getHostString();
-		out = out.replace(".", "");
-		out = out.replace("/", "");
-		out = out.replace(":", "p");
-		return out;
+		return "d" + super.getTableName();
 	}
 
 }

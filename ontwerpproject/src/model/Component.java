@@ -174,7 +174,10 @@ public abstract class Component {
 		return adr;
 	}
 	
-	public abstract String getTableName();
+	public String getTableName() {
+		String result = adr.toString();
+		return result.replaceAll(":|/|\\.", "_");
+	}
 	
 	/**
 	 * getter for columnlist

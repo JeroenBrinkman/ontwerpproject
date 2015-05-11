@@ -1,6 +1,9 @@
 package controller;
 
+import global.Globals;
+
 import java.net.InetSocketAddress;
+import java.util.concurrent.locks.Lock;
 
 import model.Component;
 import model.Database;
@@ -9,8 +12,8 @@ import model.Model;
 import model.Worker;
 
 public class ServerHandler {
-	static Scheduler 	scheduler = null;
-	static Model		model = null;
+	public static Scheduler 	scheduler = null;
+	public static Model			model = null;
 	
 	public boolean online() {
 		System.out.println("oline called");
@@ -18,7 +21,7 @@ public class ServerHandler {
 	}
 	
 	public boolean add(int type, String ip, int port) {
-		if(scheduler == null || model == null) {
+		if(Globals.DEBUGOUTPUT && (scheduler == null || model == null)) {
 			System.out.println("Scheduler or model is null, please initiate!");
 			return false;
 		}
@@ -40,15 +43,21 @@ public class ServerHandler {
 		};
 		
 		model.addComponent(comp);
-		Retriever ret = new Retriever(comp);		
+		Retriever ret = new Retriever(comp);
+		
 		scheduler.addRetriever(1000, ret);
 		
 		System.out.println("Component " + comp.getTableName() + " added");
 		return true;		
 	}
 	
-	public boolean remove(String ip, int port) {
-		scheduler.removeRetriever(ip, port);
+	public boolean remove(String hostname, int port) {
+		Retriever ret = scheduler.getRetriever(hostname, port);
+		
+		if(ret == null) return false;
+		
+		scheduler.removeRetriever(ret);
+		model.removeComponent(ret.getComponent());
 		return true;
 	}
 }

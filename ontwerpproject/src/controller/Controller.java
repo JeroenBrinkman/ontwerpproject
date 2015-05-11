@@ -41,7 +41,8 @@ public class Controller {
 		}
 		System.out.println("Model connection created");
 		
-		ServerHandler.scheduler = new Scheduler();		
+		ServerHandler.scheduler = new Scheduler();
+		
 		
 		WebServer webServer = new WebServer(Globals.XMLRPC_PORT);
 		XmlRpcServer server = webServer.getXmlRpcServer();

@@ -56,10 +56,6 @@ public class Worker extends Component {
 
 	@Override
 	public String getTableName() {
-			String out = "w" + adr.getHostName();
-			out = out.replace(".", "");
-			out = out.replace("/", "");
-			out = out.replace(":", "p");
-			return out;
-			}
+		return "w" + super.getTableName();
+	}
 }

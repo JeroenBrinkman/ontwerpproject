@@ -1,5 +1,7 @@
 package controller;
 
+import global.Globals;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -96,44 +98,28 @@ public class Retriever {
 		return this.comp;
 	}
 	
-	public void retrieveAllData() {
+	public XMLRPCClient getClient() {
+		return this.client;
+	}
+	
+	public void retrieveAllData() throws XMLRPCException{
 		String[] keys = comp.getKeys();
 		for(int index = 0; index < keys.length; index++) {
-			updateData(index, retrieveData(keys[index]));
+			try {
+				updateData(index, retrieveData(keys[index]));
+			} catch (XMLRPCServerException e) {
+				if(Globals.DEBUGOUTPUT)
+					System.err.println(e.toString());
+			}
 		}
 	}
 	
 	/**
 	 * This method uses XML RPC to retrieve data from a particular component and stores it in the array. 
+	 * @throws XMLRPCException 
 	 */
-	public String retrieveData(String key){
-		String result = null;
-		Object tmpObject = null;
-		
-		try {
-			tmpObject = (Object)client.call(key);
-			//System.out.println(tmpObject.toString());
-		} catch (XMLRPCException e) {
-			System.out.println(e.getMessage());
-			if(e.getMessage().equals("java.net.ConnectException: Connection timed out: connect")) {
-				System.out.println("Connection time out: Check IP and if the host is up");
-			}
-			else if(e.getMessage().equals("java.net.SocketException: Connection reset")) {
-				System.out.println("Connection reset, Check if the server is up");
-			}
-			else if(e.getMessage().equals("java.net.ConnectException: Connection refused: connect")) {
-				System.out.println("Connect Exception, Check if the server is up and if the file is correct: " + client.getURL().getFile());
-			}
-			else if(e.getMessage().contains("java.io.FileNotFoundException:")) {
-				System.out.println("File not found exception, check if the file is correct: " + client.getURL().getFile());
-			}
-			System.out.println("Stack trace:");
-			e.printStackTrace();
-			// TODO Auto-generated catch block
-			
-		}
-	   
-		return parse(tmpObject);
+	public String retrieveData(String key) throws XMLRPCException{
+		return parse(client.call(key));
 	}
 	
 	/**
@@ -144,7 +130,7 @@ public class Retriever {
 	}
 	
 	// TODO remove test main after im done with testing
-	public static void main(String[] args) {
+	public static void main(String[] args) throws XMLRPCException {
 		Model model = new Model();
 		while(model.createConnection() == null) {
 			System.out.println("Could not connect to SQL Database!");

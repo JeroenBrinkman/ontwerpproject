@@ -46,11 +46,7 @@ public class Manager extends Component {
 
 	@Override
 	public String getTableName() {
-		String out = "m" + adr.getHostString();
-		out = out.replace(".", "");
-		out = out.replace("/", "");
-		out = out.replace(":", "p");
-		return out;
+		return "m" + super.getTableName();
 	}
 
 }
