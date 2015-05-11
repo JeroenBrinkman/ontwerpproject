@@ -1,10 +1,7 @@
 package model;
 
 import global.Globals;
-
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -63,14 +60,14 @@ public abstract class Component {
 
 		try {
 			String sql = "SELECT COUNT(*) FROM "
-					+ Globals.getTableName(getTableName()) + " WHERE tag =  ? ";
+					+ getTableName() + " WHERE tag =  ? ";
 			check = conn.prepareStatement(sql);
 
-			sql = "SELECT * FROM " + Globals.getTableName(getTableName())
+			sql = "SELECT * FROM " + getTableName()
 					+ " WHERE tag = ? ORDER BY date ASC LIMIT ?";
 			getlimit = conn.prepareStatement(sql);
 
-			sql = "DELETE FROM " + Globals.getTableName(getTableName())
+			sql = "DELETE FROM " + getTableName()
 					+ " WHERE tag =  ?  AND date = ?";
 			delete = conn.prepareStatement(sql);
 		} catch (SQLException e) {
@@ -93,14 +90,14 @@ public abstract class Component {
 		
 		try {
 			String sql = "SELECT COUNT(*) FROM "
-					+ Globals.getTableName(getTableName()) + " WHERE tag =  ? ";
+					+ getTableName() + " WHERE tag =  ? ";
 			check = conn.prepareStatement(sql);
 
-			sql = "SELECT * FROM " + Globals.getTableName(getTableName())
+			sql = "SELECT * FROM " + getTableName()
 					+ " WHERE tag = ? ORDER BY date ASC LIMIT ?";
 			getlimit = conn.prepareStatement(sql);
 
-			sql = "DELETE FROM " + Globals.getTableName(getTableName())
+			sql = "DELETE FROM " + getTableName()
 					+ " WHERE tag =  ?  AND date = ?";
 			delete = conn.prepareStatement(sql);
 		} catch (SQLException e) {
@@ -144,19 +141,19 @@ public abstract class Component {
 		try {
 			// delete small amounts of data
 			Statement s = conn.createStatement();
-			String sql = "DELETE FROM " + Globals.getTableName(getTableName())
+			String sql = "DELETE FROM " + getTableName()
 					+ " WHERE tag = \'S\' OR tag = \'M\'";
 			s.executeUpdate(sql);
-			sql = "SELECT COUNT(*) FROM " + Globals.getTableName(getTableName());
+			sql = "SELECT COUNT(*) FROM " + getTableName();
 			ResultSet r = s.executeQuery(sql);
 			r.next();
 			if (r.getInt(1) == 0) {
 				//droptable if its now empty (no use keeping an empty table)
-				sql = "DROP TABLE " + Globals.getTableName(getTableName());
+				sql = "DROP TABLE " + getTableName();
 				s.executeUpdate(sql);
 			} else {
 				sql = "UPDATE "
-						+ Globals.getTableName(getTableName())
+						+ getTableName()
 						+ " SET tag = \'O\' WHERE tag = \'H\' OR tag = \'D\' OR tag=\'W\'";
 				s.executeUpdate(sql);
 			}
@@ -177,9 +174,7 @@ public abstract class Component {
 		return adr;
 	}
 	
-	public String getTableName() {
-		return adr.getHostName() + adr.getPort();
-	}
+	public abstract String getTableName();
 	
 	/**
 	 * getter for columnlist
@@ -197,7 +192,7 @@ public abstract class Component {
 	 */
 	public String createTableSQL() {
 		String sql = "CREATE TABLE "
-				+ Globals.getTableName(getTableName())
+				+ getTableName()
 				+ " (date BIGINT(64) not NULL, " + " tag CHAR(1) not NULL , ";
 		for (String a : collumnList) {
 			sql += a + " INTEGER, ";

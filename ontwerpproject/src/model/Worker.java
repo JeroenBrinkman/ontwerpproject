@@ -1,8 +1,5 @@
 package model;
 
-import global.Globals;
-
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,7 +16,7 @@ public class Worker extends Component {
 		//TODO temp currently placeholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
-		String sql = "INSERT INTO " + Globals.getTableName(getTableName())
+		String sql = "INSERT INTO " + getTableName()
 				+ " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
 			sql += ",  ?";
@@ -38,7 +35,7 @@ public class Worker extends Component {
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
 		
-		String sql = "INSERT INTO " + Globals.getTableName(getTableName())
+		String sql = "INSERT INTO " + getTableName()
 				+ " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
 			sql += ",  ?";
@@ -56,4 +53,13 @@ public class Worker extends Component {
 		// TODO makeparser
 		return null;
 	}
+
+	@Override
+	public String getTableName() {
+			String out = "w" + adr.getHostName();
+			out = out.replace(".", "");
+			out = out.replace("/", "");
+			out = out.replace(":", "p");
+			return out;
+			}
 }

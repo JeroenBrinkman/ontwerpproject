@@ -1,8 +1,5 @@
 package model;
 
-import global.Globals;
-
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,7 +17,7 @@ public class Database extends Component {
 		//TODO tepm currentlyplaceholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
-		String sql = "INSERT INTO " + Globals.getTableName(getTableName())
+		String sql = "INSERT INTO " + getTableName()
 				+ " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
 			sql += ",  ?";
@@ -44,6 +41,15 @@ public class Database extends Component {
 	protected String[] parseInput(String message) {
 		// TODO make parser
 		return null;
+	}
+
+	@Override
+	public String getTableName() {
+		String out = "d" + adr.getHostString();
+		out = out.replace(".", "");
+		out = out.replace("/", "");
+		out = out.replace(":", "p");
+		return out;
 	}
 
 }
