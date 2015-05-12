@@ -46,6 +46,6 @@ public class Globals {
 	
 	/* LUUKS SHIT */
 	public static final int XMLRPC_PORT = 8000;
-	public static final boolean DEBUGOUTPUT = false;
+	public static final boolean DEBUGOUTPUT = true;
 
 }

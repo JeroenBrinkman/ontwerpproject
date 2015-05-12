@@ -52,12 +52,18 @@ public class ServerHandler {
 	}
 	
 	public boolean remove(String hostname, int port) {
+		System.out.println("Remove called!");
+		
 		Retriever ret = scheduler.getRetriever(hostname, port);
+		synchronized (scheduler) {	
+			if(ret == null) {
+				System.out.println("Retriever not found (hostname, port): (" + hostname + ", " + port + ")");
+				return false;			
+			}
+			scheduler.removeRetriever(ret);
+		}
 		
-		if(ret == null) return false;
-		
-		scheduler.removeRetriever(ret);
-		model.removeComponent(ret.getComponent());
+		//model.removeComponent(ret.getComponent());		
 		return true;
 	}
 }
