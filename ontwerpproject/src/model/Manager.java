@@ -5,6 +5,8 @@ import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import model.intelligence.ManagerIntelligence;
+
 /**
  * Represents a clustermanager in the query system
  * 
@@ -15,6 +17,7 @@ public class Manager extends Component {
 
 	public Manager(String ip, Connection con) {
 		super(ip, con);
+		intel = new ManagerIntelligence(this);
 		//TODO temp currently placeholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
@@ -33,6 +36,7 @@ public class Manager extends Component {
 
 	public Manager(InetSocketAddress addr, Connection con) {
 		super(addr, con);
+		intel = new ManagerIntelligence(this);
 		//TODO temp currentlyplaceholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;

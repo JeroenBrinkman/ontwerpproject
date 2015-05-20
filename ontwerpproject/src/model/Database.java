@@ -4,6 +4,8 @@ import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import model.intelligence.DatabaseIntelligence;
+
 /**
  * Represents a database in the query system
  * 
@@ -14,6 +16,7 @@ public class Database extends Component {
 
 	public Database(String ip, Connection con) {
 		super(ip, con);
+		intel = new DatabaseIntelligence(this);
 		//TODO tepm currentlyplaceholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
@@ -32,6 +35,7 @@ public class Database extends Component {
 
 	public Database(InetSocketAddress addr, Connection con) {
 		super(addr, con);
+		intel = new DatabaseIntelligence(this);
 		//TODO temp currentlyplaceholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;

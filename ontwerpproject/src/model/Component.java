@@ -1,6 +1,7 @@
 package model;
 
 import global.Globals;
+
 import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.lang.String;
+
+import model.intelligence.Intelligence;
 
 /**
  * The abstract superclass for all components. represents a component in the
@@ -40,19 +43,16 @@ public abstract class Component {
 	 */
 	protected Connection conn;
 
-	/**
-	 * Creates a new component, tries to parse an inetadress from the given
-	 * string
-	 * 
-	 * @requires ip is valid && ip != null
-	 * @requires mod != null
-	 * @ensures model = mod
-	 * @ensures adr = ip (parsed)
-	 */
 	protected PreparedStatement check;
 	protected PreparedStatement delete;
 	protected PreparedStatement insert;
 	protected PreparedStatement getlimit;
+	
+	/**
+	 * The intelligence of this component, should never be null
+	 */
+	protected Intelligence intel;
+	
 
 	public Component(String hostname, Connection con) {
 		conn = con;
@@ -75,15 +75,6 @@ public abstract class Component {
 		}
 	}
 
-	/**
-	 * Creates a new component using the given ip and model
-	 * 
-	 * @requires ip != null
-	 * @param mod
-	 *            != null
-	 * @ensures model = mod
-	 * @ensures adr = ip
-	 */
 	public Component(InetSocketAddress addr, Connection con) {
 		adr = addr;
 		conn = con;
@@ -210,6 +201,7 @@ public abstract class Component {
 	 * @requires message != null && message.length == collumnList.length +1
 	 */
 	public void update(String[] message) {
+		intel.checkCritical(message);
 		try {
 			// tags are Seconds -> Minutes -> Hours -> Days -> Weeks -> Other
 			// aka S->M->H->D->W->O

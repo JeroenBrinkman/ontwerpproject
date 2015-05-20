@@ -7,11 +7,21 @@ import javax.mail.internet.*;
 
 public abstract class Intelligence {
 	protected Component comp;
+	protected int[] CRITS = { 80, 90, 99 };// TODO init crits in subclasses
+	protected int[] LIMITS; /* list of counters, keeps track of when we send a mail*/
+	protected final static int LIMIT = 60 * 12; /* send mail max once per hour per issue*///TODO update this to correct value
 
 	public Intelligence(Component comp) {
 		this.comp = comp;
 	}
 
+	/**
+	 * Sends an error Email to the preset addresses with a given subject and a
+	 * given message
+	 * 
+	 * @requires message != null
+	 * @requires subject != null
+	 */
 	public void errorMail(String message, String subject) {
 		// TODO make this global
 		String to = "test@test.test";// needs to be valid though
@@ -57,6 +67,13 @@ public abstract class Intelligence {
 		// ontvanger)
 	}
 
+	/**
+	 * Checks the new input data for the component for critical values, and
+	 * sends the correct error messages if it finds these
+	 * 
+	 * @requires newin != null
+	 * @ensures correct errormessages are send
+	 */
 	public abstract void checkCritical(String[] newin);
 
 }
