@@ -17,7 +17,7 @@ public class Worker extends Component {
 		super(ip, con);
 		intel = new WorkerIntelligence(this);
 		//TODO temp currently placeholder
-		String[] temp = {"cpu", "hdd", "mem"};
+		String[] temp = {"cpu", "hdd", "mem", "time"};
 		collumnList = temp;
 		String sql = "INSERT INTO " + getTableName()
 				+ " VALUES( ?,  ?";
@@ -36,7 +36,7 @@ public class Worker extends Component {
 		super(addr, con);
 		intel = new WorkerIntelligence(this);
 		//TODO temp currently placeholder
-		String[] temp = {"cpu", "hdd", "mem"};
+		String[] temp = {"cpu", "hdd", "mem", "time"};
 		collumnList = temp;
 		
 		String sql = "INSERT INTO " + getTableName()

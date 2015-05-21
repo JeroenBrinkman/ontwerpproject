@@ -24,11 +24,11 @@ import model.Worker;
 
 public class Scheduler {
 	
-	class Wub extends TimerTask {
+	class SchedulerTimer extends TimerTask {
 		
 		private long period;
 		
-		public Wub(long period) {
+		public SchedulerTimer(long period) {
 			this.period = period;
 		}
 
@@ -71,7 +71,13 @@ public class Scheduler {
 						System.out.println("Retrieved data from \"" + r.getComponent().getTableName() + "\": " + Arrays.toString(r.getData()));
 						System.out.println("Pushing data from " + r.getComponent().getTableName() + "...");
 					}
-					r.pushData();
+					try {
+						r.pushData();
+					}
+					catch(Exception e) {
+						//JEROEN FIX JE EXCEPTIONS
+						e.printStackTrace();
+					}
 					if(Globals.DEBUGOUTPUT) System.out.println("Pushed data from \"" + r.getComponent().getTableName() + "\"");
 				}
 				
@@ -87,13 +93,13 @@ public class Scheduler {
 	
 	private Map<Long, List<Retriever>> retrieverMap;
 	private Map<Long, ConcurrentLinkedQueue<Retriever>> queueMap;
-	private Map<Long, Wub> taskMap;
+	private Map<Long, SchedulerTimer> taskMap;
 	private Timer timer;
 	
 	public Scheduler() {
 		retrieverMap = new HashMap<Long, List<Retriever>>();
 		queueMap = new HashMap<Long, ConcurrentLinkedQueue<Retriever>>();
-		taskMap = new HashMap<Long, Wub>();
+		taskMap = new HashMap<Long, SchedulerTimer>();
 		timer = new Timer();
 	}
 	
@@ -167,7 +173,7 @@ public class Scheduler {
 		if(!retrieverMap.containsKey(milliseconds)) {
 			retrieverMap.put(milliseconds, new ArrayList<Retriever>());
 			queueMap.put(milliseconds, new ConcurrentLinkedQueue<Retriever>());
-			taskMap.put(milliseconds, new Wub(milliseconds));
+			taskMap.put(milliseconds, new SchedulerTimer(milliseconds));
 			
 			timer.scheduleAtFixedRate(taskMap.get(milliseconds), milliseconds, milliseconds);			
 		}

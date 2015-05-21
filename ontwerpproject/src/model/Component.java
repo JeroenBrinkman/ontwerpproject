@@ -77,7 +77,10 @@ public abstract class Component {
 
 	public Component(InetSocketAddress addr, Connection con) {
 		adr = addr;
+		this.adr.getHostName();
 		conn = con;
+		
+		System.out.println("Constructor called of component: " + getTableName());
 		
 		try {
 			String sql = "SELECT COUNT(*) FROM "

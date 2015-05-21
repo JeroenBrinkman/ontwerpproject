@@ -35,7 +35,7 @@ public class Retriever {
 			result = (String)object;
 		}
 		else if(object.getClass() == Double.class) {
-			result = "" + ((Double)object) * 1000;
+			result = "" + ((Double)object);
 		}
 		else if(object.getClass() == Integer.class) {
 			result = ((Integer)object).toString();
