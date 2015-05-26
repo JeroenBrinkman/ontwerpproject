@@ -15,7 +15,7 @@ public class DatabaseIntelligence extends Intelligence {
 		if (newin.length != comp.getKeys().length) {
 			// TODO crash with error
 		} else {
-			String[] keys = comp.getKeys();
+
 			
 		}
 	}

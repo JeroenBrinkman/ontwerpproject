@@ -78,7 +78,7 @@ public abstract class Intelligence {
 	 */
 	public void databaseError(){
 		errorMail("Database connection fail in " + comp.getTableName() + ". The component has been disconnected from the system.","Database error");
-		
+		mod.removeComponent(comp);
 	}
 
 	/**
