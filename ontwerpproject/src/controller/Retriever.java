@@ -148,7 +148,7 @@ public class Retriever {
 				System.out.println("Lololol doesn't work!");
 			}
 		}
-		Worker w = new Worker("localhost", model.createConnection());
+		Worker w = new Worker("localhost", model.createConnection(), model);
 		model.addComponent(w);
 		
 		Retriever r = new Retriever(w);

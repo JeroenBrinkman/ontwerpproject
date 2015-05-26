@@ -200,9 +200,9 @@ public class Scheduler {
 			}
 		}
 		
-		Worker work1 = new Worker(new InetSocketAddress("localhost", 8000), model.createConnection());
-		Worker work2 = new Worker(new InetSocketAddress("localhost", 7999), model.createConnection());
-		Worker work3 = new Worker(new InetSocketAddress("localhost", 7998), model.createConnection());
+		Worker work1 = new Worker(new InetSocketAddress("localhost", 8000), model.createConnection(), model);
+		Worker work2 = new Worker(new InetSocketAddress("localhost", 7999), model.createConnection(), model);
+		Worker work3 = new Worker(new InetSocketAddress("localhost", 7998), model.createConnection(), model);
 		
 		System.out.println(work1.getTableName());
 		System.out.println(work2.getTableName());

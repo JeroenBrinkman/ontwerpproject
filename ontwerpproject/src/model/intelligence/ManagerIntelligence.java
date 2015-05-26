@@ -1,11 +1,12 @@
 package model.intelligence;
 
 import model.Component;
+import model.Model;
 
 public class ManagerIntelligence extends Intelligence {
 
-	public ManagerIntelligence(Component comp) {
-		super(comp);
+	public ManagerIntelligence(Component comp, Model mod) {
+		super(comp, mod);
 		LIMITS = new int[comp.getKeys().length];
 	}
 

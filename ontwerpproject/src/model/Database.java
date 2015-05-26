@@ -14,9 +14,9 @@ import model.intelligence.DatabaseIntelligence;
  */
 public class Database extends Component {
 
-	public Database(String ip, Connection con) {
+	public Database(String ip, Connection con, Model mod) {
 		super(ip, con);
-		intel = new DatabaseIntelligence(this);
+		intel = new DatabaseIntelligence(this, mod);
 		//TODO tepm currentlyplaceholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
@@ -33,9 +33,9 @@ public class Database extends Component {
 		}
 	}
 
-	public Database(InetSocketAddress addr, Connection con) {
+	public Database(InetSocketAddress addr, Connection con, Model mod) {
 		super(addr, con);
-		intel = new DatabaseIntelligence(this);
+		intel = new DatabaseIntelligence(this, mod);
 		//TODO temp currentlyplaceholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;

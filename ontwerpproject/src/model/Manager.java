@@ -15,9 +15,9 @@ import model.intelligence.ManagerIntelligence;
  */
 public class Manager extends Component {
 
-	public Manager(String ip, Connection con) {
+	public Manager(String ip, Connection con, Model mod) {
 		super(ip, con);
-		intel = new ManagerIntelligence(this);
+		intel = new ManagerIntelligence(this, mod);
 		//TODO temp currently placeholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
@@ -34,9 +34,9 @@ public class Manager extends Component {
 		}
 	}
 
-	public Manager(InetSocketAddress addr, Connection con) {
+	public Manager(InetSocketAddress addr, Connection con, Model mod) {
 		super(addr, con);
-		intel = new ManagerIntelligence(this);
+		intel = new ManagerIntelligence(this, mod);
 		//TODO temp currentlyplaceholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;

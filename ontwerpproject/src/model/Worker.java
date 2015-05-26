@@ -13,9 +13,9 @@ import model.intelligence.WorkerIntelligence;
  */
 public class Worker extends Component {
 
-	public Worker(String ip, Connection con) {
+	public Worker(String ip, Connection con, Model mod) {
 		super(ip, con);
-		intel = new WorkerIntelligence(this);
+		intel = new WorkerIntelligence(this, mod);
 		//TODO temp currently placeholder
 		String[] temp = {"cpu", "hdd", "mem", "time"};
 		collumnList = temp;
@@ -32,9 +32,9 @@ public class Worker extends Component {
 		}
 	}
 
-	public Worker(InetSocketAddress addr, Connection con) {
+	public Worker(InetSocketAddress addr, Connection con, Model mod) {
 		super(addr, con);
-		intel = new WorkerIntelligence(this);
+		intel = new WorkerIntelligence(this, mod);
 		//TODO temp currently placeholder
 		String[] temp = {"cpu", "hdd", "mem", "time"};
 		collumnList = temp;

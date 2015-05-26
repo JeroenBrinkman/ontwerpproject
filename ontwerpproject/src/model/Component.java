@@ -72,7 +72,7 @@ public abstract class Component {
 					+ " WHERE tag =  ?  AND date = ?";
 			delete = conn.prepareStatement(sql);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			intel.databaseError();
 		}
 	}
 
@@ -99,7 +99,7 @@ public abstract class Component {
 					+ " WHERE tag =  ?  AND date = ?";
 			delete = conn.prepareStatement(sql);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			intel.databaseError();
 		}
 		startUp();
 	}
@@ -119,7 +119,7 @@ public abstract class Component {
 			getlimit.close();
 			conn.close();
 		} catch (SQLException se) {
-			se.printStackTrace();
+			intel.databaseError();
 		}
 	}
 
@@ -148,7 +148,7 @@ public abstract class Component {
 			update(System.currentTimeMillis(), x);
 			conn.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			intel.databaseError();
 		}
 
 		closeConnection();
@@ -189,7 +189,7 @@ public abstract class Component {
 				conn.commit();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			intel.databaseError();
 		}
 	}
 
@@ -239,7 +239,7 @@ public abstract class Component {
 	 * @ensures data is correctly inserted
 	 */
 	public void update(Long date, String[] message) {
-		//intel.checkCritical(message);
+		intel.checkCritical(message);
 		try {
 			// tags are Minutes -> Hours -> Days
 			// aka M->H->D
@@ -258,7 +258,6 @@ public abstract class Component {
 			}
 
 			// actual insert
-			// TODO choose between system time and component time
 			insert.setString(1, Long.toString(date));
 			insert.setString(2, "M");
 			for (int i = 0; i < message.length; ++i) {
@@ -267,7 +266,7 @@ public abstract class Component {
 			insert.executeUpdate();
 			conn.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			intel.databaseError();
 		}
 	}
 

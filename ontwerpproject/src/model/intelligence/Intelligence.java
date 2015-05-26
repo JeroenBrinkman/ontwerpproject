@@ -1,18 +1,23 @@
 package model.intelligence;
 
 import model.Component;
+import model.Model;
+
 import java.util.*;
+
 import javax.mail.*;
 import javax.mail.internet.*;
 
 public abstract class Intelligence {
 	protected Component comp;
+	protected Model mod;
 	protected int[] CRITS = { 80, 90, 99 };// TODO init crits in subclasses
 	protected int[] LIMITS; /* list of counters, keeps track of when we send a mail*/
 	protected final static int LIMIT = 60 * 12; /* send mail max once per hour per issue*///TODO update this to correct value
 
-	public Intelligence(Component comp) {
+	public Intelligence(Component comp, Model mod) {
 		this.comp = comp;
+		this.mod = mod;
 	}
 
 	/**
@@ -65,6 +70,15 @@ public abstract class Intelligence {
 		// TODO indien tmobile ofzo heel makkelijk, gewoon email naar
 		// \nummer/@tmobile.com en dit wordt een sms naar het nummer (kosten van
 		// ontvanger)
+	}
+	
+	/**
+	 * send error, and disconnect the relevant component
+	 * 
+	 */
+	public void databaseError(){
+		errorMail("Database connection fail in " + comp.getTableName() + ". The component has been disconnected from the system.","Database error");
+		
 	}
 
 	/**

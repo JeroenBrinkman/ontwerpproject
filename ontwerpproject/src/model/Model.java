@@ -120,7 +120,7 @@ public class Model {
 	// TODO remove test main after im done with testing
 	public static void main(String[] args) {
 		Model model = new Model();
-		Worker w = new Worker("192.192.192.192:123", model.createConnection());
+		Worker w = new Worker("192.192.192.192:123", model.createConnection(), model);
 		model.addComponent(w);
 		long start = System.currentTimeMillis();
 		int i = 0;
@@ -132,7 +132,7 @@ public class Model {
 		}
 		System.out.println("endtime inserts: " + (System.currentTimeMillis()-start));
 		model.removeComponent(w);
-		Intelligence test = new WorkerIntelligence(w);
+		Intelligence test = new WorkerIntelligence(w, model);
 		//test.errorMail("ss", "er");
 	}
 
