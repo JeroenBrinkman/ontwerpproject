@@ -3,15 +3,11 @@ package controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetSocketAddress;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Arrays;
 
-import model.Component;
-import model.Database;
-import model.Manager;
 import model.Model;
-import model.Worker;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.server.*;
@@ -23,7 +19,8 @@ public class Controller {
 	
 	public static void main(String[] args) {
 		ServerHandler.model = new Model();
-		while(ServerHandler.model.createConnection() == null) {
+		Connection conn = null;
+		while((conn = ServerHandler.model.createConnection()) == null) {
 			System.out.println("Could not connect to SQL Database!");
 			System.out.println("Press enter to try again or exit to quit.");
 			
@@ -38,6 +35,12 @@ public class Controller {
 			if(input.equals("exit")) {
 				System.out.println("Lololol doesn't work!");
 			}
+		}
+		try {
+			conn.close();
+		} catch (SQLException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
 		System.out.println("Model connection created");
 		
@@ -64,7 +67,7 @@ public class Controller {
 		}
 	
 		server.setHandlerMapping(phm);
-		
+
 		XmlRpcServerConfigImpl config = (XmlRpcServerConfigImpl) server.getConfig();
 		config.setEnabledForExceptions(true);
 		config.setContentLengthOptional(false);

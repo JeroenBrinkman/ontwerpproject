@@ -16,7 +16,7 @@ public class ServerHandler {
 	public static Model			model = null;
 	
 	public boolean online() {
-		System.out.println("oline called");
+		System.out.println("online called");
 		return true;
 	}
 	
@@ -63,7 +63,7 @@ public class ServerHandler {
 			scheduler.removeRetriever(ret);
 		}
 		
-		//model.removeComponent(ret.getComponent());		
+		model.removeComponent(ret.getComponent());		
 		return true;
 	}
 }
