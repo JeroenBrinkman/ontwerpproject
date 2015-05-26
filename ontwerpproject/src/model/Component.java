@@ -74,7 +74,6 @@ public abstract class Component {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		startUp();
 	}
 
 	public Component(InetSocketAddress addr, Connection con) {
@@ -240,13 +239,13 @@ public abstract class Component {
 	 * @ensures data is correctly inserted
 	 */
 	public void update(Long date, String[] message) {
-		intel.checkCritical(message);
+		//intel.checkCritical(message);
 		try {
 			// tags are Minutes -> Hours -> Days
 			// aka M->H->D
 			// nested, because only possibility is when the previous was
 			// converted
-			ResultSet v = check.executeQuery();
+			ResultSet v;
 			check.setString(1, "M");
 			v = check.executeQuery();
 			if (v.next() && v.getInt(1) == Globals.SQLMAXmin) {
