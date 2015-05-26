@@ -124,16 +124,18 @@ public class Model {
 		model.addComponent(w);
 		long start = System.currentTimeMillis();
 		int i = 0;
-		while (i< 2/*(12*60+1)*/) {
-			String[] message = { "15", "8", "2", "1" };
+		String[] message = { "15", "8", "2", "1" };
+		while (System.currentTimeMillis()-start < (1000*60*60*5)) {//run 5 uur
+			if (i%250 ==0 && i>0){
+				System.out.print(i + ":");
+				System.out.println("average time per update is : " +((System.currentTimeMillis()-start)/i) + " millisecs");
+							}
 			w.update(System.currentTimeMillis(), message);
 			i++;
-			System.out.println(i);
+			
 		}
 		System.out.println("endtime inserts: " + (System.currentTimeMillis()-start));
 		model.removeComponent(w);
-		Intelligence test = new WorkerIntelligence(w, model);
-		//test.errorMail("ss", "er");
 	}
 
 }

@@ -228,7 +228,7 @@ public abstract class Component {
 		for (String a : collumnList) {
 			sql += a + " INTEGER, ";
 		}
-		sql += "PRIMARY KEY ( date))";
+		sql += "PRIMARY KEY ( date), INDEX (tag))";
 		return sql;
 	}
 
