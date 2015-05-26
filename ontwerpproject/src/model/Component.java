@@ -47,20 +47,19 @@ public abstract class Component {
 	protected PreparedStatement delete;
 	protected PreparedStatement insert;
 	protected PreparedStatement getlimit;
-	
+
 	/**
 	 * The intelligence of this component, should never be null
 	 */
 	protected Intelligence intel;
-	
 
 	public Component(String hostname, Connection con) {
 		conn = con;
 		adr = new InetSocketAddress(hostname, 8000);
 
 		try {
-			String sql = "SELECT COUNT(*) FROM "
-					+ getTableName() + " WHERE tag =  ? ";
+			String sql = "SELECT COUNT(*) FROM " + getTableName()
+					+ " WHERE tag =  ? ";
 			check = conn.prepareStatement(sql);
 
 			sql = "SELECT * FROM " + getTableName()
@@ -78,10 +77,10 @@ public abstract class Component {
 	public Component(InetSocketAddress addr, Connection con) {
 		adr = addr;
 		conn = con;
-		
+
 		try {
-			String sql = "SELECT COUNT(*) FROM "
-					+ getTableName() + " WHERE tag =  ? ";
+			String sql = "SELECT COUNT(*) FROM " + getTableName()
+					+ " WHERE tag =  ? ";
 			check = conn.prepareStatement(sql);
 
 			sql = "SELECT * FROM " + getTableName()
@@ -139,7 +138,7 @@ public abstract class Component {
 			ResultSet r = s.executeQuery(sql);
 			r.next();
 			if (r.getInt(1) == 0) {
-				//droptable if its now empty (no use keeping an empty table)
+				// droptable if its now empty (no use keeping an empty table)
 				sql = "DROP TABLE " + getTableName();
 				s.executeUpdate(sql);
 			} else {
@@ -164,12 +163,12 @@ public abstract class Component {
 	public InetSocketAddress getAddress() {
 		return adr;
 	}
-	
+
 	public String getTableName() {
 		String result = adr.toString();
 		return result.replaceAll(":|/|\\.", "_");
 	}
-	
+
 	/**
 	 * getter for columnlist
 	 */
@@ -185,8 +184,7 @@ public abstract class Component {
 	 * @pure
 	 */
 	public String createTableSQL() {
-		String sql = "CREATE TABLE "
-				+ getTableName()
+		String sql = "CREATE TABLE " + getTableName()
 				+ " (date BIGINT(64) not NULL, " + " tag CHAR(1) not NULL , ";
 		for (String a : collumnList) {
 			sql += a + " INTEGER, ";
@@ -205,7 +203,7 @@ public abstract class Component {
 		try {
 			// tags are Seconds -> Minutes -> Hours -> Days -> Weeks -> Other
 			// aka S->M->H->D->W->O
-			// nested, because only possibilty is when the previous was
+			// nested, because only possibility is when the previous was
 			// converted
 			check.setString(1, "S");
 			ResultSet v = check.executeQuery();
