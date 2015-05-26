@@ -125,7 +125,7 @@ public class Model {
 		int i = 0;
 		while (i<(12*60+1)) {
 			String[] message = { "15", "8", "2" };
-			w.update(message);
+			w.update(System.currentTimeMillis(), message);
 			i++;
 			System.out.println(i);
 		}

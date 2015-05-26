@@ -1,10 +1,8 @@
 package global;
 
 public class Globals {
-	public static int POLLINGINTERVAL = 5000; // 5 seconds for now
-	
-	public static final String[] componentTypes = { "swag", "yolo" };
-	public static final String[] workerKeys = { "key1", "key2" };
+	public static int POLLINGINTERVAL = 60000; // once every minute
+
 	
 	/**
 	 * Array indices to send from retriever to the update method.
@@ -21,27 +19,16 @@ public class Globals {
 	public static final int UPDATE_INDEX_MEM = 3;
 	public static final int UPDATE_INDEX_DISK = 4;
 
-	public static String[] getKeys(String cl) {
-		if (cl.equals("worker")) {
-			return workerKeys;
-		} else {
-			String[] r = { "a", "b" };
-			return r;
-		}
-	}
 	
 	public static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	public static final String DB_URL_DETAIL = "jdbc:mysql://localhost/detail";
 	public static final String DB_URL_RRD = "jdbc:mysql://localhost/detail";
 	public static final String USER = "henk";
 	public static final String PASS = "henk";
-	public static final long MYSQLMAXTIME = 3 * 31 * 24 * 60 * 60 * 1000; // 3 * 1 maand * 1dag * 1 uur * 1 minuut * 1 seconde * milliseconden
 	//amount of records in the database of a certain type
-	public static final int SQLMAXsec = 12;//minimum = 12
-	public static final int SQLMAXmin = 60;//minimum = 60
-	public static final int SQLMAXhour = 24;//minimum = 24
-	public static final int SQLMAXday = 7;// minimum = 7
-	public static final int SQLMAXweek = 4;//minimum = 4
+	public static final int SQLMAXmin = 10080;//minimum = 60
+	public static final int SQLMAXhour = 8544;//minimum = 24
+
 	
 	
 	/* LUUKS SHIT */

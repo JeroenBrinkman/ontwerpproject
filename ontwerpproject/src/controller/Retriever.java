@@ -126,7 +126,7 @@ public class Retriever {
 	 * Pushes the data to the Model where it can be updated. 
 	 */
 	public void pushData(){
-		comp.update(data);
+		comp.update(System.currentTimeMillis(), data);
 	}
 	
 	// TODO remove test main after im done with testing
