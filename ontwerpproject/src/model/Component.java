@@ -56,8 +56,10 @@ public abstract class Component {
 	public Component(String hostname, Connection con) {
 		conn = con;
 		adr = new InetSocketAddress(hostname, 8000);
-
+		
 		try {
+			conn.setAutoCommit(false);
+			
 			String sql = "SELECT COUNT(*) FROM " + getTableName()
 					+ " WHERE tag =  ? ";
 			check = conn.prepareStatement(sql);
@@ -83,6 +85,8 @@ public abstract class Component {
 		System.out.println("Constructor called of component: " + getTableName());
 
 		try {
+			conn.setAutoCommit(false);
+			
 			String sql = "SELECT COUNT(*) FROM " + getTableName()
 					+ " WHERE tag =  ? ";
 			check = conn.prepareStatement(sql);
@@ -151,6 +155,7 @@ public abstract class Component {
 						+ " SET tag = \'O\' WHERE tag = \'H\' OR tag = \'D\' OR tag=\'W\'";
 				s.executeUpdate(sql);
 			}
+			conn.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -243,6 +248,7 @@ public abstract class Component {
 				insert.setString(i + 3, message[i]);
 			}
 			insert.executeUpdate();
+			conn.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
