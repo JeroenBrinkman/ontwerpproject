@@ -56,10 +56,10 @@ public abstract class Component {
 	public Component(String hostname, Connection con) {
 		conn = con;
 		adr = new InetSocketAddress(hostname, 8000);
-		
+
 		try {
 			conn.setAutoCommit(false);
-			
+
 			String sql = "SELECT COUNT(*) FROM " + getTableName()
 					+ " WHERE tag =  ? ";
 			check = conn.prepareStatement(sql);
@@ -74,6 +74,7 @@ public abstract class Component {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		startUp();
 	}
 
 	public Component(InetSocketAddress addr, Connection con) {
@@ -81,12 +82,12 @@ public abstract class Component {
 		this.adr.getHostName();
 		conn = con;
 
-		
-		System.out.println("Constructor called of component: " + getTableName());
+		System.out
+				.println("Constructor called of component: " + getTableName());
 
 		try {
 			conn.setAutoCommit(false);
-			
+
 			String sql = "SELECT COUNT(*) FROM " + getTableName()
 					+ " WHERE tag =  ? ";
 			check = conn.prepareStatement(sql);
@@ -101,6 +102,7 @@ public abstract class Component {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		startUp();
 	}
 
 	/**
@@ -133,34 +135,63 @@ public abstract class Component {
 	 * @ensures Connection closed && database ready for gap in data
 	 */
 	public void shutDown() {
-		// lazy solution -> delete all S and M tags, convert all H, D and W tags
-		// to O
-		// TODO less lazy solution?
 		try {
-			// delete small amounts of data
 			Statement s = conn.createStatement();
-			String sql = "DELETE FROM " + getTableName()
-					+ " WHERE tag = \'S\' OR tag = \'M\'";
-			s.executeUpdate(sql);
+			String sql;
 			sql = "SELECT COUNT(*) FROM " + getTableName();
 			ResultSet r = s.executeQuery(sql);
 			r.next();
-			if (r.getInt(1) == 0) {
-				// droptable if its now empty (no use keeping an empty table)
-				sql = "DROP TABLE " + getTableName();
-				s.executeUpdate(sql);
-			} else {
-				sql = "UPDATE "
-						+ getTableName()
-						+ " SET tag = \'O\' WHERE tag = \'H\' OR tag = \'D\' OR tag=\'W\'";
-				s.executeUpdate(sql);
+			// commit entry with only 0 to mark the shutdown point
+			String[] x = new String[collumnList.length];
+			for(String str:x){
+				str="0";
 			}
+			update(System.currentTimeMillis(), x);
 			conn.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		closeConnection();
+	}
+	
+	/**
+	 * Add 0 entries from the last entry in the database until now, to mark the period the component was offline
+	 * @requires Database running
+	 * @ensures Database back up to date and ready for use
+	 */
+	protected void startUp(){
+		//check if there are old entries in the database
+		String sql = "SELECT COUNT(*) FROM " + getTableName();
+		try {
+			Statement s = conn.createStatement();
+			ResultSet v = s.executeQuery(sql);
+			v.next();
+			if(v.getInt(1)>0){
+				v.close();
+				s.close();
+				// enter new entries until now
+				// first get the startpoint
+				getlimit.setString(1, "M");
+				getlimit.setInt(2, 1);
+				v = getlimit.executeQuery();
+				v.next();
+				long current = v.getLong(1) + Globals.POLLINGINTERVAL;
+				long end = System.currentTimeMillis();
+				String[] str = new String[collumnList.length];
+				for(String st:str){
+					st = "0";
+				}
+				//insert every polling interval a 0 entry
+				while(current < end && true){
+					update(current, str);
+					current += Globals.POLLINGINTERVAL;
+				}
+				conn.commit();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -206,44 +237,31 @@ public abstract class Component {
 	 * Updates the database with a new entry, parsed from the String[]
 	 * 
 	 * @requires message != null && message.length == collumnList.length +1
+	 * @ensures data is correctly inserted
 	 */
-	public void update(String[] message) {
+	public void update(Long date, String[] message) {
 		intel.checkCritical(message);
 		try {
-			// tags are Seconds -> Minutes -> Hours -> Days -> Weeks -> Other
-			// aka S->M->H->D->W->O
+			// tags are Minutes -> Hours -> Days
+			// aka M->H->D
 			// nested, because only possibility is when the previous was
 			// converted
-			check.setString(1, "S");
 			ResultSet v = check.executeQuery();
-			if (v.next() && v.getInt(1) == Globals.SQLMAXsec) {
-				compressSEntries();
-				check.setString(1, "M");
+			check.setString(1, "M");
+			v = check.executeQuery();
+			if (v.next() && v.getInt(1) == Globals.SQLMAXmin) {
+				compressMEntries();
+				check.setString(1, "H");
 				v = check.executeQuery();
-				if (v.next() && v.getInt(1) == Globals.SQLMAXmin) {
-					compressMEntries();
-					check.setString(1, "H");
-					v = check.executeQuery();
-					if (v.next() && v.getInt(1) == Globals.SQLMAXhour) {
-						compressHEntries();
-						check.setString(1, "D");
-						v = check.executeQuery();
-						if (v.next() && v.getInt(1) == Globals.SQLMAXday) {
-							compressDEntries();
-							check.setString(1, "W");
-							v = check.executeQuery();
-							if (v.next() && v.getInt(1) == Globals.SQLMAXweek) {
-								compressWEntries();
-							}
-						}
-					}
+				if (v.next() && v.getInt(1) == Globals.SQLMAXhour) {
+					compressHEntries();
 				}
 			}
 
 			// actual insert
 			// TODO choose between system time and component time
-			insert.setString(1, Long.toString(System.currentTimeMillis()));
-			insert.setString(2, "S");
+			insert.setString(1, Long.toString(date));
+			insert.setString(2, "M");
 			for (int i = 0; i < message.length; ++i) {
 				insert.setString(i + 3, message[i]);
 			}
@@ -252,60 +270,6 @@ public abstract class Component {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
-
-	// helpfunction for update
-	private void compressWEntries() throws SQLException {
-		int[] b = new int[collumnList.length];
-		delete.setString(1, "W");
-		getlimit.setString(1, "W");
-		getlimit.setInt(2, 28); // 1 month = 4 weeks
-		ResultSet r = getlimit.executeQuery();
-		long newdate = 0;
-		while (r.next()) {
-			for (int i = 0; i < b.length; ++i) {
-				// start at 3,because date and tag do not have to be
-				// averaged and are not relevant
-				b[i] += r.getInt(i + 3);
-			}
-			delete.setString(2, r.getString(1));
-			delete.executeUpdate();
-			newdate = Long.parseLong(r.getString(1))
-					- ((int) (14 * 7 * 24 * 60 * 6000));
-		}
-		insert.setString(1, Long.toString(newdate));
-		insert.setString(2, "O");
-		for (int i = 0; i < b.length; ++i) {
-			insert.setString(i + 3, Integer.toString(b[i] / 28));
-		}
-		insert.executeUpdate();
-	}
-
-	// helpfunction for update
-	private void compressDEntries() throws SQLException {
-		int[] b = new int[collumnList.length];
-		delete.setString(1, "D");
-		getlimit.setString(1, "D");
-		getlimit.setInt(2, 7);
-		ResultSet r = getlimit.executeQuery();
-		long newdate = 0;
-		while (r.next()) {
-			for (int i = 0; i < b.length; ++i) {
-				// start at 3,because date and tag do not have to be
-				// averaged and are not relevant
-				b[i] += r.getInt(i + 3);
-			}
-			delete.setString(2, r.getString(1));
-			delete.executeUpdate();
-			newdate = Long.parseLong(r.getString(1))
-					- ((int) (3.5 * 24 * 60 * 6000));
-		}
-		insert.setString(1, Long.toString(newdate));
-		insert.setString(2, "W");
-		for (int i = 0; i < b.length; ++i) {
-			insert.setString(i + 3, Integer.toString(b[i] / 7));
-		}
-		insert.executeUpdate();
 	}
 
 	// help function for update
@@ -333,6 +297,7 @@ public abstract class Component {
 			insert.setString(i + 3, Integer.toString(b[i] / 24));
 		}
 		insert.executeUpdate();
+		conn.commit();
 	}
 
 	// help function for update
@@ -359,9 +324,10 @@ public abstract class Component {
 			insert.setString(i + 3, Integer.toString(b[i] / 60));
 		}
 		insert.executeUpdate();
+		conn.commit();
 	}
 
-	// help function for update
+	// help function for update currently unused, but might be useful to keep
 	private void compressSEntries() throws SQLException {
 		int a = (60 * 1000) / Globals.POLLINGINTERVAL;
 		int[] b = new int[collumnList.length];
@@ -386,6 +352,7 @@ public abstract class Component {
 			insert.setString(i + 3, Integer.toString(b[i] / a));
 		}
 		insert.executeUpdate();
+		conn.commit();
 	}
 
 	/**
