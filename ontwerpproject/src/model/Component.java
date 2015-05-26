@@ -142,8 +142,8 @@ public abstract class Component {
 			r.next();
 			// commit entry with only 0 to mark the shutdown point
 			String[] x = new String[collumnList.length];
-			for(String str:x){
-				str="0";
+			for(int i =0; i< x.length;++i){
+				x[i]="0";
 			}
 			update(System.currentTimeMillis(), x);
 			conn.commit();
@@ -178,8 +178,8 @@ public abstract class Component {
 				long current = v.getLong(1) + Globals.POLLINGINTERVAL;
 				long end = System.currentTimeMillis();
 				String[] str = new String[collumnList.length];
-				for(String st:str){
-					st = "0";
+				for(int i =0; i< str.length; ++i){
+					str[i] = "0";
 				}
 				//insert every polling interval a 0 entry
 				while(current < end && true){
