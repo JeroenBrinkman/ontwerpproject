@@ -13,7 +13,11 @@ import javax.mail.internet.*;
 public abstract class Intelligence {
 	
 	public class ClosedException extends Exception {
-		  public ClosedException() { super(); }
+		  /**
+		 * for some reason it needs this
+		 */
+		private static final long serialVersionUID = 2400467736031885588L;
+		public ClosedException() { super(); }
 		  public ClosedException(String message) { super(message); }
 		  public ClosedException(String message, Throwable cause) { super(message, cause); }
 		  public ClosedException(Throwable cause) { super(cause); }

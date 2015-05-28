@@ -2,7 +2,6 @@ package model;
 
 import java.net.InetSocketAddress;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import model.intelligence.DatabaseIntelligence;
 import model.intelligence.Intelligence.ClosedException;
