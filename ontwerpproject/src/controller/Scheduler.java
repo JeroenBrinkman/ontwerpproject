@@ -2,12 +2,7 @@ package controller;
 
 import global.Globals;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import java.net.InetSocketAddress;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,8 +14,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import de.timroes.axmlrpc.XMLRPCException;
-import model.Model;
-import model.Worker;
+import model.intelligence.Intelligence.ClosedException;
 
 public class Scheduler {
 	
@@ -75,7 +69,6 @@ public class Scheduler {
 						r.pushData();
 					}
 					catch(Exception e) {
-						//JEROEN FIX JE EXCEPTIONS
 						e.printStackTrace();
 					}
 					if(Globals.DEBUGOUTPUT) System.out.println("Pushed data from \"" + r.getComponent().getTableName() + "\"");
@@ -84,8 +77,13 @@ public class Scheduler {
 			}
 			
 			for(Retriever ret : failedList) {
-				if(retrieverMap.get(period).contains(ret));
-					ret.getComponent().getIntelligence().connectionError();
+				if(retrieverMap.get(period).contains(ret)) {
+					try {
+						ret.getComponent().getIntelligence().connectionError();
+					} catch (ClosedException e) {
+						e.printStackTrace();
+					}
+				}
 				removeRetriever(ret);
 			}
 			
@@ -179,47 +177,5 @@ public class Scheduler {
 			
 			timer.scheduleAtFixedRate(taskMap.get(milliseconds), milliseconds, milliseconds);			
 		}
-	}
-	
-	// TODO remove test main after im done with testing
-	public static void main(String[] args) {
-		Model model = new Model();
-		while((model.createConnection()) == null) {
-			System.out.println("Could not connect to SQL Database!");
-			System.out.println("Press enter to try again or exit to quit.");
-			
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			String input = null;
-			try {
-				input = br.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			if(input.equals("exit")) {
-				System.out.println("Lololol doesn't work!");
-			}
-		}
-		
-		Worker work1 = new Worker(new InetSocketAddress("localhost", 8000), model.createConnection(), model);
-		Worker work2 = new Worker(new InetSocketAddress("localhost", 7999), model.createConnection(), model);
-		Worker work3 = new Worker(new InetSocketAddress("localhost", 7998), model.createConnection(), model);
-		
-		System.out.println(work1.getTableName());
-		System.out.println(work2.getTableName());
-		System.out.println(work3.getTableName());
-		
-		model.addComponent(work1);
-		model.addComponent(work2);
-		model.addComponent(work3);
-		
-		Retriever[] retList = new Retriever[3];
-		retList[0] = new Retriever(work1);
-		retList[1] = new Retriever(work2);
-		retList[2] = new Retriever(work3);
-		
-		Scheduler sched = new Scheduler();
-		sched.addRetrievers(1000, retList);
-	}
-	
+	}	
 }

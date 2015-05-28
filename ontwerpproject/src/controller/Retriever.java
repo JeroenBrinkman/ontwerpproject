@@ -14,6 +14,7 @@ import java.util.Date;
 import model.Component;
 import model.Model;
 import model.Worker;
+import model.intelligence.Intelligence.ClosedException;
 import de.timroes.axmlrpc.XMLRPCClient;
 import de.timroes.axmlrpc.XMLRPCException;
 import de.timroes.axmlrpc.XMLRPCServerException;
@@ -119,47 +120,9 @@ public class Retriever {
 	
 	/**
 	 * Pushes the data to the Model where it can be updated. 
+	 * @throws ClosedException 
 	 */
-	public void pushData(){
+	public void pushData() throws ClosedException{
 		comp.update(System.currentTimeMillis(), data);
-	}
-	
-	// TODO remove test main after im done with testing
-	public static void main(String[] args) throws XMLRPCException {
-		Model model = new Model();
-		while(model.createConnection() == null) {
-			System.out.println("Could not connect to SQL Database!");
-			System.out.println("Press enter to try again or exit to quit.");
-			
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			String input = null;
-			try {
-				input = br.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			if(input.equals("exit")) {
-				System.out.println("Lololol doesn't work!");
-			}
-		}
-		Worker w = new Worker(new InetSocketAddress("localhost", 8000), model.createConnection(), model);
-		model.addComponent(w);
-		
-		Retriever r = new Retriever(w);
-		
-		long start = System.currentTimeMillis();
-		for(int i = 0; i < 12*60+1; i++) {
-			r.retrieveAllData();
-			r.pushData();
-			System.out.println(i + ": " + Arrays.toString(r.getData()));
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		System.out.println("endtime inserts: " + (System.currentTimeMillis()-start));
-		model.removeComponent(w);
 	}
 }

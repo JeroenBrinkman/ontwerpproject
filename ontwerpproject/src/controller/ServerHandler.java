@@ -3,11 +3,13 @@ package controller;
 import global.Globals;
 
 import java.net.InetSocketAddress;
+
 import model.Component;
 import model.Database;
 import model.Manager;
 import model.Model;
 import model.Worker;
+import model.intelligence.Intelligence.ClosedException;
 
 public class ServerHandler {
 	public static Scheduler 	scheduler = null;
@@ -25,28 +27,35 @@ public class ServerHandler {
 		}
 		
 		InetSocketAddress adr = new InetSocketAddress(ip, port);
-		Component comp;
-		switch(type) {
-			case 0:
-				comp = new Worker(adr, model.createConnection(), model);
-				break;
-			case 1:
-				comp = new Database(adr, model.createConnection(), model);
-				break;
-			case 2:
-				comp = new Manager(adr, model.createConnection(), model);
-				break;
-			default:
-				return false;
-		};
-		
-		model.addComponent(comp);
-		Retriever ret = new Retriever(comp);
-		
-		scheduler.addRetriever(1000, ret);
-		
-		System.out.println("Component " + comp.getTableName() + " added");
-		return true;		
+		Component comp = null;
+		try {
+			switch(type) {
+				case 0:
+					comp = new Worker(adr, model.createConnection(), model);
+					break;
+				case 1:
+					comp = new Database(adr, model.createConnection(), model);
+					break;
+				case 2:
+					comp = new Manager(adr, model.createConnection(), model);
+					break;
+				default:
+					return false;
+			};
+			
+			model.addComponent(comp);
+			Retriever ret = new Retriever(comp);
+			
+			scheduler.addRetriever(1000, ret);
+			
+			System.out.println("Component " + comp.getTableName() + " added");
+			
+			return true;
+		}
+		catch(ClosedException e) {
+			e.printStackTrace();
+		}
+		return false;		
 	}
 	
 	public boolean remove(String hostname, int port) {
@@ -61,7 +70,11 @@ public class ServerHandler {
 			scheduler.removeRetriever(ret);
 		}
 		
-		model.removeComponent(ret.getComponent());		
+		try {
+			model.removeComponent(ret.getComponent());
+		} catch (ClosedException e) {
+			e.printStackTrace();
+		}		
 		return true;
 	}
 }
