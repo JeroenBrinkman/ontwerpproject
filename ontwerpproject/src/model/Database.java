@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import model.intelligence.DatabaseIntelligence;
+import model.intelligence.Intelligence.ClosedException;
 
 /**
  * Represents a database in the query system
@@ -14,7 +15,7 @@ import model.intelligence.DatabaseIntelligence;
  */
 public class Database extends Component {
 
-	public Database(InetSocketAddress addr, Connection con, Model mod) {
+	public Database(InetSocketAddress addr, Connection con, Model mod) throws ClosedException {
 		super(addr, con);
 		intel = new DatabaseIntelligence(this, mod);
 		//TODO temp currentlyplaceholder

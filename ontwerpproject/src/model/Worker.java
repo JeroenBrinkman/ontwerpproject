@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import model.intelligence.Intelligence.ClosedException;
 import model.intelligence.WorkerIntelligence;
 
 /**
@@ -13,7 +14,7 @@ import model.intelligence.WorkerIntelligence;
  */
 public class Worker extends Component {
 
-	public Worker(InetSocketAddress addr, Connection con, Model mod) {
+	public Worker(InetSocketAddress addr, Connection con, Model mod) throws ClosedException {
 		super(addr, con);
 		intel = new WorkerIntelligence(this, mod);
 		//TODO temp currently placeholder

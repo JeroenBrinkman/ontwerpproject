@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import model.intelligence.Intelligence.ClosedException;
 import model.intelligence.ManagerIntelligence;
 
 /**
@@ -15,7 +16,7 @@ import model.intelligence.ManagerIntelligence;
  */
 public class Manager extends Component {
 
-	public Manager(InetSocketAddress addr, Connection con, Model mod) {
+	public Manager(InetSocketAddress addr, Connection con, Model mod) throws ClosedException {
 		super(addr, con);
 		intel = new ManagerIntelligence(this, mod);
 		//TODO temp currentlyplaceholder
