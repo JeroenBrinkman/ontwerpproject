@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.sql.*;
 import java.util.ArrayList;
 
+import model.intelligence.Intelligence.ClosedException;
 import global.Globals;
 
 /**
@@ -37,11 +38,12 @@ public class Model {
 	/**
 	 * Removes a component from the list of active components, does not remove
 	 * the component from our databases
+	 * @throws ClosedException 
 	 * 
 	 * @requires c != null
 	 * @ensures components.contains(c) = false;
 	 */
-	public void removeComponent(Component c) {
+	public void removeComponent(Component c) throws ClosedException {
 		c.shutDown();
 		components.remove(c);
 	}
@@ -59,12 +61,13 @@ public class Model {
 	/**
 	 * Adds a component to the model (list of ative components). If there does
 	 * not exist a database table for this component it will be created as well
+	 * @throws ClosedException when something goes wrong
 	 *
 	 * @requires c != null
 	 * @ensures components.contains(c) == true
 	 * @ensures database entry for c exists
 	 */
-	public void addComponent(Component c) {
+	public void addComponent(Component c) throws ClosedException {
 		Connection conn = createConnection();
 		Statement st = null;
 		try {
@@ -120,7 +123,12 @@ public class Model {
 	public static void main(String[] args) {
 		Model model = new Model();
 		Worker w = new Worker(new InetSocketAddress("192.192.192.192", 123), model.createConnection(), model);
-		model.addComponent(w);
+		try {
+			model.addComponent(w);
+		} catch (ClosedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		long start = System.currentTimeMillis();
 		int i = 0;
 		String[] message = { "15", "8", "2", "1" };
@@ -129,12 +137,22 @@ public class Model {
 				System.out.print(i + ":");
 				System.out.println("average time per update is : " +((System.currentTimeMillis()-start)/i) + " millisecs");
 							}
-			w.update(System.currentTimeMillis(), message);
+			try {
+				w.update(System.currentTimeMillis(), message);
+			} catch (ClosedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			i++;
 			
 		}
 		System.out.println("endtime inserts: " + (System.currentTimeMillis()-start));
-		model.removeComponent(w);
+		try {
+			model.removeComponent(w);
+		} catch (ClosedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

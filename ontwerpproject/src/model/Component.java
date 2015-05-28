@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.lang.String;
 
 import model.intelligence.Intelligence;
+import model.intelligence.Intelligence.ClosedException;
 
 /**
  * The abstract superclass for all components. represents a component in the
@@ -53,7 +54,7 @@ public abstract class Component {
 	 */
 	protected Intelligence intel;
 
-	public Component(InetSocketAddress addr, Connection con) {
+	public Component(InetSocketAddress addr, Connection con) throws ClosedException{
 		adr = addr;
 		this.adr.getHostName();
 		conn = con;
@@ -95,7 +96,11 @@ public abstract class Component {
 			getlimit.close();
 			conn.close();
 		} catch (SQLException e) {
-			intel.databaseError(e);
+			try {
+				intel.databaseError(e);
+			} catch (ClosedException e1) {
+				// hoeft niks
+			}
 		}
 	}
 
@@ -109,7 +114,7 @@ public abstract class Component {
 	 * @requires Database running
 	 * @ensures Connection closed && database ready for gap in data
 	 */
-	public void shutDown() {
+	public void shutDown() throws ClosedException{
 		try {
 			Statement s = conn.createStatement();
 			String sql;
@@ -135,7 +140,7 @@ public abstract class Component {
 	 * @requires Database running
 	 * @ensures Database back up to date and ready for use
 	 */
-	protected void startUp(){
+	protected void startUp() throws ClosedException{
 		//check if there are old entries in the database
 		String sql = "SELECT COUNT(*) FROM " + getTableName();
 		try {
@@ -218,7 +223,7 @@ public abstract class Component {
 	 * @requires message != null && message.length == collumnList.length +1
 	 * @ensures data is correctly inserted
 	 */
-	public void update(Long date, String[] message) {
+	public void update(Long date, String[] message) throws ClosedException{
 		intel.checkCritical(message);
 		try {
 			// tags are Minutes -> Hours -> Days

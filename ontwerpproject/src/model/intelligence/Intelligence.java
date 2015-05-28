@@ -11,6 +11,14 @@ import javax.mail.*;
 import javax.mail.internet.*;
 
 public abstract class Intelligence {
+	
+	public class ClosedException extends Exception {
+		  public ClosedException() { super(); }
+		  public ClosedException(String message) { super(message); }
+		  public ClosedException(String message, Throwable cause) { super(message, cause); }
+		  public ClosedException(Throwable cause) { super(cause); }
+		}
+	
 	protected Component comp;
 	protected Model mod;
 	protected int[] CRITS = { 80, 90, 99 };// TODO init crits in subclasses
@@ -88,7 +96,7 @@ public abstract class Intelligence {
 	 * @ensure component disconnected and error mail send
 	 * 
 	 */
-	public void databaseError(SQLException e) {
+	public void databaseError(SQLException e) throws ClosedException{
 		if (Globals.LAST_DATABASE_ERROR == -1
 				|| (System.currentTimeMillis() - Globals.LAST_DATABASE_ERROR) > Globals.MIN_DATABASE_ERROR_DELAY) {
 			errorMail(
@@ -98,12 +106,14 @@ public abstract class Intelligence {
 							+ e.getMessage(), "Database error");
 		}
 		mod.removeComponent(comp);
+		throw new ClosedException("alles kapot");
 	}
 
-	public void connectionError() {
+	public void connectionError() throws ClosedException{
 		errorMail("Component " + comp.getTableName()
 				+ " disconnected from the system.", "Component disconnected");
 		mod.removeComponent(comp);
+		throw new ClosedException("alles kapot");
 	}
 
 	/**
