@@ -3,6 +3,7 @@ package model.intelligence;
 import model.Component;
 import model.Model;
 
+import java.sql.SQLException;
 import java.util.*;
 
 import javax.mail.*;
@@ -12,8 +13,15 @@ public abstract class Intelligence {
 	protected Component comp;
 	protected Model mod;
 	protected int[] CRITS = { 80, 90, 99 };// TODO init crits in subclasses
-	protected int[] LIMITS; /* list of counters, keeps track of when we send a mail*/
-	protected final static int LIMIT = 60 * 12; /* send mail max once per hour per issue*///TODO update this to correct value
+	protected int[] LIMITS; /*
+							 * list of counters, keeps track of when we send a
+							 * mail
+							 */
+	protected final static int LIMIT = 60 * 12; /*
+												 * send mail max once per hour
+												 * per issue
+												 */// TODO update this to
+													// correct value
 
 	public Intelligence(Component comp, Model mod) {
 		this.comp = comp;
@@ -71,13 +79,20 @@ public abstract class Intelligence {
 		// \nummer/@tmobile.com en dit wordt een sms naar het nummer (kosten van
 		// ontvanger)
 	}
-	
+
 	/**
 	 * send error, and disconnect the relevant component
 	 * 
+	 * @require e != null
+	 * @ensure component disconnected and error mail send
+	 * 
 	 */
-	public void databaseError(){
-		errorMail("Database connection fail in " + comp.getTableName() + ". The component has been disconnected from the system.","Database error");
+	public void databaseError(SQLException e) {
+		errorMail(
+				"Database fail in "
+						+ comp.getTableName()
+						+ ". The component has been disconnected from the system with error : "
+						+ e.getMessage(), "Database error");
 		mod.removeComponent(comp);
 	}
 

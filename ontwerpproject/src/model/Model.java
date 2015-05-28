@@ -2,9 +2,6 @@ package model;
 
 import java.sql.*;
 import java.util.ArrayList;
-
-import model.intelligence.Intelligence;
-import model.intelligence.WorkerIntelligence;
 import global.Globals;
 
 /**

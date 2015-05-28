@@ -72,7 +72,7 @@ public abstract class Component {
 					+ " WHERE tag =  ?  AND date = ?";
 			delete = conn.prepareStatement(sql);
 		} catch (SQLException e) {
-			intel.databaseError();
+			intel.databaseError(e);
 		}
 	}
 
@@ -99,7 +99,7 @@ public abstract class Component {
 					+ " WHERE tag =  ?  AND date = ?";
 			delete = conn.prepareStatement(sql);
 		} catch (SQLException e) {
-			intel.databaseError();
+			intel.databaseError(e);
 		}
 		startUp();
 	}
@@ -118,8 +118,8 @@ public abstract class Component {
 			delete.close();
 			getlimit.close();
 			conn.close();
-		} catch (SQLException se) {
-			intel.databaseError();
+		} catch (SQLException e) {
+			intel.databaseError(e);
 		}
 	}
 
@@ -148,7 +148,7 @@ public abstract class Component {
 			update(System.currentTimeMillis(), x);
 			conn.commit();
 		} catch (SQLException e) {
-			intel.databaseError();
+			intel.databaseError(e);
 		}
 
 		closeConnection();
@@ -189,7 +189,7 @@ public abstract class Component {
 				conn.commit();
 			}
 		} catch (SQLException e) {
-			intel.databaseError();
+			intel.databaseError(e);
 		}
 	}
 
@@ -266,7 +266,7 @@ public abstract class Component {
 			insert.executeUpdate();
 			conn.commit();
 		} catch (SQLException e) {
-			intel.databaseError();
+			intel.databaseError(e);
 		}
 	}
 
@@ -324,7 +324,7 @@ public abstract class Component {
 		insert.executeUpdate();
 		conn.commit();
 	}
-
+	/*
 	// help function for update currently unused, but might be useful to keep
 	private void compressSEntries() throws SQLException {
 		int a = (60 * 1000) / Globals.POLLINGINTERVAL;
@@ -351,7 +351,7 @@ public abstract class Component {
 		}
 		insert.executeUpdate();
 		conn.commit();
-	}
+	}*/
 
 	/**
 	 * Parses the input from the actual component into something that can be
