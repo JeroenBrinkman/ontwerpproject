@@ -1,7 +1,9 @@
 package model;
 
+import java.net.InetSocketAddress;
 import java.sql.*;
 import java.util.ArrayList;
+
 import global.Globals;
 
 /**
@@ -117,7 +119,7 @@ public class Model {
 	// TODO remove test main after im done with testing
 	public static void main(String[] args) {
 		Model model = new Model();
-		Worker w = new Worker("192.192.192.192:123", model.createConnection(), model);
+		Worker w = new Worker(new InetSocketAddress("192.192.192.192", 123), model.createConnection(), model);
 		model.addComponent(w);
 		long start = System.currentTimeMillis();
 		int i = 0;

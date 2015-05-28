@@ -3,8 +3,6 @@ package controller;
 import global.Globals;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.locks.Lock;
-
 import model.Component;
 import model.Database;
 import model.Manager;
@@ -30,13 +28,13 @@ public class ServerHandler {
 		Component comp;
 		switch(type) {
 			case 0:
-				comp = new Worker(adr, model.createConnection());
+				comp = new Worker(adr, model.createConnection(), model);
 				break;
 			case 1:
-				comp = new Database(adr, model.createConnection());
+				comp = new Database(adr, model.createConnection(), model);
 				break;
 			case 2:
-				comp = new Manager(adr, model.createConnection());
+				comp = new Manager(adr, model.createConnection(), model);
 				break;
 			default:
 				return false;

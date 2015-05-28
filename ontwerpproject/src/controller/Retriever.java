@@ -5,20 +5,15 @@ import global.Globals;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import model.Component;
 import model.Model;
 import model.Worker;
-import model.intelligence.Intelligence;
-import model.intelligence.WorkerIntelligence;
 import de.timroes.axmlrpc.XMLRPCClient;
 import de.timroes.axmlrpc.XMLRPCException;
 import de.timroes.axmlrpc.XMLRPCServerException;
@@ -148,7 +143,7 @@ public class Retriever {
 				System.out.println("Lololol doesn't work!");
 			}
 		}
-		Worker w = new Worker("localhost", model.createConnection(), model);
+		Worker w = new Worker(new InetSocketAddress("localhost", 8000), model.createConnection(), model);
 		model.addComponent(w);
 		
 		Retriever r = new Retriever(w);

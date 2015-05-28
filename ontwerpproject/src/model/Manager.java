@@ -15,25 +15,6 @@ import model.intelligence.ManagerIntelligence;
  */
 public class Manager extends Component {
 
-	public Manager(String ip, Connection con, Model mod) {
-		super(ip, con);
-		intel = new ManagerIntelligence(this, mod);
-		//TODO temp currently placeholder
-		String[] temp = {"cpu", "hdd", "mem"};
-		collumnList = temp;
-		String sql = "INSERT INTO " + getTableName()
-				+ " VALUES( ?,  ?";
-		for (int i = 0; i < collumnList.length; ++i) {
-			sql += ",  ?";
-		}
-		sql += ")";
-		try {
-			insert = conn.prepareStatement(sql);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public Manager(InetSocketAddress addr, Connection con, Model mod) {
 		super(addr, con);
 		intel = new ManagerIntelligence(this, mod);

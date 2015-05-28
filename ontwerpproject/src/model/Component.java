@@ -53,29 +53,6 @@ public abstract class Component {
 	 */
 	protected Intelligence intel;
 
-	public Component(String hostname, Connection con) {
-		conn = con;
-		adr = new InetSocketAddress(hostname, 8000);
-
-		try {
-			conn.setAutoCommit(false);
-
-			String sql = "SELECT COUNT(*) FROM " + getTableName()
-					+ " WHERE tag =  ? ";
-			check = conn.prepareStatement(sql);
-
-			sql = "SELECT * FROM " + getTableName()
-					+ " WHERE tag = ? ORDER BY date ASC LIMIT ?";
-			getlimit = conn.prepareStatement(sql);
-
-			sql = "DELETE FROM " + getTableName()
-					+ " WHERE tag =  ?  AND date = ?";
-			delete = conn.prepareStatement(sql);
-		} catch (SQLException e) {
-			intel.databaseError(e);
-		}
-	}
-
 	public Component(InetSocketAddress addr, Connection con) {
 		adr = addr;
 		this.adr.getHostName();
