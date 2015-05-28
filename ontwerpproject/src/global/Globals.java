@@ -30,6 +30,10 @@ public class Globals {
 	public static final int SQLMAXhour = 8544;//minimum = 24
 
 	
+	//Intelligence shit
+	public static long LAST_DATABASE_ERROR = -1;
+	public static final int MIN_DATABASE_ERROR_DELAY = 30000;// max 1 keer per half uur
+	
 	
 	/* LUUKS SHIT */
 	public static final int XMLRPC_PORT = 8000;

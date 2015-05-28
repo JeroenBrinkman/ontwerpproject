@@ -2,6 +2,7 @@ package model.intelligence;
 
 import model.Component;
 import model.Model;
+import global.Globals;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -88,11 +89,20 @@ public abstract class Intelligence {
 	 * 
 	 */
 	public void databaseError(SQLException e) {
-		errorMail(
-				"Database fail in "
-						+ comp.getTableName()
-						+ ". The component has been disconnected from the system with error : "
-						+ e.getMessage(), "Database error");
+		if (Globals.LAST_DATABASE_ERROR == -1
+				|| (System.currentTimeMillis() - Globals.LAST_DATABASE_ERROR) > Globals.MIN_DATABASE_ERROR_DELAY) {
+			errorMail(
+					"Database fail in "
+							+ comp.getTableName()
+							+ ". The component has been disconnected from the system with error : "
+							+ e.getMessage(), "Database error");
+		}
+		mod.removeComponent(comp);
+	}
+
+	public void connectionError() {
+		errorMail("Component " + comp.getTableName()
+				+ " disconnected from the system.", "Component disconnected");
 		mod.removeComponent(comp);
 	}
 
