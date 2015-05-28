@@ -38,7 +38,8 @@ public class Model {
 	/**
 	 * Removes a component from the list of active components, does not remove
 	 * the component from our databases
-	 * @throws ClosedException 
+	 * 
+	 * @throws ClosedException
 	 * 
 	 * @requires c != null
 	 * @ensures components.contains(c) = false;
@@ -61,7 +62,9 @@ public class Model {
 	/**
 	 * Adds a component to the model (list of ative components). If there does
 	 * not exist a database table for this component it will be created as well
-	 * @throws ClosedException when something goes wrong
+	 * 
+	 * @throws ClosedException
+	 *             when something goes wrong
 	 *
 	 * @requires c != null
 	 * @ensures components.contains(c) == true
@@ -72,8 +75,8 @@ public class Model {
 		Statement st = null;
 		try {
 			DatabaseMetaData dbm = conn.getMetaData();
-			ResultSet tables = dbm.getTables(null, null,
-					c.getTableName(), null);
+			ResultSet tables = dbm
+					.getTables(null, null, c.getTableName(), null);
 			if (!tables.next()) {
 				// no table for this address
 				st = conn.createStatement();
@@ -121,38 +124,34 @@ public class Model {
 
 	// TODO remove test main after im done with testing
 	public static void main(String[] args) {
-		Model model = new Model();
-		Worker w = new Worker(new InetSocketAddress("192.192.192.192", 123), model.createConnection(), model);
 		try {
+			Model model = new Model();
+			Worker w = new Worker(
+					new InetSocketAddress("192.192.192.192", 123),
+					model.createConnection(), model);
 			model.addComponent(w);
-		} catch (ClosedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		long start = System.currentTimeMillis();
-		int i = 0;
-		String[] message = { "15", "8", "2", "1" };
-		while (System.currentTimeMillis()-start < (1000*60*60*5)) {//run 5 uur
-			if (i%250 ==0 && i>0){
-				System.out.print(i + ":");
-				System.out.println("average time per update is : " +((System.currentTimeMillis()-start)/i) + " millisecs");
-							}
-			try {
+			long start = System.currentTimeMillis();
+			int i = 0;
+			String[] message = { "15", "8", "2", "1" };
+			while (System.currentTimeMillis() - start < (1000 * 60 * 60 * 5)) {
+				if (i % 250 == 0 && i > 0) {
+					System.out.print(i + ":");
+					System.out.println("average time per update is : "
+							+ ((System.currentTimeMillis() - start) / i)
+							+ " millisecs");
+				}
+
 				w.update(System.currentTimeMillis(), message);
-			} catch (ClosedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("endtime inserts: "
+						+ (System.currentTimeMillis() - start));
+				model.removeComponent(w);
+				i++;
 			}
-			i++;
-			
-		}
-		System.out.println("endtime inserts: " + (System.currentTimeMillis()-start));
-		try {
-			model.removeComponent(w);
 		} catch (ClosedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
 }
