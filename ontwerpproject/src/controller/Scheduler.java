@@ -84,6 +84,8 @@ public class Scheduler {
 			}
 			
 			for(Retriever ret : failedList) {
+				if(retrieverMap.get(period).contains(ret));
+					ret.getComponent().getIntelligence().connectionError();
 				removeRetriever(ret);
 			}
 			

@@ -160,6 +160,6 @@ public class Retriever {
 			}
 		}
 		System.out.println("endtime inserts: " + (System.currentTimeMillis()-start));
-		//model.removeComponent(w);
+		model.removeComponent(w);
 	}
 }

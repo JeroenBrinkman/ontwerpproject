@@ -178,6 +178,10 @@ public abstract class Component {
 	public InetSocketAddress getAddress() {
 		return adr;
 	}
+	
+	public Intelligence getIntelligence() {
+		return intel;
+	}
 
 	public String getTableName() {
 		String result = adr.toString();
