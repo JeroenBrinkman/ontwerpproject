@@ -101,7 +101,6 @@ public abstract class Component {
 		} catch (SQLException e) {
 			intel.databaseError(e);
 		}
-		startUp();
 	}
 
 	/**
