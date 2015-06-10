@@ -77,7 +77,7 @@ public abstract class Component {
 					+ " WHERE tag =  ?  AND date = ?";
 			delete = conn.prepareStatement(sql);
 		} catch (SQLException e) {
-			intel.databaseError(e);
+			//intel.databaseError(e);
 		}
 	}
 
@@ -96,11 +96,11 @@ public abstract class Component {
 			getlimit.close();
 			conn.close();
 		} catch (SQLException e) {
-			try {
-				intel.databaseError(e);
+			/*try {
+				//intel.databaseError(e);
 			} catch (ClosedException e1) {
 				// hoeft niks
-			}
+			}*/
 		}
 	}
 
@@ -129,7 +129,7 @@ public abstract class Component {
 			update(System.currentTimeMillis(), x);
 			conn.commit();
 		} catch (SQLException e) {
-			intel.databaseError(e);
+			//intel.databaseError(e);
 		}
 
 		closeConnection();
@@ -170,7 +170,7 @@ public abstract class Component {
 				conn.commit();
 			}
 		} catch (SQLException e) {
-			intel.databaseError(e);
+			//intel.databaseError(e);
 		}
 	}
 
@@ -190,7 +190,8 @@ public abstract class Component {
 
 	public String getTableName() {
 		String result = adr.toString();
-		return result.replaceAll(":|/|\\.", "_");
+		System.out.println(adr.toString());
+		return result.replaceAll("-:|/|\\.", "_");
 	}
 
 	/**
@@ -252,7 +253,7 @@ public abstract class Component {
 			insert.executeUpdate();
 			conn.commit();
 		} catch (SQLException e) {
-			intel.databaseError(e);
+			//intel.databaseError(e);
 		}
 	}
 

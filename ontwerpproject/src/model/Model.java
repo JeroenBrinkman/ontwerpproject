@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.sql.*;
 import java.util.ArrayList;
 
+import view.GUI;
 import model.intelligence.Intelligence.ClosedException;
 import global.Globals;
 
@@ -27,6 +28,8 @@ public class Model {
 	 * @invariant components != null;
 	 */
 	private ArrayList<Component> components;
+	
+	private GUI gui;
 
 	/**
 	 * Constructor for a new model. initializes the components list
@@ -55,8 +58,8 @@ public class Model {
 	 * @ensures \result != null && \result == components
 	 * @pure
 	 */
-	public Component[] getComponents() {
-		return (Component[]) components.toArray();
+	public ArrayList<Component> getComponents() {
+		return components;
 	}
 
 	/**
@@ -81,6 +84,7 @@ public class Model {
 				// no table for this address
 				st = conn.createStatement();
 				String sql = c.createTableSQL();
+				System.out.println(sql);
 				st.executeUpdate(sql);
 			}
 		} catch (SQLException e) {
@@ -97,6 +101,9 @@ public class Model {
 
 		components.add(c);
 		c.startUp();
+		if(gui != null){
+			
+		}
 	}
 
 	/**
@@ -121,6 +128,10 @@ public class Model {
 		}
 		return conn;
 	}
+	
+	public void addGUIObserver(GUI gui){
+		this.gui = gui;
+	}
 
 	// TODO remove test main after im done with testing
 	public static void main(String[] args) {
@@ -133,7 +144,7 @@ public class Model {
 			long start = System.currentTimeMillis();
 			int i = 0;
 			int[] message = { 15, 8, 2, 1 };
-			while (System.currentTimeMillis() - start < (1000 * 60 * 60 * 5)) {
+			while (i<10/*System.currentTimeMillis() - start < (1000 * 60 * 60 * 5)*/) {
 				if (i % 250 == 0 && i > 0) {
 					System.out.print(i + ":");
 					System.out.println("average time per update is : "
