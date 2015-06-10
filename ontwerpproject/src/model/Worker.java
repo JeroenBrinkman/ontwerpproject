@@ -16,7 +16,7 @@ public class Worker extends Component {
 
 	public Worker(InetSocketAddress addr, Connection con, Model mod) throws ClosedException {
 		super(addr, con);
-		intel = new WorkerIntelligence(this, mod);
+		intel = new WorkerIntelligence(this, mod, con);
 		//TODO temp currently placeholder
 		String[] temp = {"cpu", "hdd", "mem", "time"};
 		collumnList = temp;

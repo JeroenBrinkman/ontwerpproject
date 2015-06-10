@@ -4,6 +4,7 @@ import model.Component;
 import model.Model;
 import global.Globals;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -23,6 +24,7 @@ public abstract class Intelligence {
 		  public ClosedException(Throwable cause) { super(cause); }
 		}
 	
+	protected Connection con;
 	protected Component comp;
 	protected Model mod;
 	protected int[] CRITS = { 80, 90, 99 };// TODO init crits in subclasses
@@ -36,9 +38,10 @@ public abstract class Intelligence {
 												 */// TODO update this to
 													// correct value
 
-	public Intelligence(Component comp, Model mod) {
+	public Intelligence(Component comp, Model mod, Connection conn) {
 		this.comp = comp;
 		this.mod = mod;
+		con = conn;
 	}
 
 	/**
@@ -123,10 +126,11 @@ public abstract class Intelligence {
 	/**
 	 * Checks the new input data for the component for critical values, and
 	 * sends the correct error messages if it finds these
+	 * @throws ClosedException when the database dies
 	 * 
 	 * @requires newin != null
 	 * @ensures correct errormessages are send
 	 */
-	public abstract void checkCritical(String[] newin);
+	public abstract void checkCritical(int[] newin) throws ClosedException;
 
 }

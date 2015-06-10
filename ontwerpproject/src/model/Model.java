@@ -132,7 +132,7 @@ public class Model {
 			model.addComponent(w);
 			long start = System.currentTimeMillis();
 			int i = 0;
-			String[] message = { "15", "8", "2", "1" };
+			int[] message = { 15, 8, 2, 1 };
 			while (System.currentTimeMillis() - start < (1000 * 60 * 60 * 5)) {
 				if (i % 250 == 0 && i > 0) {
 					System.out.print(i + ":");
@@ -148,7 +148,6 @@ public class Model {
 				i++;
 			}
 		} catch (ClosedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

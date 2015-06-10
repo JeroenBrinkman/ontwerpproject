@@ -16,7 +16,7 @@ public class Database extends Component {
 
 	public Database(InetSocketAddress addr, Connection con, Model mod) throws ClosedException {
 		super(addr, con);
-		intel = new DatabaseIntelligence(this, mod);
+		intel = new DatabaseIntelligence(this, mod, con);
 		//TODO temp currentlyplaceholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;

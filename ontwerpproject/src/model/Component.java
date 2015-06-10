@@ -122,9 +122,9 @@ public abstract class Component {
 			ResultSet r = s.executeQuery(sql);
 			r.next();
 			// commit entry with only 0 to mark the shutdown point
-			String[] x = new String[collumnList.length];
+			int[] x = new int[collumnList.length];
 			for(int i =0; i< x.length;++i){
-				x[i]="0";
+				x[i]=0;
 			}
 			update(System.currentTimeMillis(), x);
 			conn.commit();
@@ -158,9 +158,9 @@ public abstract class Component {
 				v.next();
 				long current = v.getLong(1) + Globals.POLLINGINTERVAL;
 				long end = System.currentTimeMillis();
-				String[] str = new String[collumnList.length];
+				int[] str = new int[collumnList.length];
 				for(int i =0; i< str.length; ++i){
-					str[i] = "0";
+					str[i] = 0;
 				}
 				//insert every polling interval a 0 entry
 				while(current < end && true){
@@ -223,8 +223,9 @@ public abstract class Component {
 	 * @requires message != null && message.length == collumnList.length +1
 	 * @ensures data is correctly inserted
 	 */
-	public void update(Long date, String[] message) throws ClosedException{
-		intel.checkCritical(message);
+	public void update(Long date, int[] message) throws ClosedException{
+		//TODO reenable check critical when everything works
+		//intel.checkCritical(message);
 		try {
 			// tags are Minutes -> Hours -> Days
 			// aka M->H->D
@@ -246,7 +247,7 @@ public abstract class Component {
 			insert.setString(1, Long.toString(date));
 			insert.setString(2, "M");
 			for (int i = 0; i < message.length; ++i) {
-				insert.setString(i + 3, message[i]);
+				insert.setInt(i + 3, message[i]);
 			}
 			insert.executeUpdate();
 			conn.commit();

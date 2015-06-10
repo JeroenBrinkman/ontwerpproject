@@ -17,7 +17,7 @@ public class Manager extends Component {
 
 	public Manager(InetSocketAddress addr, Connection con, Model mod) throws ClosedException {
 		super(addr, con);
-		intel = new ManagerIntelligence(this, mod);
+		intel = new ManagerIntelligence(this, mod, con);
 		//TODO temp currentlyplaceholder
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;

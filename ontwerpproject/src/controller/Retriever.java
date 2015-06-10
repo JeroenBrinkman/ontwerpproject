@@ -116,6 +116,7 @@ public class Retriever {
 	 * @throws ClosedException 
 	 */
 	public void pushData() throws ClosedException{
-		comp.update(System.currentTimeMillis(), data);
+		//TODO make int[] instead of string[]
+		//comp.update(System.currentTimeMillis(), data);
 	}
 }
