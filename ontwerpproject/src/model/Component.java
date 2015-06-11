@@ -190,8 +190,8 @@ public abstract class Component {
 
 	public String getTableName() {
 		String result = adr.toString();
-		System.out.println(adr.toString());
-		return result.replaceAll("-:|/|\\.", "_");
+		result = result.replaceAll(":|/|\\.", "_");
+		return result.replaceAll("-", "_");
 	}
 
 	/**
