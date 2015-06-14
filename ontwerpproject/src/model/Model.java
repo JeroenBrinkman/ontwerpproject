@@ -28,7 +28,7 @@ public class Model {
 	 * @invariant components != null;
 	 */
 	private ArrayList<Component> components;
-	
+
 	private GUI gui;
 
 	/**
@@ -101,8 +101,8 @@ public class Model {
 
 		components.add(c);
 		c.startUp();
-		if(gui != null){
-			
+		if (gui != null) {
+
 		}
 	}
 
@@ -128,8 +128,8 @@ public class Model {
 		}
 		return conn;
 	}
-	
-	public void addGUIObserver(GUI gui){
+
+	public void addGUIObserver(GUI gui) {
 		this.gui = gui;
 	}
 
@@ -144,41 +144,44 @@ public class Model {
 			long start = System.currentTimeMillis();
 			int i = 0;
 			int[] message = { 15, 8, 2, 1 };
-			while (System.currentTimeMillis() - start < (1000 * 60 * 60 * 5)) {
-				if (i % 250 == 0 && i > 0) {
-					System.out.print(i + ":");
-					System.out.println("average time per update is : "
-							+ ((System.currentTimeMillis() - start) / i)
-							+ " millisecs");
-					if( i%500 ==0){
-				        int mb = 1024*1024;
-				         
-				        //Getting the runtime reference from system
-				        Runtime runtime = Runtime.getRuntime();
-				         
-				        System.out.print("##### Heap utilization statistics [MB] #####");
-				         
-				        //Print used memory
-				        System.out.print("\t Used Memory:"
-				            + (runtime.totalMemory() - runtime.freeMemory()) / mb);
-				 
-				        //Print free memory
-				        System.out.print("\t Free Memory:"
-				            + runtime.freeMemory() / mb);
-				         
-				        //Print total available memory
-				        System.out.print("\t Total Memory:" + runtime.totalMemory() / mb);
-				 
-				        //Print Maximum available memory
-				        System.out.println("Max Memory:" + runtime.maxMemory() / mb);
-					}
+			while (/* System.currentTimeMillis() - start < (1000 * 60 * 60 * 5) */true) {
+
+				if (i % 500 == 0) {
+					int mb = 1024;
+
+					// Getting the runtime reference from system
+					Runtime runtime = Runtime.getRuntime();
+
+					System.out
+							.print("##### Heap utilization statistics [KB] #####");
+
+					// Print used memory
+					System.out.print("\t Used Memory: \t"
+							+ (runtime.totalMemory() - runtime.freeMemory())
+							/ mb);
+
+					// Print free memory
+					System.out.print("\t Free Memory: \t"
+							+ runtime.freeMemory() / mb);
+
+					// Print total available memory
+					System.out.print("\t Total Memory: \t"
+							+ runtime.totalMemory() / mb);
+
+					// Print Maximum available memory
+					System.out.println("\t Max Memory: \t"
+							+ runtime.maxMemory() / mb);
+
 				}
 
 				w.update(System.currentTimeMillis(), message);
-				System.out.println("endtime inserts: "
-						+ (System.currentTimeMillis() - start));
-				model.removeComponent(w);
 				i++;
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		} catch (ClosedException e) {
 			e.printStackTrace();
