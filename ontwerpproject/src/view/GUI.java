@@ -8,9 +8,8 @@ import model.Model;
 import model.Worker;
 import model.intelligence.Intelligence.ClosedException;
 
+import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
@@ -23,7 +22,6 @@ public class GUI {
 	// example it's all in the one class.
 	public static void main(String[] args) {
 		Model mod = new Model();
-		new GUI(mod);
 		try {
 			mod.addComponent(new Worker(
 						new InetSocketAddress("192.192.192.192", 123),
@@ -32,6 +30,8 @@ public class GUI {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		new GUI(mod);
+
 	}
 
 	public GUI(Model mod) {
@@ -39,9 +39,9 @@ public class GUI {
 		JFrame guiFrame = new JFrame();
 		guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		guiFrame.setTitle("Monitoring system");
-		guiFrame.setSize(800, 800);
+		guiFrame.setSize(600, 800);
 		guiFrame.setLocationRelativeTo(null);
-		GridLayout g = new GridLayout(1, 2);
+		GridLayout g = new GridLayout(2, 1);
 		guiFrame.setLayout(g);
 		guiFrame.add(compPanel());
 		guiFrame.add(compPanel());
@@ -67,6 +67,9 @@ public class GUI {
 		}
 		complist.setModel(model);
 		complist.setSelectedIndex(index);
+		complist.setSize(200, 200);
+		complist.setBackground(Color.BLACK);
+		complist.setVisible(true);
 	}
 
 	private JPanel logPanel() {

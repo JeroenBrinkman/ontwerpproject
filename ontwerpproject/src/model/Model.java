@@ -144,12 +144,34 @@ public class Model {
 			long start = System.currentTimeMillis();
 			int i = 0;
 			int[] message = { 15, 8, 2, 1 };
-			while (i<10/*System.currentTimeMillis() - start < (1000 * 60 * 60 * 5)*/) {
+			while (System.currentTimeMillis() - start < (1000 * 60 * 60 * 5)) {
 				if (i % 250 == 0 && i > 0) {
 					System.out.print(i + ":");
 					System.out.println("average time per update is : "
 							+ ((System.currentTimeMillis() - start) / i)
 							+ " millisecs");
+					if( i%500 ==0){
+				        int mb = 1024*1024;
+				         
+				        //Getting the runtime reference from system
+				        Runtime runtime = Runtime.getRuntime();
+				         
+				        System.out.print("##### Heap utilization statistics [MB] #####");
+				         
+				        //Print used memory
+				        System.out.print("\t Used Memory:"
+				            + (runtime.totalMemory() - runtime.freeMemory()) / mb);
+				 
+				        //Print free memory
+				        System.out.print("\t Free Memory:"
+				            + runtime.freeMemory() / mb);
+				         
+				        //Print total available memory
+				        System.out.print("\t Total Memory:" + runtime.totalMemory() / mb);
+				 
+				        //Print Maximum available memory
+				        System.out.println("Max Memory:" + runtime.maxMemory() / mb);
+					}
 				}
 
 				w.update(System.currentTimeMillis(), message);
