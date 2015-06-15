@@ -76,16 +76,26 @@ public class Model {
 	public void addComponent(Component c) throws ClosedException {
 		Connection conn = createConnection();
 		Statement st = null;
+		System.out.println("CONNECTIE CHECK");
 		try {
 			DatabaseMetaData dbm = conn.getMetaData();
+			System.out.println("METADATA CHECK");
 			ResultSet tables = dbm
 					.getTables(null, null, c.getTableName(), null);
+			System.out.println("GETTABLES CHECK");
 			if (!tables.next()) {
+				
 				// no table for this address
 				st = conn.createStatement();
+				System.out.println("CREATESTATEMENT CHECK");
 				String sql = c.createTableSQL();
+				System.out.println("CREATETABLESQL CHECK");
 				System.out.println(sql);
 				st.executeUpdate(sql);
+				System.out.println("EXECUTEUPDATE CHECK");
+			}
+			else {
+				System.out.println("TABLES NEXT TRUE");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -99,8 +109,11 @@ public class Model {
 			}
 		}
 
+		System.out.println("NA TRY CATCH CHECK");
 		components.add(c);
+		System.out.println("COMPONENTS ADD CHECK");
 		c.startUp();
+		System.out.println("STARTUP CHECK");
 		if (gui != null) {
 
 		}

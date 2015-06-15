@@ -21,6 +21,8 @@ public class ServerHandler {
 	}
 	
 	public boolean add(int type, String ip, int port) {
+		System.out.println("add called");
+		
 		if(Globals.DEBUGOUTPUT && (scheduler == null || model == null)) {
 			System.out.println("Scheduler or model is null, please initiate!");
 			return false;
@@ -41,13 +43,13 @@ public class ServerHandler {
 					break;
 				default:
 					return false;
-			};
-			
+			};			
 			model.addComponent(comp);
+			System.out.println("dubdub");
 			Retriever ret = new Retriever(comp);
+			System.out.println("wubwub");
 			
-			scheduler.addRetriever(1000, ret);
-			
+			scheduler.addRetriever(1000, ret);			
 			System.out.println("Component " + comp.getTableName() + " added");
 			
 			return true;

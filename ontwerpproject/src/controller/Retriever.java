@@ -14,29 +14,29 @@ import de.timroes.axmlrpc.XMLRPCServerException;
 
 public class Retriever {
 	private XMLRPCClient		client;
-	private String[]			data;
+	private int[]			data;
 	private Component			comp;
 	
-	static String parse(Object object) {
-		String result = null;
+	static int parse(Object object) {
+		Integer result = null;
 		
 		if(object.getClass() == String.class) {
-			result = (String)object;
+			result = (int) Double.parseDouble((String)object);
 		}
 		else if(object.getClass() == Double.class) {
-			result = "" + ((Double)object);
+			result = ((Double)object).intValue();
 		}
 		else if(object.getClass() == Integer.class) {
-			result = ((Integer)object).toString();
+			result = ((Integer)object);
 		}
 		else if(object.getClass() == Long.class) {
-			result = ((Long)object).toString();
+			result = ((Long)object).intValue();
 		}
 		else if(object.getClass() == Boolean.class) {
-			result = ((Boolean)object).toString();
+			result = ((Boolean)object) == true ? 1 : 0;
 		}
 		else if(object.getClass() == Date.class) {
-			result = ((Date)object).toString();
+			result = (int) ((Date)object).getTime();
 		}
 		else {
 			System.err.println("Could not convert tmpObject to a string. tmpObject class: " + object.getClass().toString());
@@ -52,7 +52,7 @@ public class Retriever {
 	 * @param id The ID of this retriever */
 	public Retriever(Component comp){
 		this.comp = comp;
-		this.data = new String[comp.getKeys().length];
+		this.data = new int[comp.getKeys().length];
 		
 		URL xmlrpcUrl = null;
 		try {
@@ -71,7 +71,7 @@ public class Retriever {
 	 * @param key The key value of the array, in other words, the index of the array
 	 * @param value The value related to a particular index
 	 */
-	public void updateData(int index, String value){
+	public void updateData(int index, int value){
 		data[index] = value;
 	}
 	
@@ -79,8 +79,8 @@ public class Retriever {
 	 * Method to return the data[] variable
 	 * @return data
 	 */
-	public String[] getData(){
-		return (String[]) data;
+	public int[] getData(){
+		return data;
 	}
 	
 	public Component getComponent() {
@@ -101,13 +101,15 @@ public class Retriever {
 					System.err.println(e.toString());
 			}
 		}
+		String thedata = (String)client.call("getData");
+		System.out.println(thedata);
 	}
 	
 	/**
 	 * This method uses XML RPC to retrieve data from a particular component and stores it in the array. 
 	 * @throws XMLRPCException 
 	 */
-	public String retrieveData(String key) throws XMLRPCException{
+	public int retrieveData(String key) throws XMLRPCException{
 		return parse(client.call(key));
 	}
 	
@@ -116,7 +118,6 @@ public class Retriever {
 	 * @throws ClosedException 
 	 */
 	public void pushData() throws ClosedException{
-		//TODO make int[] instead of string[]
-		//comp.update(System.currentTimeMillis(), data);
+		comp.update(System.currentTimeMillis(), data);
 	}
 }

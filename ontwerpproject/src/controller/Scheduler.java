@@ -4,7 +4,6 @@ import global.Globals;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -12,14 +11,17 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-import de.timroes.axmlrpc.XMLRPCException;
 import model.intelligence.Intelligence.ClosedException;
 
 public class Scheduler {
 	
-	class SchedulerTimer extends TimerTask {
-		
+	class SchedulerTimer extends TimerTask {		
 		private long period;
 		
 		public SchedulerTimer(long period) {
@@ -30,53 +32,21 @@ public class Scheduler {
 		public void run() {			
 			queueMap.get(period).addAll(retrieverMap.get(period));
 			ConcurrentLinkedQueue<Retriever> queue 	= queueMap.get(period);
-			List<Retriever> failedList 				= new ArrayList<Retriever>();
+			ConcurrentLinkedQueue<Retriever> failed	= new ConcurrentLinkedQueue<Retriever>();
+			ExecutorService threadPool				= Executors.newFixedThreadPool(16);
 			
 			for (Retriever r; (r = queue.poll()) != null;){
-				boolean failed = false;
-				
-				if(Globals.DEBUGOUTPUT) System.out.println("Retrieving data from " + r.getComponent().getTableName() + "...");
-				try {
-						r.retrieveAllData();
-					} catch (XMLRPCException e) {
-					System.out.println(e.getMessage());
-					if(e.getMessage().equals("java.net.ConnectException: Connection timed out: connect")) {
-						System.out.println("Connection time out: Check IP and if the host is up");
-					}
-					else if(e.getMessage().equals("java.net.SocketException: Connection reset")) {
-						System.out.println("Connection reset, Check if the server is up");
-					}
-					else if(e.getMessage().equals("java.net.ConnectException: Connection refused: connect")) {
-						System.out.println("Connect Exception, Check if the server is up and if the file is correct: " + r.getClient().getURL().getFile());
-					}
-					else if(e.getMessage().contains("java.io.FileNotFoundException:")) {
-						System.out.println("File not found exception, check if the file is correct: " + r.getClient().getURL().getFile());
-					}
-					else {
-						e.printStackTrace();
-					}					
-					
-					failed = true;
-					failedList.add(r);
-				}
-				
-				if(!failed) {
-					if(Globals.DEBUGOUTPUT) {
-						System.out.println("Retrieved data from \"" + r.getComponent().getTableName() + "\": " + Arrays.toString(r.getData()));
-						System.out.println("Pushing data from " + r.getComponent().getTableName() + "...");
-					}
-					try {
-						r.pushData();
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
-					if(Globals.DEBUGOUTPUT) System.out.println("Pushed data from \"" + r.getComponent().getTableName() + "\"");
-				}
-				
+				threadPool.submit(new RetrieverThread(r, failed));				
+			}
+						
+			try {
+				threadPool.awaitTermination(1, TimeUnit.SECONDS);
+			} catch (InterruptedException e1) {
+				System.out.println("Interrupted Exeception of threadPool in SchedulerTimer: ");
+				e1.printStackTrace();
 			}
 			
-			for(Retriever ret : failedList) {
+			for(Retriever ret : failed) {
 				if(retrieverMap.get(period).contains(ret)) {
 					try {
 						ret.getComponent().getIntelligence().connectionError();
@@ -86,21 +56,20 @@ public class Scheduler {
 				}
 				removeRetriever(ret);
 			}
-			
-			failedList.clear();
 		}		
 	}
 	
 	private Map<Long, List<Retriever>> retrieverMap;
 	private Map<Long, ConcurrentLinkedQueue<Retriever>> queueMap;
 	private Map<Long, SchedulerTimer> taskMap;
-	private Timer timer;
+	private ScheduledExecutorService timer;
 	
 	public Scheduler() {
 		retrieverMap = new HashMap<Long, List<Retriever>>();
 		queueMap = new HashMap<Long, ConcurrentLinkedQueue<Retriever>>();
 		taskMap = new HashMap<Long, SchedulerTimer>();
-		timer = new Timer();
+		//timer = new Timer();
+		timer = Executors.newScheduledThreadPool(4);
 	}
 	
 	public void addRetriever(long milliseconds, Retriever r) {
@@ -165,7 +134,7 @@ public class Scheduler {
 			
 			taskMap.get(milliseconds).cancel();
 			taskMap.remove(milliseconds);
-			timer.purge();
+			timer.shutdown();
 		}
 	}
 	
@@ -175,7 +144,7 @@ public class Scheduler {
 			queueMap.put(milliseconds, new ConcurrentLinkedQueue<Retriever>());
 			taskMap.put(milliseconds, new SchedulerTimer(milliseconds));
 			
-			timer.scheduleAtFixedRate(taskMap.get(milliseconds), milliseconds, milliseconds);			
+			timer.scheduleAtFixedRate(taskMap.get(milliseconds), milliseconds, milliseconds, TimeUnit.MILLISECONDS);			
 		}
 	}	
 }
