@@ -1,7 +1,7 @@
 package global;
 
 public class Globals {
-	public static int POLLINGINTERVAL = 60000; // once every minute
+	public static int POLLINGINTERVAL = 1000; // once every minute
 
 	
 	/**

@@ -45,11 +45,9 @@ public class ServerHandler {
 					return false;
 			};			
 			model.addComponent(comp);
-			System.out.println("dubdub");
 			Retriever ret = new Retriever(comp);
-			System.out.println("wubwub");
 			
-			scheduler.addRetriever(1000, ret);			
+			scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);			
 			System.out.println("Component " + comp.getTableName() + " added");
 			
 			return true;

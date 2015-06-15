@@ -19,7 +19,7 @@ public class Manager extends Component {
 		super(addr, con);
 		intel = new ManagerIntelligence(this, mod, con);
 		//TODO temp currentlyplaceholder
-		String[] temp = {"cpu", "hdd", "mem"};
+		String[] temp = {"time", "cpu", "hdd", "mem"};
 		collumnList = temp;
 	}
 

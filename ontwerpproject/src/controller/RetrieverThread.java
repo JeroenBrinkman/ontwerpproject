@@ -62,6 +62,8 @@ public class RetrieverThread implements Runnable {
 			}
 			if(Globals.DEBUGOUTPUT) System.out.println("Pushed data from \"" + ret.getComponent().getTableName() + "\"");
 		}
+		
+		System.out.println("Completed run");
 	}
 
 }

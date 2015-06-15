@@ -8,11 +8,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -34,23 +37,40 @@ public class Scheduler {
 			ConcurrentLinkedQueue<Retriever> queue 	= queueMap.get(period);
 			ConcurrentLinkedQueue<Retriever> failed	= new ConcurrentLinkedQueue<Retriever>();
 			ExecutorService threadPool				= Executors.newFixedThreadPool(16);
+			Stack<Future<?>> results				= new Stack<Future<?>>();
 			
 			for (Retriever r; (r = queue.poll()) != null;){
-				threadPool.submit(new RetrieverThread(r, failed));				
+				results.add(threadPool.submit(new RetrieverThread(r, failed)));			
 			}
-						
+			
 			try {
-				threadPool.awaitTermination(1, TimeUnit.SECONDS);
+				if(!threadPool.awaitTermination(period, TimeUnit.MILLISECONDS)) {
+					System.out.println("Threads has been interupptedksdlk, please call an adult");
+				}
 			} catch (InterruptedException e1) {
 				System.out.println("Interrupted Exeception of threadPool in SchedulerTimer: ");
 				e1.printStackTrace();
+			}
+			
+			while(!results.empty()) {
+				Future<?> ftr = results.pop();
+				try {
+					if(ftr.get() != null) {
+						System.out.println("This future failed: " + ftr.toString());
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					System.out.println("Timeout Failed ofzo");
+				}
 			}
 			
 			for(Retriever ret : failed) {
 				if(retrieverMap.get(period).contains(ret)) {
 					try {
 						ret.getComponent().getIntelligence().connectionError();
-					} catch (ClosedException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
@@ -62,20 +82,18 @@ public class Scheduler {
 	private Map<Long, List<Retriever>> retrieverMap;
 	private Map<Long, ConcurrentLinkedQueue<Retriever>> queueMap;
 	private Map<Long, SchedulerTimer> taskMap;
-	private ScheduledExecutorService timer;
+	private ScheduledThreadPoolExecutor timer;
 	
 	public Scheduler() {
 		retrieverMap = new HashMap<Long, List<Retriever>>();
 		queueMap = new HashMap<Long, ConcurrentLinkedQueue<Retriever>>();
 		taskMap = new HashMap<Long, SchedulerTimer>();
-		//timer = new Timer();
-		timer = Executors.newScheduledThreadPool(4);
+		timer = new ScheduledThreadPoolExecutor(4); //Executors.newScheduledThreadPool(4);
 	}
 	
 	public void addRetriever(long milliseconds, Retriever r) {
 		synchronized (retrieverMap) {
 			checkAndCreate(milliseconds);
-			this.queueMap.get(milliseconds).add(r);
 			this.retrieverMap.get(milliseconds).add(r);	
 		}
 	}
@@ -84,7 +102,6 @@ public class Scheduler {
 		synchronized (retrieverMap) {
 			checkAndCreate(milliseconds);		
 			for(Retriever r : rs) {
-				this.queueMap.get(milliseconds).add(r);
 				this.retrieverMap.get(milliseconds).add(r);
 			}
 		}
@@ -94,7 +111,6 @@ public class Scheduler {
 		synchronized (retrieverMap) {
 			checkAndCreate(milliseconds);
 			this.retrieverMap.get(milliseconds).addAll(rs);
-			this.queueMap.get(milliseconds).addAll(rs);
 		}
 	}
 	
@@ -132,9 +148,9 @@ public class Scheduler {
 			retrieverMap.remove(milliseconds);
 			queueMap.remove(milliseconds);
 			
+			timer.remove(taskMap.get(milliseconds));
 			taskMap.get(milliseconds).cancel();
-			taskMap.remove(milliseconds);
-			timer.shutdown();
+			taskMap.remove(milliseconds);			
 		}
 	}
 	
@@ -144,6 +160,7 @@ public class Scheduler {
 			queueMap.put(milliseconds, new ConcurrentLinkedQueue<Retriever>());
 			taskMap.put(milliseconds, new SchedulerTimer(milliseconds));
 			
+			System.out.println("Schedule added at " + milliseconds + " milliseconds");
 			timer.scheduleAtFixedRate(taskMap.get(milliseconds), milliseconds, milliseconds, TimeUnit.MILLISECONDS);			
 		}
 	}	

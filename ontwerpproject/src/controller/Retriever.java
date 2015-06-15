@@ -61,7 +61,8 @@ public class Retriever {
 			e1.printStackTrace();
 		}
 		
-		client = new XMLRPCClient(xmlrpcUrl);		
+		client = new XMLRPCClient(xmlrpcUrl);
+		//client.setTimeout(1000);
 	}
 	
 	/**
@@ -101,6 +102,7 @@ public class Retriever {
 					System.err.println(e.toString());
 			}
 		}
+		//System.out.println("retrieving getData");
 		String thedata = (String)client.call("getData");
 		System.out.println(thedata);
 	}
