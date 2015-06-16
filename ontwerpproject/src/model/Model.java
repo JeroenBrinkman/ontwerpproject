@@ -148,7 +148,7 @@ public class Model {
 			System.out.println(System.currentTimeMillis()-start);
 			int i = 0;
 			int[] message = { 15, 8, 2, 1 };
-			while (/* System.currentTimeMillis() - start < (1000 * 60 * 60 * 5) */true) {
+			while (/* System.currentTimeMillis() - start < (1000 * 60 * 60 * 5) */i<5) {
 
 				if (i % 500 == 0) {
 					int mb = 1024;
