@@ -50,6 +50,9 @@ public class Model {
 	public void removeComponent(Component c) throws ClosedException {
 		c.shutDown();
 		components.remove(c);
+		if(gui!=null){
+			gui.updateCompList(components);
+		}
 	}
 
 	/**
@@ -115,7 +118,8 @@ public class Model {
 		c.startUp();
 		System.out.println("STARTUP CHECK");
 		if (gui != null) {
-
+			gui.updateCompList(components);
+			Globals.LAST_COMPONENT = System.currentTimeMillis();
 		}
 	}
 
@@ -150,11 +154,12 @@ public class Model {
 	public static void main(String[] args) {
 		try {
 			Model model = new Model();
+			long start = System.currentTimeMillis();
 			Worker w = new Worker(
 					new InetSocketAddress("192.192.192.192", 123),
 					model.createConnection(), model);
 			model.addComponent(w);
-			long start = System.currentTimeMillis();
+			System.out.println(System.currentTimeMillis()-start);
 			int i = 0;
 			int[] message = { 15, 8, 2, 1 };
 			while (/* System.currentTimeMillis() - start < (1000 * 60 * 60 * 5) */true) {

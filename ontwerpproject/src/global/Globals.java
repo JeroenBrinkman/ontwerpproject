@@ -39,4 +39,14 @@ public class Globals {
 	public static final int XMLRPC_PORT = 8000;
 	public static final boolean DEBUGOUTPUT = true;
 
+
+	public static long LAST_UPDATE = 0;
+	public static long LAST_COMPONENT = 0;
+	public static long AMOUNT_UPDATES = 0;
+	
+	public static void newUpdate(){
+		LAST_UPDATE = System.currentTimeMillis();
+		AMOUNT_UPDATES++;
+	}
+
 }

@@ -1,21 +1,25 @@
 package view;
 
 //Imports are listed in full to show what's being used //could just import javax.swing.* and java.awt.* etc.. 
+import global.Globals;
+
 import javax.swing.*;
 
 import model.Component;
 import model.Model;
 import model.Worker;
 import model.intelligence.Intelligence.ClosedException;
-
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
 public class GUI {
 	private Model mod;
-	private JList<String> complist;
+	private ScrollList complist;
+	private JLabel lastupdate;
+	private JLabel lastcompcon;
+	private JLabel amountupdates;
+	
 
 	// Note: Typically the main method will be in a
 	// separate class. As this is a simple one class
@@ -51,25 +55,36 @@ public class GUI {
 
 	private JPanel compPanel() {
 		JPanel out = new JPanel();
-		complist = new JList<String>();
+		out.setLayout(new GridLayout(2,1));
+		complist = new ScrollList();
 		updateCompList(mod.getComponents());
 		JLabel comps = new JLabel("Components:");
 		out.add(comps);
 		out.add(complist);
+		JPanel right = new JPanel();
+		right.setLayout(new GridLayout(1,0));
+		lastupdate = new JLabel("Last update : NEVER");
+		lastcompcon = new JLabel("Last component connected : NEVER");
+		amountupdates = new JLabel("Total amount of updates : NONE");
+		right.add(lastupdate);
+		right.add(lastcompcon);
+		right.add(amountupdates);
+		out.add(right);
 		return out;
 	}
 
 	public void updateCompList(ArrayList<Component> comps) {
-		int index = complist.getSelectedIndex();
-		DefaultListModel<String> model = new DefaultListModel<String>();
+		complist.setText("");
 		for (Component c : comps) {
-			model.addElement(c.getTableName());
+			complist.addText(c.getTableName());;
 		}
-		complist.setModel(model);
-		complist.setSelectedIndex(index);
-		complist.setSize(200, 200);
-		complist.setBackground(Color.BLACK);
-		complist.setVisible(true);
+		updateMetaData();
+	}
+	
+	public void updateMetaData(){
+		lastupdate.setText("Last update : " + Globals.LAST_UPDATE);
+		lastcompcon.setText("Last component connected : " + Globals.LAST_COMPONENT);
+		amountupdates.setText("Total amount of updates : " + Globals.AMOUNT_UPDATES);
 	}
 
 	private JPanel logPanel() {

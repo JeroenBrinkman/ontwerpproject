@@ -163,7 +163,7 @@ public abstract class Component {
 					str[i] = 0;
 				}
 				//insert every polling interval a 0 entry
-				while(current < end && true){
+				while(current < end){
 					update(current, str);
 					current += Globals.POLLINGINTERVAL;
 				}
