@@ -26,6 +26,7 @@ public class Worker extends Component {
 			throws ClosedException {
 		super(addr, con);
 		intel = new WorkerIntelligence(this, mod, con);
+
 		// TODO temp currently placeholder
 		collumnList = Globals.concat(Globals.WorkerCalls, Globals.WORKER_COLS);
 
