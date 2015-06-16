@@ -44,9 +44,9 @@ public class Globals {
 	public static final int XMLRPC_PORT = 8000;
 	public static final boolean DEBUGOUTPUT = true;
 	
-	public static final String[] WorkerCalls 	= {"time", "hdd", "mem", "cpu"};
-	public static final String[] ManagerCalls 	= {"time", "hdd", "mem", "cpu"};
-	public static final String[] DatabaseCalls 	= {"time", "hdd", "mem", "cpu"};
+	public static final String[] WORKER_CALLS 	= {"time", "hdd", "mem", "cpu"};
+	public static final String[] MANAGER_CALLS 	= {"time", "hdd", "mem", "cpu"};
+	public static final String[] DATABASE_CALLS = {"time", "hdd", "mem", "cpu"};
 
 
 	public static long LAST_UPDATE = 0;
