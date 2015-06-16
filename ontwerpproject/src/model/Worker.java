@@ -26,7 +26,6 @@ public class Worker extends Component {
 			throws ClosedException {
 		super(addr, con);
 		intel = new WorkerIntelligence(this, mod, con);
-		// TODO temp currently placeholder
 		collumnList = Globals.WORKER_COLS;
 
 		String sql = "INSERT INTO " + getTableName() + " VALUES( ?,  ?";
