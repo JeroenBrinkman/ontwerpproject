@@ -104,36 +104,7 @@ public abstract class Component {
 		}
 	}
 
-	/**
-	 * aggregrates the database on this component and closes the connection.
-	 * Should be called when a component disconnects from the system. The
-	 * database will be readied for a gap in the data, no matter how big the gap
-	 * is, this will be achieved by aggregrating the data and converting the
-	 * tags to O
-	 * 
-	 * @requires Database running
-	 * @ensures Connection closed && database ready for gap in data
-	 */
-	public void shutDown() throws ClosedException{
-		try {
-			Statement s = conn.createStatement();
-			String sql;
-			sql = "SELECT COUNT(*) FROM " + getTableName();
-			ResultSet r = s.executeQuery(sql);
-			r.next();
-			// commit entry with only 0 to mark the shutdown point
-			int[] x = new int[collumnList.length];
-			for(int i =0; i< x.length;++i){
-				x[i]=0;
-			}
-			update(System.currentTimeMillis(), x);
-			conn.commit();
-		} catch (SQLException e) {
-			intel.databaseError(e);
-		}
 
-		closeConnection();
-	}
 	
 	/**
 	 * Add 0 entries from the last entry in the database until now, to mark the period the component was offline
@@ -154,9 +125,7 @@ public abstract class Component {
 				sql = "SELECT date FROM " + getTableName() + " WHERE tag = \'M\' ORDER BY date DESC LIMIT 1";
 				v = s.executeQuery(sql);
 				v.next();
-				System.out.println(v.getLong(1));
 				long current = v.getLong(1) + Globals.POLLINGINTERVAL;
-				System.out.println(current);
 				long end = System.currentTimeMillis();
 				int[] str = new int[collumnList.length];
 				for(int i =0; i< str.length; ++i){

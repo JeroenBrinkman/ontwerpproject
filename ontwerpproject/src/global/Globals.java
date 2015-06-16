@@ -98,5 +98,5 @@ public class Globals {
 		"ws_curr_fail_q_count_NSEC",
 		"ws_curr_fail_q_count_NSEC3",
 		"ws_curr_fail_q_count_NSEC3PARAM", "ws_writer_threadcount",
-		"ws_writer_total_out_size", "ws_writer_files_written" };
+		"ws_writer_total_out_size", "ws_writer_files_written"};
 }

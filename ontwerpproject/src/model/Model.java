@@ -47,10 +47,9 @@ public class Model {
 	 * @requires c != null
 	 * @ensures components.contains(c) = false;
 	 */
-	public void removeComponent(Component c) throws ClosedException {
-		c.shutDown();
+	public void removeComponent(Component c) {
 		components.remove(c);
-		if(gui!=null){
+		if (gui != null) {
 			gui.updateCompList(components);
 		}
 	}
@@ -84,11 +83,23 @@ public class Model {
 			ResultSet tables = dbm
 					.getTables(null, null, c.getTableName(), null);
 			if (!tables.next()) {
-				
+
 				// no table for this address
 				st = conn.createStatement();
 				String sql = c.createTableSQL();
 				st.executeUpdate(sql);
+			} else {
+				String[] cols = c.getKeys();
+				st = conn.createStatement();
+				for (int x =0; x< cols.length;x++) {
+					String sql = "SHOW COLUMNS FROM `" +c.getTableName()+ "` LIKE \'" +  cols[x] +"\'";
+					ResultSet col = st.executeQuery(sql);
+					if(!col.next()){
+						String end = (x-1)<0?" FIRST":" AFTER "+ Integer.toString(x-1);
+						sql = "ALTER TABLE " + c.getTableName() + " ADD " + cols[x] + " INTEGER" + end;
+						st.executeUpdate(sql);
+					}
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -145,13 +156,12 @@ public class Model {
 					new InetSocketAddress("192.192.192.192", 123),
 					model.createConnection(), model);
 			model.addComponent(w);
-			System.out.println(System.currentTimeMillis()-start);
 			int i = 0;
 			int[] message = new int[w.getKeys().length];
-			for( int j =0; j<message.length; ++j){
-				message[j] =j;
+			for (int j = 0; j < message.length; ++j) {
+				message[j] = j;
 			}
-			while (/* System.currentTimeMillis() - start < (1000 * 60 * 60 * 5) */i<5) {
+			while (/* System.currentTimeMillis() - start < (1000 * 60 * 60 * 5) */i < 5) {
 
 				if (i % 500 == 0) {
 					int mb = 1024;
