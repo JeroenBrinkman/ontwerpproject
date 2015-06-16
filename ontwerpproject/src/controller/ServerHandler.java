@@ -4,6 +4,7 @@ import global.Globals;
 
 import java.net.InetSocketAddress;
 
+import de.timroes.axmlrpc.XMLRPCException;
 import model.Component;
 import model.Database;
 import model.Manager;
@@ -45,8 +46,22 @@ public class ServerHandler {
 				default:
 					return false;
 			};			
-			model.addComponent(comp);
-			Retriever ret = new Retriever(comp);
+			try {
+				model.addComponent(comp);
+			} catch (Exception e1) {
+				System.out.println("Failed to added to model, canceling...");
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				return false;
+			}
+			Retriever ret;
+			try {
+				ret = new Retriever(comp);
+			} catch (XMLRPCException e) {
+				model.removeComponent(comp);
+				e.printStackTrace();
+				return false;
+			}	
 			
 			scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);	
 			System.out.println("Component " + comp.getTableName() + " added");

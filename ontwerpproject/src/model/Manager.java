@@ -27,7 +27,7 @@ public class Manager extends Component {
 		intel = new ManagerIntelligence(this, mod, con);
 		//TODO temp currentlyplaceholder
 		String[] temp = {"cms_version", "cms_start_time", "cms_now_time", "cms_tot_domains", "cms_doms_last_day", "cms_doms_today", "cms_worker_count"};
-		collumnList = Globals.concat(Globals.ManagerCalls, temp);
+		collumnList = Globals.concat(Globals.MANAGER_CALLS, temp);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class Manager extends Component {
 	
 	@Override
 	public String[] getCalls() {
-		return Globals.ManagerCalls;
+		return Globals.MANAGER_CALLS;
 	}
 
 }

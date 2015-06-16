@@ -14,7 +14,7 @@ import de.timroes.axmlrpc.XMLRPCServerException;
 
 public class Retriever {
 	private XMLRPCClient		client;
-	private int[]			data;
+	private int[]				data;
 	private Component			comp;
 	
 	static int parse(Object object) {
@@ -49,8 +49,9 @@ public class Retriever {
 	 * @require ip is a valid IP address and id is a unique int value
 	 * @ensure The retriever gets assigned an id and IP address. 
 	 * @param ip The IP address this retriever will connect to 
-	 * @param id The ID of this retriever */
-	public Retriever(Component comp){
+	 * @param id The ID of this retriever 
+	 * @throws XMLRPCException */
+	public Retriever(Component comp) throws XMLRPCException{
 		this.comp = comp;
 		this.data = new int[comp.getKeys().length];
 		
@@ -62,6 +63,8 @@ public class Retriever {
 		}
 		
 		client = new XMLRPCClient(xmlrpcUrl);
+		
+		client.call("setPollingTime", Globals.POLLINGINTERVAL);
 	}
 	
 	/**
@@ -103,7 +106,10 @@ public class Retriever {
 		}
 		//System.out.println("retrieving getData");
 		String thedata =(String)client.call("getData"); 
-		//comp.parseInput()
+		String[] parsed = comp.parseInput(thedata);
+		for(int index = 0; index < parsed.length; index++) { 
+			updateData(comp.getCalls().length + index, Integer.parseInt(parsed[index]));
+		}
 		System.out.println(thedata);
 	}
 	
