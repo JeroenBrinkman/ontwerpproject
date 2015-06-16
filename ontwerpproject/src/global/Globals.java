@@ -5,7 +5,7 @@ import java.lang.reflect.Array;
 public class Globals {
 	public static int POLLINGINTERVAL = 1000; // once every minute
 
-	
+	public static Boolean GUI = true;
 	/**
 	 * Array indices to send from retriever to the update method.
 	 * The retriever receives data from a component in text format.
@@ -99,4 +99,7 @@ public class Globals {
 		"ws_curr_fail_q_count_NSEC3",
 		"ws_curr_fail_q_count_NSEC3PARAM", "ws_writer_threadcount",
 		"ws_writer_total_out_size", "ws_writer_files_written"};
+
+
+	public static final int GUI_UPDATE = 5000;
 }

@@ -22,7 +22,7 @@ public class ScrollList extends JScrollPane{
 	 * @param title
 	 *            The title this component should have.
 	 */
-	public ScrollList() {
+	public ScrollList(Boolean console) {
 		super(new JTextArea(), VERTICAL_SCROLLBAR_ALWAYS,
 				HORIZONTAL_SCROLLBAR_NEVER);
 		this.textArea = (JTextArea) getViewport().getComponent(0);
@@ -32,6 +32,7 @@ public class ScrollList extends JScrollPane{
 		textArea.setWrapStyleWord(true);
 		setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(), "Components"));
+		
 	}
 
 	/**
