@@ -28,7 +28,7 @@ public class Worker extends Component {
 		intel = new WorkerIntelligence(this, mod, con);
 
 		// TODO temp currently placeholder
-		collumnList = Globals.concat(Globals.WorkerCalls, Globals.WORKER_COLS);
+		collumnList = Globals.concat(Globals.WORKER_CALLS, Globals.WORKER_COLS);
 
 		String sql = "INSERT INTO " + getTableName() + " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
@@ -45,22 +45,17 @@ public class Worker extends Component {
 	@Override
 	public String[] parseInput(String message) {
 		String[] parts;
+		String[] lines = message.split("\n");
 		List<String> result = new ArrayList<String>();
 		String currentLine;
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(message));
-			while ((currentLine = br.readLine()) != null) {
-				if (!currentLine.contains("last")) {
-					parts = currentLine.split(":");
-					currentLine = parts[1];
-					currentLine = currentLine.replace(" ", "");
-					result.add(currentLine);
-				}
+		for(int i = 0; i < lines.length; i++){
+			currentLine = lines[i];
+			if(!currentLine.contains("last")){
+				parts = currentLine.split(":");
+				currentLine = parts[1];
+				currentLine = currentLine.replace(" ", "");
+				result.add(currentLine);
 			}
-			br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			// TODO: weet niet of hier nog een email error zou moeten ofzo?
 		}
 		return (String[]) result.toArray();
 	}
@@ -72,6 +67,6 @@ public class Worker extends Component {
 	
 	@Override
 	public String[] getCalls() {
-		return Globals.WorkerCalls;
+		return Globals.WORKER_CALLS;
 	}
 }

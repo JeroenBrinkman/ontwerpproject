@@ -1,5 +1,7 @@
 package model;
 
+import global.Globals;
+
 import java.net.InetSocketAddress;
 import java.sql.Connection;
 
@@ -22,13 +24,18 @@ public class Database extends Component {
 	}
 
 	@Override
-	protected String[] parseInput(String message) {
+	public String[] parseInput(String message) {
 		return null;
 	}
 
 	@Override
 	public String getTableName() {
 		return "d" + super.getTableName();
+	}
+
+	@Override
+	public String[] getCalls() {
+		return Globals.DATABASE_CALLS;
 	}
 
 }

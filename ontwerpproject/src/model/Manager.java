@@ -27,30 +27,27 @@ public class Manager extends Component {
 		intel = new ManagerIntelligence(this, mod, con);
 		//TODO temp currentlyplaceholder
 		String[] temp = {"cms_version", "cms_start_time", "cms_now_time", "cms_tot_domains", "cms_doms_last_day", "cms_doms_today", "cms_worker_count"};
-		collumnList = Globals.concat(Globals.ManagerCalls, temp);
+		collumnList = Globals.concat(Globals.MANAGER_CALLS, temp);
 	}
 
 	@Override
 	public String[] parseInput(String message) {
 		String[] parts;
-		List<String> result = new ArrayList<String>();
+		String[] lines = message.split("\n");
+		String[] result = new String[collumnList.length];
 		String currentLine;
-		try{
-			BufferedReader br = new BufferedReader(new FileReader(message));
-			while((currentLine = br.readLine()) != null){
-				if(!currentLine.contains("w[")){
-					parts = currentLine.split(":");
-					currentLine = parts[1];
-					currentLine = currentLine.replace(" ", "");
-					result.add(currentLine);
-				}
-			}
-			br.close();
-		}catch (IOException e){
-			e.printStackTrace();
-			//TODO: weet niet of hier nog een email error zou moeten ofzo?
+		for(int i = 0; i < collumnList.length; i++){
+			currentLine = lines[i];
+			//regels met w[X] erin komen als het goed is alleen voor na alle relevante informatie.
+			//if(!currentLine.contains("[w")){
+			parts = currentLine.split(":");
+			currentLine = parts[1];
+			currentLine = currentLine.replace(" ", "");
+			//niet toepasbaar als w[X] voorkomt voor relevante informatie
+			result[i] = currentLine;
+			//}
 		}
-		return (String[]) result.toArray();
+		return result;
 	}
 
 	@Override
@@ -60,7 +57,7 @@ public class Manager extends Component {
 	
 	@Override
 	public String[] getCalls() {
-		return Globals.ManagerCalls;
+		return Globals.MANAGER_CALLS;
 	}
 
 }
