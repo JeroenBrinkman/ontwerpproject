@@ -41,7 +41,7 @@ public class Worker extends Component {
 	}
 
 	@Override
-	protected String[] parseInput(String message) {
+	public String[] parseInput(String message) {
 		String[] parts;
 		List<String> result = new ArrayList<String>();
 		String currentLine;
@@ -66,5 +66,10 @@ public class Worker extends Component {
 	@Override
 	public String getTableName() {
 		return "w" + super.getTableName();
+	}
+	
+	@Override
+	public String[] getCalls() {
+		return Globals.WorkerCalls;
 	}
 }

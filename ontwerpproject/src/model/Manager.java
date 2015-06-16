@@ -1,6 +1,8 @@
 package model;
 
 
+import global.Globals;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,7 +31,7 @@ public class Manager extends Component {
 	}
 
 	@Override
-	protected String[] parseInput(String message) {
+	public String[] parseInput(String message) {
 		String[] parts;
 		List<String> result = new ArrayList<String>();
 		String currentLine;
@@ -54,6 +56,11 @@ public class Manager extends Component {
 	@Override
 	public String getTableName() {
 		return "m" + super.getTableName();
+	}
+	
+	@Override
+	public String[] getCalls() {
+		return Globals.ManagerCalls;
 	}
 
 }
