@@ -62,7 +62,6 @@ public class Retriever {
 		}
 		
 		client = new XMLRPCClient(xmlrpcUrl);
-		//client.setTimeout(1000);
 	}
 	
 	/**

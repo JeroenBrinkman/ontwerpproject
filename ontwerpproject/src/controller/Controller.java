@@ -17,7 +17,7 @@ import global.Globals;
 
 public class Controller {
 	
-	public static void main(String[] args) {
+	public static void connectDatabase() {
 		ServerHandler.model = new Model();
 		Connection conn = null;
 		while((conn = ServerHandler.model.createConnection()) == null) {
@@ -33,7 +33,7 @@ public class Controller {
 			}
 			
 			if(input.equals("exit")) {
-				System.out.println("Lololol doesn't work!");
+				return;
 			}
 		}
 		try {
@@ -42,10 +42,13 @@ public class Controller {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		System.out.println("Model connection created");
-		
-		ServerHandler.scheduler = new Scheduler();		
-		
+	}
+	
+	public static void createScheduler() {
+		ServerHandler.scheduler = new Scheduler();	
+	}
+	
+	public static void createServers() {
 		WebServer webServer = new WebServer(Globals.XMLRPC_PORT);
 		XmlRpcServer server = webServer.getXmlRpcServer();
 		
@@ -72,18 +75,25 @@ public class Controller {
 		config.setEnabledForExceptions(true);
 		config.setContentLengthOptional(false);
 		
-		System.out.println("Starting webServer");
-		System.out.println(server.toString());
+		if(Globals.DEBUGOUTPUT)
+			System.out.println("Starting webServer...");
 		
 		try {
 			webServer.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.out.println("Couldn't start the webserver!");
 			e.printStackTrace();
 			return;
-		}
-		
-		System.out.println("Webserver succesfull started!");
-		
+		}		
+	}
+	
+	public static void main(String[] args) {
+		connectDatabase();
+		System.out.println("Database connection succesfull");		
+		createScheduler();
+		System.out.println("Scheduler created");
+		createServers();
+		System.out.println("Server created and online");
 	}
 }

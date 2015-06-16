@@ -21,7 +21,8 @@ public class ServerHandler {
 	}
 	
 	public boolean add(int type, String ip, int port) {
-		System.out.println("add called");
+		if(Globals.DEBUGOUTPUT)
+			System.out.println("add called");
 		
 		if(Globals.DEBUGOUTPUT && (scheduler == null || model == null)) {
 			System.out.println("Scheduler or model is null, please initiate!");
@@ -47,7 +48,7 @@ public class ServerHandler {
 			model.addComponent(comp);
 			Retriever ret = new Retriever(comp);
 			
-			scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);			
+			scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);	
 			System.out.println("Component " + comp.getTableName() + " added");
 			
 			return true;
@@ -59,12 +60,14 @@ public class ServerHandler {
 	}
 	
 	public boolean remove(String hostname, int port) {
-		System.out.println("Remove called!");
+		if(Globals.DEBUGOUTPUT)
+			System.out.println("Remove called!");
 		
 		Retriever ret = scheduler.getRetriever(hostname, port);
 		synchronized (scheduler) {	
 			if(ret == null) {
-				System.out.println("Retriever not found (hostname, port): (" + hostname + ", " + port + ")");
+				if(Globals.DEBUGOUTPUT)
+					System.out.println("Retriever not found (hostname, port): (" + hostname + ", " + port + ")");
 				return false;			
 			}
 			scheduler.removeRetriever(ret);

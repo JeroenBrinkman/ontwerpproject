@@ -36,7 +36,7 @@ public class Scheduler {
 			queueMap.get(period).addAll(retrieverMap.get(period));
 			ConcurrentLinkedQueue<Retriever> queue 	= queueMap.get(period);
 			ConcurrentLinkedQueue<Retriever> failed	= new ConcurrentLinkedQueue<Retriever>();
-			ExecutorService threadPool				= Executors.newFixedThreadPool(16);
+			ExecutorService threadPool				= Executors.newFixedThreadPool(Globals.SchedulerThreads);
 			Stack<Future<?>> results				= new Stack<Future<?>>();
 			
 			for (Retriever r; (r = queue.poll()) != null;){
@@ -44,7 +44,7 @@ public class Scheduler {
 			}
 			
 			try {
-				if(!threadPool.awaitTermination(period, TimeUnit.MILLISECONDS)) {
+				if(!threadPool.awaitTermination(Globals.SchedulerTimerThreads, TimeUnit.MILLISECONDS)) {
 					System.out.println("Threads has been interupptedksdlk, please call an adult");
 				}
 			} catch (InterruptedException e1) {
@@ -69,6 +69,7 @@ public class Scheduler {
 			for(Retriever ret : failed) {
 				if(retrieverMap.get(period).contains(ret)) {
 					try {
+						System.out.println("Connection with " + ret.getComponent().getTableName() + " failed");
 						ret.getComponent().getIntelligence().connectionError();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -88,7 +89,7 @@ public class Scheduler {
 		retrieverMap = new HashMap<Long, List<Retriever>>();
 		queueMap = new HashMap<Long, ConcurrentLinkedQueue<Retriever>>();
 		taskMap = new HashMap<Long, SchedulerTimer>();
-		timer = new ScheduledThreadPoolExecutor(4); //Executors.newScheduledThreadPool(4);
+		timer = new ScheduledThreadPoolExecutor(Globals.SchedulerThreads);
 	}
 	
 	public void addRetriever(long milliseconds, Retriever r) {
@@ -144,7 +145,9 @@ public class Scheduler {
 	
 	private void checkAndDestroy(long milliseconds) {		
 		if(retrieverMap.get(milliseconds).isEmpty()) {
-			System.out.println("Retriever map is empty, destroying the thread");
+			if(Globals.DEBUGOUTPUT)
+				System.out.println("Retriever map is empty, destroying the thread");
+			
 			retrieverMap.remove(milliseconds);
 			queueMap.remove(milliseconds);
 			
@@ -160,7 +163,8 @@ public class Scheduler {
 			queueMap.put(milliseconds, new ConcurrentLinkedQueue<Retriever>());
 			taskMap.put(milliseconds, new SchedulerTimer(milliseconds));
 			
-			System.out.println("Schedule added at " + milliseconds + " milliseconds");
+			if(Globals.DEBUGOUTPUT)
+				System.out.println("Schedule added at " + milliseconds + " milliseconds");
 			timer.scheduleAtFixedRate(taskMap.get(milliseconds), milliseconds, milliseconds, TimeUnit.MILLISECONDS);			
 		}
 	}	

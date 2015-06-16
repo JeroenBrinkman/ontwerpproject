@@ -36,6 +36,9 @@ public class Globals {
 	
 	
 	/* LUUKS SHIT */
+	public static final int SchedulerTimeout = 1000;
+	public static final int SchedulerTimerThreads = 16;
+	public static final int SchedulerThreads = 4;
 	public static final int XMLRPC_PORT = 8000;
 	public static final boolean DEBUGOUTPUT = true;
 

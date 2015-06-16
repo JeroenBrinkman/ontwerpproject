@@ -25,25 +25,26 @@ public class RetrieverThread implements Runnable {
 		try {
 				ret.retrieveAllData();
 		} catch (XMLRPCException e) {
-			System.out.println(e.getMessage());
-			if(e.getMessage().equals("java.net.ConnectException: Connection timed out: connect")) {
-				System.out.println("Connection time out: Check IP and if the host is up");
+			if(Globals.DEBUGOUTPUT) {
+				if(e.getMessage().equals("java.net.ConnectException: Connection timed out: connect")) {
+					System.out.println("Connection time out: Check IP and if the host is up");
+				}
+				else if(e.getMessage().equals("java.net.SocketException: Connection reset")) {
+					System.out.println("Connection reset, Check if the server is up");
+				}
+				else if(e.getMessage().equals("java.net.ConnectException: Connection refused: connect")) {
+					System.out.println("Connect Exception, Check if the server is up and if the file is correct: " + ret.getClient().getURL().getFile());
+				}
+				else if(e.getMessage().contains("java.io.FileNotFoundException:")) {
+					System.out.println("File not found exception, check if the file is correct: " + ret.getClient().getURL().getFile());
+				}
+				else if(e.getMessage().contains("<class 'subprocess.CalledProcessError'>")) {
+					System.out.println("I don't even know");
+				}
+				else {
+					e.printStackTrace();
+				}		
 			}
-			else if(e.getMessage().equals("java.net.SocketException: Connection reset")) {
-				System.out.println("Connection reset, Check if the server is up");
-			}
-			else if(e.getMessage().equals("java.net.ConnectException: Connection refused: connect")) {
-				System.out.println("Connect Exception, Check if the server is up and if the file is correct: " + ret.getClient().getURL().getFile());
-			}
-			else if(e.getMessage().contains("java.io.FileNotFoundException:")) {
-				System.out.println("File not found exception, check if the file is correct: " + ret.getClient().getURL().getFile());
-			}
-			else if(e.getMessage().contains("<class 'subprocess.CalledProcessError'>")) {
-				System.out.println("I don't even know");
-			}
-			else {
-				e.printStackTrace();
-			}					
 			
 			failed = true;
 			failedList.add(ret);
@@ -63,7 +64,8 @@ public class RetrieverThread implements Runnable {
 			if(Globals.DEBUGOUTPUT) System.out.println("Pushed data from \"" + ret.getComponent().getTableName() + "\"");
 		}
 		
-		System.out.println("Completed run");
+		if(Globals.DEBUGOUTPUT)
+			System.out.println("Completed run");
 	}
 
 }
