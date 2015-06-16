@@ -92,17 +92,18 @@ public class Retriever {
 	}
 	
 	public void retrieveAllData() throws XMLRPCException{
-		String[] keys = comp.getKeys();
-		for(int index = 0; index < keys.length; index++) {
+		String[] calls = comp.getCalls();
+		for(int index = 0; index < calls.length; index++) {
 			try {
-				updateData(index, retrieveData(keys[index]));
+				updateData(index, retrieveData(calls[index]));
 			} catch (XMLRPCServerException e) {
 				if(Globals.DEBUGOUTPUT)
 					System.err.println(e.toString());
 			}
 		}
 		//System.out.println("retrieving getData");
-		String thedata = (String)client.call("getData");
+		String thedata =(String)client.call("getData"); 
+		//comp.parseInput()
 		System.out.println(thedata);
 	}
 	

@@ -70,7 +70,7 @@ public abstract class Component {
 			check = conn.prepareStatement(sql);
 
 			sql = "SELECT * FROM " + getTableName()
-					+ " WHERE tag = ? ORDER BY date DESC LIMIT ?";
+					+ " WHERE tag = ? ORDER BY date ASC LIMIT ?";
 			getlimit = conn.prepareStatement(sql);
 
 			sql = "DELETE FROM " + getTableName()
@@ -149,12 +149,10 @@ public abstract class Component {
 			v.next();
 			if(v.getInt(1)>0){
 				v.close();
-				s.close();
 				// enter new entries until now
 				// first get the startpoint
-				getlimit.setString(1, "M");
-				getlimit.setInt(2, 1);
-				v = getlimit.executeQuery();
+				sql = "SELECT date FROM " + getTableName() + " WHERE tag = \'M\' ORDER BY date DESC LIMIT 1";
+				v = s.executeQuery(sql);
 				v.next();
 				System.out.println(v.getLong(1));
 				long current = v.getLong(1) + Globals.POLLINGINTERVAL;
@@ -166,13 +164,13 @@ public abstract class Component {
 				}
 				//insert every polling interval a 0 entry
 				while(current < end){
-					System.out.println("sadfassssss");
 					update(current, str);
 					current += Globals.POLLINGINTERVAL;
 				}
 				//conn.commit();
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 			intel.databaseError(e);
 		}
 	}
@@ -203,6 +201,11 @@ public abstract class Component {
 	public String[] getKeys() {
 		return this.collumnList;
 	}
+	
+	/**
+	 * Getter for calls
+	 */
+	public abstract String[] getCalls();
 
 	/**
 	 * Abstract method, generates the sql for creating a new table for this
@@ -228,7 +231,6 @@ public abstract class Component {
 	 * @ensures data is correctly inserted
 	 */
 	public void update(Long date, int[] message) throws ClosedException{
-		//TODO reenable check critical when everything works
 		intel.checkCritical(message);
 		try {
 			// tags are Minutes -> Hours -> Days
@@ -351,5 +353,5 @@ public abstract class Component {
 	 * @require message != null
 	 * @ensure \result != null && result.length == collumnList.length
 	 */
-	protected abstract String[] parseInput(String message);
+	public abstract String[] parseInput(String message);
 }

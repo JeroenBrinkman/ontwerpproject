@@ -1,5 +1,7 @@
 package global;
 
+import java.lang.reflect.Array;
+
 public class Globals {
 	public static int POLLINGINTERVAL = 1000; // once every minute
 
@@ -41,6 +43,10 @@ public class Globals {
 	public static final int SchedulerThreads = 4;
 	public static final int XMLRPC_PORT = 8000;
 	public static final boolean DEBUGOUTPUT = true;
+	
+	public static final String[] WorkerCalls 	= {"time", "hdd", "mem", "cpu"};
+	public static final String[] ManagerCalls 	= {"time", "hdd", "mem", "cpu"};
+	public static final String[] DatabaseCalls 	= {"time", "hdd", "mem", "cpu"};
 
 
 	public static long LAST_UPDATE = 0;
@@ -51,5 +57,46 @@ public class Globals {
 		LAST_UPDATE = System.currentTimeMillis();
 		AMOUNT_UPDATES++;
 	}
+	
+	public static <T> T[] concat (T[] a, T[] b) {
+	    int aLen = a.length;
+	    int bLen = b.length;
 
+	    @SuppressWarnings("unchecked")
+	    T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen+bLen);
+	    System.arraycopy(a, 0, c, 0, aLen);
+	    System.arraycopy(b, 0, c, aLen, bLen);
+
+	    return c;
+	}
+
+	public static final String[] WORKER_COLS= { "ws_version", "ws_connstate", "ws_worker_start_ts",
+		"ws_chunk_start_ts", "ws_worker_now_ts",
+		"ws_measure_queue_len", "ws_result_queue_len",
+		"ws_total_scanned", "ws_worker_state", "ws_total_q_count",
+		"ws_current_q_count", "ws_curr_succ_q_count_SOA",
+		"ws_curr_succ_q_count_A",
+		"ws_curr_succ_q_count_AAAA",
+		"ws_curr_succ_q_count_NS",
+		"ws_curr_succ_q_count_MX",
+		"ws_curr_succ_q_count_TXT",
+		"ws_curr_succ_q_count_SPF",
+		"ws_curr_succ_q_count_DS",
+		"ws_curr_succ_q_count_DNSKEY",
+		"ws_curr_succ_q_count_NSEC",
+		"ws_curr_succ_q_count_NSEC3",
+		"ws_curr_succ_q_count_NSEC3PARAM",
+		"ws_curr_fail_q_count_SOA",
+		"ws_curr_fail_q_count_A",
+		"ws_curr_fail_q_count_AAAA",
+		"ws_curr_fail_q_count_NS",
+		"ws_curr_fail_q_count_MX",
+		"ws_curr_fail_q_count_TXT",
+		"ws_curr_fail_q_count_SPF",
+		"ws_curr_fail_q_count_DS",
+		"ws_curr_fail_q_count_DNSKEY",
+		"ws_curr_fail_q_count_NSEC",
+		"ws_curr_fail_q_count_NSEC3",
+		"ws_curr_fail_q_count_NSEC3PARAM", "ws_writer_threadcount",
+		"ws_writer_total_out_size", "ws_writer_files_written" };
 }

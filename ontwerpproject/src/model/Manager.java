@@ -1,6 +1,8 @@
 package model;
 
 
+import global.Globals;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,11 +27,11 @@ public class Manager extends Component {
 		intel = new ManagerIntelligence(this, mod, con);
 		//TODO temp currentlyplaceholder
 		String[] temp = {"cms_version", "cms_start_time", "cms_now_time", "cms_tot_domains", "cms_doms_last_day", "cms_doms_today", "cms_worker_count"};
-		collumnList = temp;
+		collumnList = Globals.concat(Globals.ManagerCalls, temp);
 	}
 
 	@Override
-	protected String[] parseInput(String message) {
+	public String[] parseInput(String message) {
 		String[] parts;
 		String[] lines = message.split("\n");
 		String[] result = new String[collumnList.length];
@@ -51,6 +53,11 @@ public class Manager extends Component {
 	@Override
 	public String getTableName() {
 		return "m" + super.getTableName();
+	}
+	
+	@Override
+	public String[] getCalls() {
+		return Globals.ManagerCalls;
 	}
 
 }

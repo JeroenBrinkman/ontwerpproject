@@ -147,8 +147,11 @@ public class Model {
 			model.addComponent(w);
 			System.out.println(System.currentTimeMillis()-start);
 			int i = 0;
-			int[] message = { 15, 8, 2, 1 };
-			while (/* System.currentTimeMillis() - start < (1000 * 60 * 60 * 5) */true) {
+			int[] message = new int[w.getKeys().length];
+			for( int j =0; j<message.length; ++j){
+				message[j] =j;
+			}
+			while (/* System.currentTimeMillis() - start < (1000 * 60 * 60 * 5) */i<5) {
 
 				if (i % 500 == 0) {
 					int mb = 1024;
