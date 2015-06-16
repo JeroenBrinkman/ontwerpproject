@@ -27,7 +27,7 @@ public class Worker extends Component {
 		super(addr, con);
 		intel = new WorkerIntelligence(this, mod, con);
 		// TODO temp currently placeholder
-		collumnList = Globals.WORKER_COLS;
+		collumnList = Globals.concat(Globals.WorkerCalls, Globals.WORKER_COLS);
 
 		String sql = "INSERT INTO " + getTableName() + " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {

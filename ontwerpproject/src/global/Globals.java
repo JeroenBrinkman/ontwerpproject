@@ -58,7 +58,7 @@ public class Globals {
 		AMOUNT_UPDATES++;
 	}
 	
-	public <T> T[] concat (T[] a, T[] b) {
+	public static <T> T[] concat (T[] a, T[] b) {
 	    int aLen = a.length;
 	    int bLen = b.length;
 
