@@ -6,6 +6,7 @@ import global.Globals;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 import javax.mail.*;
@@ -27,7 +28,6 @@ public abstract class Intelligence {
 	protected Connection con;
 	protected Component comp;
 	protected Model mod;
-	protected int[] CRITS = { 80, 90, 99 };// TODO init crits in subclasses
 	protected int[] LIMITS; /*
 							 * list of counters, keeps track of when we send a
 							 * mail
@@ -52,8 +52,8 @@ public abstract class Intelligence {
 	 * @requires subject != null
 	 */
 	public void errorMail(String message, String subject) {
-		// TODO make this global
-		String to = "test@test.test";// needs to be valid though
+		// TODO reset password
+		/*String to = "test@test.test";// needs to be valid though
 		String from = "monitoringontwerpproject@gmail.com";
 		final String username = "monitoringontwerpproject@gmail.com";
 		final String password = "T3st1234";
@@ -82,11 +82,17 @@ public abstract class Intelligence {
 			Transport.send(email);
 		} catch (MessagingException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
-	public void errorPopup() {
-		// TODO wegschrijven in textfile of in de webserver database
+	public void errorPopup(String at, String message) {
+		try {
+			Statement st = con.createStatement();
+			String sql = "INSERT INTO notifications VALUES( "+ comp.getTableName() + ", " + at + ", " + message +")";
+			st.executeUpdate(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
 	}
 

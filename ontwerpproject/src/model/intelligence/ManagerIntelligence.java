@@ -37,7 +37,8 @@ public class ManagerIntelligence extends Intelligence {
 					}
 				}
 			} catch (SQLException e) {
-				databaseError(e);
+				//databaseError(e);
+				//TODO hoort kapot
 			}
 
 		}

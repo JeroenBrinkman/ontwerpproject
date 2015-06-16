@@ -36,7 +36,7 @@ public class DatabaseIntelligence extends Intelligence {
 					}
 				}
 			} catch (SQLException e) {
-				databaseError(e);
+				//databaseError(e);
 			}
 
 

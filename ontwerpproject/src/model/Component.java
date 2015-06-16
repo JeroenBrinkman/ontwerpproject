@@ -70,14 +70,14 @@ public abstract class Component {
 			check = conn.prepareStatement(sql);
 
 			sql = "SELECT * FROM " + getTableName()
-					+ " WHERE tag = ? ORDER BY date ASC LIMIT ?";
+					+ " WHERE tag = ? ORDER BY date DESC LIMIT ?";
 			getlimit = conn.prepareStatement(sql);
 
 			sql = "DELETE FROM " + getTableName()
 					+ " WHERE tag =  ?  AND date = ?";
 			delete = conn.prepareStatement(sql);
 		} catch (SQLException e) {
-			//intel.databaseError(e);
+			intel.databaseError(e);
 		}
 	}
 
@@ -96,11 +96,11 @@ public abstract class Component {
 			getlimit.close();
 			conn.close();
 		} catch (SQLException e) {
-			/*try {
-				//intel.databaseError(e);
+			try {
+				intel.databaseError(e);
 			} catch (ClosedException e1) {
 				// hoeft niks
-			}*/
+			}
 		}
 	}
 
@@ -129,7 +129,7 @@ public abstract class Component {
 			update(System.currentTimeMillis(), x);
 			conn.commit();
 		} catch (SQLException e) {
-			//intel.databaseError(e);
+			intel.databaseError(e);
 		}
 
 		closeConnection();
@@ -156,7 +156,9 @@ public abstract class Component {
 				getlimit.setInt(2, 1);
 				v = getlimit.executeQuery();
 				v.next();
+				System.out.println(v.getLong(1));
 				long current = v.getLong(1) + Globals.POLLINGINTERVAL;
+				System.out.println(current);
 				long end = System.currentTimeMillis();
 				int[] str = new int[collumnList.length];
 				for(int i =0; i< str.length; ++i){
@@ -164,13 +166,14 @@ public abstract class Component {
 				}
 				//insert every polling interval a 0 entry
 				while(current < end){
+					System.out.println("sadfassssss");
 					update(current, str);
 					current += Globals.POLLINGINTERVAL;
 				}
-				conn.commit();
+				//conn.commit();
 			}
 		} catch (SQLException e) {
-			//intel.databaseError(e);
+			intel.databaseError(e);
 		}
 	}
 
@@ -226,7 +229,7 @@ public abstract class Component {
 	 */
 	public void update(Long date, int[] message) throws ClosedException{
 		//TODO reenable check critical when everything works
-		//intel.checkCritical(message);
+		intel.checkCritical(message);
 		try {
 			// tags are Minutes -> Hours -> Days
 			// aka M->H->D
@@ -253,7 +256,8 @@ public abstract class Component {
 			insert.executeUpdate();
 			conn.commit();
 		} catch (SQLException e) {
-			//intel.databaseError(e);
+			e.printStackTrace();
+			intel.databaseError(e);
 		}
 	}
 

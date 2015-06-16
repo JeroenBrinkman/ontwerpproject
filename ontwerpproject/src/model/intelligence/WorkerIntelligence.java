@@ -37,7 +37,7 @@ public class WorkerIntelligence extends Intelligence {
 					}
 				}
 			} catch (SQLException e) {
-				databaseError(e);
+				//databaseError(e);
 			}
 
 
