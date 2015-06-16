@@ -102,7 +102,8 @@ public class Retriever {
 			}
 		}
 		//System.out.println("retrieving getData");
-		String thedata = (String)client.call("getData");
+		String thedata =(String)client.call("getData"); 
+		//comp.parseInput()
 		System.out.println(thedata);
 	}
 	

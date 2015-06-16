@@ -1,5 +1,7 @@
 package global;
 
+import java.lang.reflect.Array;
+
 public class Globals {
 	public static int POLLINGINTERVAL = 1000; // once every minute
 
@@ -41,6 +43,10 @@ public class Globals {
 	public static final int SchedulerThreads = 4;
 	public static final int XMLRPC_PORT = 8000;
 	public static final boolean DEBUGOUTPUT = true;
+	
+	public static final String[] WorkerCalls 	= {"time", "hdd", "mem", "cpu"};
+	public static final String[] ManagerCalls 	= {"time", "hdd", "mem", "cpu"};
+	public static final String[] DatabaseCalls 	= {"time", "hdd", "mem", "cpu"};
 
 
 	public static long LAST_UPDATE = 0;
@@ -50,6 +56,18 @@ public class Globals {
 	public static void newUpdate(){
 		LAST_UPDATE = System.currentTimeMillis();
 		AMOUNT_UPDATES++;
+	}
+	
+	public <T> T[] concat (T[] a, T[] b) {
+	    int aLen = a.length;
+	    int bLen = b.length;
+
+	    @SuppressWarnings("unchecked")
+	    T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen+bLen);
+	    System.arraycopy(a, 0, c, 0, aLen);
+	    System.arraycopy(b, 0, c, aLen, bLen);
+
+	    return c;
 	}
 
 }

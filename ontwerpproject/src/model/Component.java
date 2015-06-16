@@ -203,6 +203,11 @@ public abstract class Component {
 	public String[] getKeys() {
 		return this.collumnList;
 	}
+	
+	/**
+	 * Getter for calls
+	 */
+	public abstract String[] getCalls();
 
 	/**
 	 * Abstract method, generates the sql for creating a new table for this
@@ -351,5 +356,5 @@ public abstract class Component {
 	 * @require message != null
 	 * @ensure \result != null && result.length == collumnList.length
 	 */
-	protected abstract String[] parseInput(String message);
+	public abstract String[] parseInput(String message);
 }
