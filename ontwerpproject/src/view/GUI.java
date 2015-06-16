@@ -7,7 +7,11 @@ import javax.swing.*;
 
 import model.Component;
 import model.Model;
+import model.Worker;
+import model.intelligence.Intelligence.ClosedException;
+
 import java.awt.GridLayout;
+import java.net.InetSocketAddress;
 
 
 public class GUI {
@@ -18,6 +22,19 @@ public class GUI {
 	private JLabel amountupdates;
 	private Updater update;
 
+	public static void main(String[] args) {
+		Model mod = new Model();
+		try {
+			mod.addComponent(new Worker(
+						new InetSocketAddress("192.192.192.192", 123),
+						mod.createConnection(), mod));
+		} catch (ClosedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		new GUI(mod);
+
+	}
 	public GUI(Model mod) {
 		this.mod = mod;
 		JFrame guiFrame = new JFrame();

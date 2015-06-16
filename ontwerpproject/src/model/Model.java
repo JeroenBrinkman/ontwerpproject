@@ -3,6 +3,7 @@ package model;
 import java.net.InetSocketAddress;
 import java.sql.*;
 import java.util.ArrayList;
+
 import model.intelligence.Intelligence.ClosedException;
 import global.Globals;
 
@@ -32,6 +33,23 @@ public class Model {
 	 */
 	public Model() {
 		components = new ArrayList<Component>();
+		Connection conn = createConnection();
+		DatabaseMetaData dbm;
+
+		try {
+			Statement st= conn.createStatement();
+			dbm = conn.getMetaData();
+			ResultSet tables = dbm.getTables(null, null, "notifications", null);
+			if (!tables.next()) {
+				st.executeUpdate("CREATE TABLE notifications (component VARCHAR(240),  attribute VARCHAR(240), message VARCHAR(240))");
+			}
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+
 	}
 
 	/**
@@ -84,12 +102,15 @@ public class Model {
 			} else {
 				String[] cols = c.getKeys();
 				st = conn.createStatement();
-				for (int x =0; x< cols.length;x++) {
-					String sql = "SHOW COLUMNS FROM `" +c.getTableName()+ "` LIKE \'" +  cols[x] +"\'";
+				for (int x = 0; x < cols.length; x++) {
+					String sql = "SHOW COLUMNS FROM `" + c.getTableName()
+							+ "` LIKE \'" + cols[x] + "\'";
 					ResultSet col = st.executeQuery(sql);
-					if(!col.next()){
-						String end = (x-1)<0?" FIRST":" AFTER "+ Integer.toString(x-1);
-						sql = "ALTER TABLE " + c.getTableName() + " ADD " + cols[x] + " INTEGER" + end;
+					if (!col.next()) {
+						String end = (x - 1) < 0 ? " FIRST" : " AFTER "
+								+ Integer.toString(x - 1);
+						sql = "ALTER TABLE " + c.getTableName() + " ADD "
+								+ cols[x] + " INTEGER" + end;
 						st.executeUpdate(sql);
 					}
 				}

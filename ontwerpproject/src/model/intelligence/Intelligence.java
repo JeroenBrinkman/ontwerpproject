@@ -5,6 +5,8 @@ import model.Model;
 import global.Globals;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
@@ -24,7 +26,7 @@ public abstract class Intelligence {
 		  public ClosedException(String message, Throwable cause) { super(message, cause); }
 		  public ClosedException(Throwable cause) { super(cause); }
 		}
-	
+	protected PreparedStatement st;
 	protected Connection con;
 	protected Component comp;
 	protected Model mod;
@@ -85,7 +87,7 @@ public abstract class Intelligence {
 		}*/
 	}
 
-	public void errorPopup(String at, String message) {
+	public void errorNotification(String at, String message) {
 		try {
 			Statement st = con.createStatement();
 			String sql = "INSERT INTO notifications VALUES( "+ comp.getTableName() + ", " + at + ", " + message +")";
@@ -137,6 +139,26 @@ public abstract class Intelligence {
 	 * @requires newin != null
 	 * @ensures correct errormessages are send
 	 */
-	public abstract void checkCritical(int[] newin) throws ClosedException;
+	public void checkCritical(int[] newin) throws ClosedException {
+		String[] cols = comp.getKeys();
+		for (int i = 0; i < newin.length; ++i) {
+			ResultSet r;
+			try {
+				st.setString(1, cols[i]);
+				r = st.executeQuery();
+				if (r.next()) {
+					if (newin[i] > r.getInt(1)) {
+						String message = cols[i] + " exceeded the critical value in " + comp.getTableName();
+						errorMail(message, "critical value");
+						errorNotification(cols[i], message);
+					}
+				}
+			} catch (SQLException e) {
+				//databaseError(e);
+				//TODO hoort kapot
+			}
+
+		}
+	}
 
 }
