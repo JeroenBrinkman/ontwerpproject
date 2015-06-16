@@ -46,22 +46,17 @@ public class Worker extends Component {
 	@Override
 	protected String[] parseInput(String message) {
 		String[] parts;
+		String[] lines = message.split("\n");
 		List<String> result = new ArrayList<String>();
 		String currentLine;
-		try{
-			BufferedReader br = new BufferedReader(new FileReader(message));
-			while((currentLine = br.readLine()) != null){
-				if(!currentLine.contains("last")){
-					parts = currentLine.split(":");
-					currentLine = parts[1];
-					currentLine = currentLine.replace(" ", "");
-					result.add(currentLine);
-				}
+		for(int i = 0; i < lines.length; i++){
+			currentLine = lines[i];
+			if(!currentLine.contains("last")){
+				parts = currentLine.split(":");
+				currentLine = parts[1];
+				currentLine = currentLine.replace(" ", "");
+				result.add(currentLine);
 			}
-			br.close();
-		}catch (IOException e){
-			e.printStackTrace();
-			//TODO: weet niet of hier nog een email error zou moeten ofzo?
 		}
 		return (String[]) result.toArray();
 	}
