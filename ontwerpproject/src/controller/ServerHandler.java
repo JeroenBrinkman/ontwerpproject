@@ -30,6 +30,13 @@ public class ServerHandler {
 		}
 
 		InetSocketAddress adr = new InetSocketAddress(ip, port);
+		//adr.getHostName();
+		
+		if(scheduler.getRetriever(ip, port) != null) {
+			System.out.println("Add called for one that already exists!, hostname: " + ip + ", port: " + port);
+			return false;
+		}
+		
 		Component comp = null;
 		try {
 			switch (type) {

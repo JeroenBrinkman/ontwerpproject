@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import de.timroes.axmlrpc.XMLRPCException;
+import de.timroes.axmlrpc.XMLRPCTimeoutException;
 
 public class RetrieverThread implements Runnable {
 	private Retriever ret;
@@ -24,7 +25,13 @@ public class RetrieverThread implements Runnable {
 		if(Globals.DEBUGOUTPUT) System.out.println("Retrieving data from " + ret.getComponent().getTableName() + "...");
 		try {
 				ret.retrieveAllData();
-		} catch (XMLRPCException e) {
+		}catch (XMLRPCTimeoutException e) {
+			if(Thread.interrupted()) {		
+				if(Globals.DEBUGOUTPUT)
+					System.out.println("Dubbel Timeout!: Returning");
+				return;
+			}
+		}catch (XMLRPCException e) {
 			if(Globals.DEBUGOUTPUT) {
 				if(e.getMessage().equals("java.net.ConnectException: Connection timed out: connect")) {
 					System.out.println("Connection time out: Check IP and if the host is up");

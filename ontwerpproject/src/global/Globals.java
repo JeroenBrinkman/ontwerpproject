@@ -3,7 +3,7 @@ package global;
 import java.lang.reflect.Array;
 
 public class Globals {
-	public static int POLLINGINTERVAL = 1000; // once every minute
+	public static int POLLINGINTERVAL = 5000; // once every minute
 
 	public static Boolean GUI = true;
 	/**
@@ -38,7 +38,7 @@ public class Globals {
 	
 	
 	/* LUUKS SHIT */
-	public static final int SchedulerTimeout = 1000;
+	public static final int SchedulerTimerTimeout = 5000;
 	public static final int SchedulerTimerThreads = 16;
 	public static final int SchedulerThreads = 4;
 	public static final int XMLRPC_PORT = 8000;
@@ -47,6 +47,8 @@ public class Globals {
 	public static final String[] WORKER_CALLS 	= {"time", "hdd", "mem", "cpu"};
 	public static final String[] MANAGER_CALLS 	= {"time", "hdd", "mem", "cpu"};
 	public static final String[] DATABASE_CALLS = {"time", "hdd", "mem", "cpu"};
+	
+	public static final String SET_POLLING_TIME = "setPollingTime";
 
 
 	public static long LAST_UPDATE = 0;

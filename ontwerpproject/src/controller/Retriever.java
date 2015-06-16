@@ -2,8 +2,10 @@ package controller;
 
 import global.Globals;
 
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Date;
 
 import model.Component;
@@ -11,6 +13,7 @@ import model.intelligence.Intelligence.ClosedException;
 import de.timroes.axmlrpc.XMLRPCClient;
 import de.timroes.axmlrpc.XMLRPCException;
 import de.timroes.axmlrpc.XMLRPCServerException;
+import de.timroes.axmlrpc.XMLRPCTimeoutException;
 
 public class Retriever {
 	private XMLRPCClient		client;
@@ -63,8 +66,12 @@ public class Retriever {
 		}
 		
 		client = new XMLRPCClient(xmlrpcUrl);
+		client.setTimeout(Globals.SchedulerTimerTimeout/1000);
 		
-		client.call("setPollingTime", Globals.POLLINGINTERVAL);
+		System.out.println("Calling set polling time to: " + Globals.POLLINGINTERVAL);
+		if((Boolean)(client.call(Globals.SET_POLLING_TIME, Globals.POLLINGINTERVAL)) != true) {
+			System.out.println("Set Polling Time failed!");
+		}
 	}
 	
 	/**
@@ -96,21 +103,34 @@ public class Retriever {
 	
 	public void retrieveAllData() throws XMLRPCException{
 		String[] calls = comp.getCalls();
+		Integer counter = 0;
 		for(int index = 0; index < calls.length; index++) {
-			try {
-				updateData(index, retrieveData(calls[index]));
-			} catch (XMLRPCServerException e) {
-				if(Globals.DEBUGOUTPUT)
-					System.err.println(e.toString());
+			if(Globals.DEBUGOUTPUT) {
+				System.out.println("Calling " + calls[index] + " for "+ comp.getTableName());
 			}
+			RetrieverListeners.Calls listener = new RetrieverListeners.Calls(this, index, counter);
+			client.callAsync(listener, calls[index]);
+			//updateData(index, retrieveData(calls[index]));
 		}
-		//System.out.println("retrieving getData");
-		String thedata =(String)client.call("getData"); 
-		String[] parsed = comp.parseInput(thedata);
+		System.out.println("retrieving getData");
+		client.callAsync(new RetrieverListeners.Data(this, counter), "getData");
+		
+		
+		//String thedata =(String)client.call("getData"); 
+		/*String[] parsed = comp.parseInput(thedata);
 		for(int index = 0; index < parsed.length; index++) { 
 			updateData(comp.getCalls().length + index, Integer.parseInt(parsed[index]));
+		}*/
+		//System.out.println(thedata);
+		
+		while(counter < calls.length+1) {
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		System.out.println(thedata);
 	}
 	
 	/**
