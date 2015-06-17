@@ -147,7 +147,7 @@ public abstract class Intelligence {
 				st.setString(1, cols[i]);
 				r = st.executeQuery();
 				if (r.next()) {
-					if (newin[i] > r.getInt(1)) {
+					if (newin[i] > r.getLong(1)) {
 						String message = cols[i] + " exceeded the critical value in " + comp.getTableName();
 						errorMail(message, "critical value");
 						errorNotification(cols[i], message);

@@ -61,7 +61,6 @@ public class ServerHandler {
 		try {
 			model.addComponent(comp);
 		} catch (ClosedException e1) {
-			e1.printStackTrace();
 			return false;
 		}
 		
@@ -76,7 +75,7 @@ public class ServerHandler {
 		scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);
 		System.out.println("Component " + comp.getTableName() + " added");
 
-		return true;
+		return true; 
 	}
 
 	public boolean remove(String hostname, int port) {
