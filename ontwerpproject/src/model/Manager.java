@@ -26,10 +26,11 @@ public class Manager extends Component {
 	}
 
 	@Override
-	public String[] parseInput(String message) {
+	public long[] parseInput(String message) {
 		String[] parts;
 		String[] lines = message.split("\n");
-		String[] result = new String[collumnList.length];
+		long[] result = new long[lines.length];
+		//String[] result = new String[collumnList.length];
 		String currentLine;
 		for(int i = 0; i < collumnList.length; i++){
 			currentLine = lines[i];
@@ -37,9 +38,9 @@ public class Manager extends Component {
 			//if(!currentLine.contains("[w")){
 			parts = currentLine.split(":");
 			currentLine = parts[1];
-			currentLine = currentLine.replace(" ", "");
+			currentLine = currentLine.replaceAll("\\s+", "");
 			//niet toepasbaar als w[X] voorkomt voor relevante informatie
-			result[i] = currentLine;
+			result[i] = Long.parseLong(currentLine);
 			//}
 		}
 		return result;

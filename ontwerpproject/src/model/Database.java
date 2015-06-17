@@ -24,7 +24,7 @@ public class Database extends Component {
 	}
 
 	@Override
-	public String[] parseInput(String message) {
+	public long[] parseInput(String message) {
 		return null;
 	}
 

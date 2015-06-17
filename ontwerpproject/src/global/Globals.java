@@ -3,7 +3,7 @@ package global;
 import java.lang.reflect.Array;
 
 public class Globals {
-	public static int POLLINGINTERVAL = 5000; // once every minute
+	public static int POLLINGINTERVAL = 10000; // once every minute
 
 	public static Boolean GUI = true;
 	/**

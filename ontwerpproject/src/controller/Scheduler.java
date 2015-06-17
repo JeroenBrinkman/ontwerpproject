@@ -33,14 +33,13 @@ public class Scheduler {
 			ConcurrentLinkedQueue<Retriever> queue 	= queueMap.get(period);
 			ConcurrentLinkedQueue<Retriever> failed	= new ConcurrentLinkedQueue<Retriever>();
 			ExecutorService threadPool				= Executors.newFixedThreadPool(Globals.SchedulerTimerThreads);
-			Stack<Future<?>> results				= new Stack<Future<?>>();
 			
 			for (Retriever r; (r = queue.poll()) != null;){
-				results.add(threadPool.submit(new RetrieverThread(r, failed)));			
+				threadPool.submit(new RetrieverThread(r, failed));		
 			}
 			
 			try {
-				if(!threadPool.awaitTermination(Globals.SchedulerTimerTimeout, TimeUnit.MILLISECONDS)) {
+				if(!threadPool.awaitTermination(Globals.POLLINGINTERVAL, TimeUnit.MILLISECONDS)) {
 					System.out.println("Threads has been interupptedksdlk, please call an adult");
 				}
 				List<Runnable> list = threadPool.shutdownNow();
@@ -51,28 +50,6 @@ public class Scheduler {
 				System.out.println("Interrupted Exeception of threadPool in SchedulerTimer: ");
 				e1.printStackTrace();
 			}
-			
-			/*while(!results.isEmpty()) {
-				System.out.println("Popping");
-				Future<?> ftr = results.pop();
-				System.out.println("Popping2");
-				try {
-					if(!ftr.isDone()) {
-						System.out.println("Cancel ftr");
-						ftr.cancel(true);
-					}
-					System.out.println("ftr.get");
-					if(ftr.get() != null) {
-						System.out.println("This future failed: " + ftr.toString());
-					}
-					System.out.println("After if");
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					System.out.println("Timeout Failed ofzo");
-				}
-			}*/
 			
 			System.out.println("For loop thingie");
 			for(Retriever ret : failed) {

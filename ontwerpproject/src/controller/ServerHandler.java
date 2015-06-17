@@ -4,6 +4,7 @@ import global.Globals;
 
 import java.net.InetSocketAddress;
 
+import de.timroes.axmlrpc.XMLRPCException;
 import model.Component;
 import model.Database;
 import model.Manager;
@@ -29,8 +30,7 @@ public class ServerHandler {
 			return false;
 		}
 
-		InetSocketAddress adr = new InetSocketAddress(ip, port);
-		//adr.getHostName();
+		InetSocketAddress adr= new InetSocketAddress(ip, port);
 		
 		if(scheduler.getRetriever(ip, port) != null) {
 			System.out.println("Add called for one that already exists!, hostname: " + ip + ", port: " + port);
@@ -54,7 +54,13 @@ public class ServerHandler {
 			}
 			;
 			model.addComponent(comp);
-			Retriever ret = new Retriever(comp);
+			Retriever ret;
+			try {
+				ret = new Retriever(comp);
+			} catch (XMLRPCException e) {
+				model.removeComponent(comp);
+				return false;
+			}
 
 			scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);
 			System.out.println("Component " + comp.getTableName() + " added");

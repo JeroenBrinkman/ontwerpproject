@@ -17,7 +17,7 @@ import de.timroes.axmlrpc.XMLRPCTimeoutException;
 
 public class Retriever {
 	private XMLRPCClient		client;
-	private int[]				data;
+	private long[]				data;
 	private Component			comp;
 	
 	static int parse(Object object) {
@@ -56,7 +56,7 @@ public class Retriever {
 	 * @throws XMLRPCException */
 	public Retriever(Component comp) throws XMLRPCException{
 		this.comp = comp;
-		this.data = new int[comp.getKeys().length];
+		this.data = new long[comp.getKeys().length];
 		
 		URL xmlrpcUrl = null;
 		try {
@@ -67,11 +67,6 @@ public class Retriever {
 		
 		client = new XMLRPCClient(xmlrpcUrl);
 		client.setTimeout(Globals.SchedulerTimerTimeout/1000);
-		
-		System.out.println("Calling set polling time to: " + Globals.POLLINGINTERVAL);
-		if((Boolean)(client.call(Globals.SET_POLLING_TIME, Globals.POLLINGINTERVAL)) != true) {
-			System.out.println("Set Polling Time failed!");
-		}
 	}
 	
 	/**
@@ -79,17 +74,17 @@ public class Retriever {
 	 * @require key >=0 && key <= 4
 	 * @ensure data[] contains new data
 	 * @param key The key value of the array, in other words, the index of the array
-	 * @param value The value related to a particular index
+	 * @param parsed The value related to a particular index
 	 */
-	public void updateData(int index, int value){
-		data[index] = value;
+	public void updateData(int index, long parsed){
+		data[index] = parsed;
 	}
 	
 	/**
 	 * Method to return the data[] variable
 	 * @return data
 	 */
-	public int[] getData(){
+	public long[] getData(){
 		return data;
 	}
 	
@@ -108,29 +103,32 @@ public class Retriever {
 			if(Globals.DEBUGOUTPUT) {
 				System.out.println("Calling " + calls[index] + " for "+ comp.getTableName());
 			}
-			RetrieverListeners.Calls listener = new RetrieverListeners.Calls(this, index, counter);
-			client.callAsync(listener, calls[index]);
-			//updateData(index, retrieveData(calls[index]));
+			//RetrieverListeners.Calls listener = new RetrieverListeners.Calls(this, index, counter, waitObject);
+			//client.callAsync(listener, calls[index]);
+			updateData(index, retrieveData(calls[index]));
 		}
 		System.out.println("retrieving getData");
-		client.callAsync(new RetrieverListeners.Data(this, counter), "getData");
+		//client.callAsync(new RetrieverListeners.Data(this, counter), "getData");
 		
 		
-		//String thedata =(String)client.call("getData"); 
-		/*String[] parsed = comp.parseInput(thedata);
+		String thedata =(String)client.call("getData"); 
+		long[] parsed = this.comp.parseInput(thedata);
 		for(int index = 0; index < parsed.length; index++) { 
-			updateData(comp.getCalls().length + index, Integer.parseInt(parsed[index]));
-		}*/
+			this.updateData(comp.getCalls().length + index, parsed[index]);
+			//updateData(comp.getCalls().length + index, Integer.parseInt(parsed[index]));
+		}
 		//System.out.println(thedata);
 		
-		while(counter < calls.length+1) {
+		/*while(counter < calls.length+1) {
 			try {
-				this.wait();
+				synchronized(counter) {
+					counter.wait();
+				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		}*/
 	}
 	
 	/**

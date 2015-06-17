@@ -113,6 +113,9 @@ public abstract class Component {
 	 */
 	protected void startUp() throws ClosedException{
 		//check if there are old entries in the database
+		if(Globals.DEBUGOUTPUT)
+			System.out.println("Wachten op jeroen!");
+		
 		String sql = "SELECT COUNT(*) FROM " + getTableName();
 		try {
 			Statement s = conn.createStatement();
@@ -142,6 +145,9 @@ public abstract class Component {
 			e.printStackTrace();
 			intel.databaseError(e);
 		}
+		
+		if(Globals.DEBUGOUTPUT)
+			System.out.println("Jeroen klaar gekomen!");
 	}
 
 	/**
@@ -322,5 +328,5 @@ public abstract class Component {
 	 * @require message != null
 	 * @ensure \result != null && result.length == collumnList.length
 	 */
-	public abstract String[] parseInput(String message);
+	public abstract long[] parseInput(String message);
 }

@@ -21,20 +21,20 @@ public class RetrieverListeners {
 			synchronized(counter) {
 				counter++;
 			}
-			ret.notify();
+			counter.notify();
 		}
 		
 		@Override
 		public void onResponse(long id, Object result) {
 			Component comp = ret.getComponent();
-			String[] parsed = comp.parseInput((String)result);
+			long[] parsed = comp.parseInput((String)result);
 			for(int index = 0; index < parsed.length; index++) { 
-				ret.updateData(comp.getCalls().length + index, Integer.parseInt(parsed[index]));
+				ret.updateData(comp.getCalls().length + index, parsed[index]);
 			}
 			synchronized(counter) {
 				counter++;
 			}	
-			ret.notify();
+			counter.notify();
 		}
 		
 		@Override
@@ -42,7 +42,7 @@ public class RetrieverListeners {
 			synchronized(counter) {
 				counter++;
 			}	
-			ret.notify();
+			counter.notify();
 		}		
 	}
 	
@@ -62,7 +62,7 @@ public class RetrieverListeners {
 			synchronized(counter) {
 				counter++;
 			}	
-			ret.notify();
+			counter.notify();
 		}
 		
 		@Override
@@ -71,7 +71,7 @@ public class RetrieverListeners {
 			synchronized(counter) {
 				counter++;
 			}		
-			ret.notify();
+			counter.notify();
 		}
 		
 		@Override
@@ -79,7 +79,7 @@ public class RetrieverListeners {
 			synchronized(counter) {
 				counter++;
 			}	
-			ret.notify();
+			counter.notify();
 		}
 	}
 
