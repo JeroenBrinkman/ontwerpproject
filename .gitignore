@@ -8,3 +8,4 @@ ontwerpproject/.classpath
 #ignore the .gitignore from eclipse
 *.class
 *.gitignore
+the-file-name.txt

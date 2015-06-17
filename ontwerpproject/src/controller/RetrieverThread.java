@@ -25,6 +25,7 @@ public class RetrieverThread implements Runnable {
 		if(Globals.DEBUGOUTPUT) System.out.println("Retrieving data from " + ret.getComponent().getTableName() + "...");
 		try {
 				ret.retrieveAllData();
+				System.out.println("Retrieving done!!");
 		}catch (XMLRPCTimeoutException e) {
 			if(Thread.interrupted()) {		
 				if(Globals.DEBUGOUTPUT)
