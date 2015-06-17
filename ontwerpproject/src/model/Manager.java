@@ -1,8 +1,10 @@
 package model;
 
 import global.Globals;
+
 import java.net.InetSocketAddress;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import model.intelligence.Intelligence.ClosedException;
 import model.intelligence.ManagerIntelligence;
@@ -15,12 +17,31 @@ import model.intelligence.ManagerIntelligence;
  */
 public class Manager extends Component {
 
+	/**
+	 * Constructor
+	 * @requires addr != null
+	 * @requires con != null
+	 * @requires mod != null
+	 * @throws ClosedException if the database fails during the construction
+	 */
 	public Manager(InetSocketAddress addr, Connection con, Model mod)
 			throws ClosedException {
 		super(addr, con);
 		intel = new ManagerIntelligence(this, mod, con);
 		collumnList = Globals.concat(Globals.MANAGER_CALLS,
 				Globals.MANAGER_COLS);
+		
+		String sql = "INSERT INTO " + getTableName() + " VALUES( ?,  ?";
+		for (int i = 0; i < collumnList.length; ++i) {
+			sql += ",  ?";
+		}
+		sql += ")";
+		try {
+			insert = conn.prepareStatement(sql);
+		} catch (SQLException e) {
+			intel.databaseError(e);
+		}
+		Globals.log("Constructor for " + getTableName() + " completed");
 	}
 
 	@Override

@@ -43,8 +43,8 @@ public abstract class Component {
 	 * @invariant model != null
 	 */
 	protected Connection conn;
-	
-	//prepared sql statements never null
+
+	// prepared sql statements never null
 	protected PreparedStatement check;
 	protected PreparedStatement delete;
 	protected PreparedStatement insert;
@@ -52,11 +52,24 @@ public abstract class Component {
 
 	/**
 	 * The intelligence of this component, should never be null
+	 * 
 	 * @invariant != null
 	 */
 	protected Intelligence intel;
 
-	public Component(InetSocketAddress addr, Connection con) throws ClosedException{
+	/**
+	 * Constructor for the component, initializes all but one of the prepared
+	 * statements, the insert statement should be implemented in the subclass,
+	 * because this is different for every component
+	 * 
+	 * @requires addr != null && is valid
+	 * @requires con != null
+	 * @throws ClosedException
+	 *             when the database connection fails, this will automaticly
+	 *             remove the component from the model
+	 */
+	public Component(InetSocketAddress addr, Connection con)
+			throws ClosedException {
 		adr = addr;
 		this.adr.getHostName();
 		conn = con;
@@ -84,10 +97,9 @@ public abstract class Component {
 	}
 
 	/**
-	 * Closes an active connection, if the database is not running this will
-	 * generate SQL errors. will also close all statements
+	 * Closes an active connection, will also close all statements.
 	 * 
-	 * @requires Database is running && Connection != null
+	 * 
 	 * @ensures Connection is closed
 	 */
 	protected void closeConnection() {
@@ -106,49 +118,52 @@ public abstract class Component {
 		}
 	}
 
-
-	
 	/**
-	 * Add 0 entries from the last entry in the database until now, to mark the period the component was offline
+	 * Add 0 entries from the last entry in the database until now, to mark the
+	 * period the component was offline. Execution of this method might take a
+	 * while depending on how long the component was offline, it is recommended
+	 * to execute this in a different thread
+	 * 
 	 * @requires Database running
 	 * @ensures Database back up to date and ready for use
 	 */
-	protected void startUp() throws ClosedException{
-		//check if there are old entries in the database
-		if(Globals.DEBUGOUTPUT)
+	protected void startUp() throws ClosedException {
+		// check if there are old entries in the database
+		if (Globals.DEBUGOUTPUT)
 			System.out.println("Wachten op jeroen!");
-		
+
 		String sql = "SELECT COUNT(*) FROM " + getTableName();
 		try {
 			Statement s = conn.createStatement();
 			ResultSet v = s.executeQuery(sql);
 			v.next();
-			if(v.getInt(1)>0){
+			if (v.getInt(1) > 0) {
 				v.close();
 				// enter new entries until now
 				// first get the startpoint
-				sql = "SELECT date FROM " + getTableName() + " WHERE tag = \'M\' ORDER BY date DESC LIMIT 1";
+				sql = "SELECT date FROM " + getTableName()
+						+ " WHERE tag = \'M\' ORDER BY date DESC LIMIT 1";
 				v = s.executeQuery(sql);
 				v.next();
 				long current = v.getLong(1) + Globals.POLLINGINTERVAL;
 				long end = System.currentTimeMillis();
 				long[] str = new long[collumnList.length];
-				for(int i =0; i< str.length; ++i){
+				for (int i = 0; i < str.length; ++i) {
 					str[i] = 0;
 				}
-				//insert every polling interval a 0 entry
-				while(current < end){
+				// insert every polling interval a 0 entry
+				while (current < end) {
 					update(current, str);
 					current += Globals.POLLINGINTERVAL;
 				}
-				//conn.commit();
+				// conn.commit();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			intel.databaseError(e);
 		}
-		
-		if(Globals.DEBUGOUTPUT)
+
+		if (Globals.DEBUGOUTPUT)
 			System.out.println("Jeroen klaar gekomen!");
 	}
 
@@ -161,11 +176,23 @@ public abstract class Component {
 	public InetSocketAddress getAddress() {
 		return adr;
 	}
-	
+
+	/**
+	 * Getter for the intelligence
+	 * 
+	 * @ensure \result = intel
+	 * @pure
+	 */
 	public Intelligence getIntelligence() {
 		return intel;
 	}
 
+	/**
+	 * Getter for the tablename, the table name is derived from the ip
+	 * 
+	 * @ensure \result = tablename
+	 * @pure
+	 */
 	public String getTableName() {
 		String result = adr.toString();
 		result = result.replaceAll(":|/|\\.", "_");
@@ -173,14 +200,20 @@ public abstract class Component {
 	}
 
 	/**
-	 * getter for columnlist
+	 * Getter for the names of the collums that are in the table of this
+	 * component
+	 * 
+	 * @ensure \result = collumList
+	 * @pure
 	 */
 	public String[] getKeys() {
 		return this.collumnList;
 	}
-	
+
 	/**
 	 * Getter for calls
+	 * 
+	 * @pure
 	 */
 	public abstract String[] getCalls();
 
@@ -202,12 +235,12 @@ public abstract class Component {
 	}
 
 	/**
-	 * Updates the database with a new entry, parsed from the String[]
+	 * Updates the database with a new entry, parsed from the long[]
 	 * 
-	 * @requires message != null && message.length == collumnList.length +1
-	 * @ensures data is correctly inserted
+	 * @requires message != null && message.length == collumnList.length
+	 * @ensures data is correctly inserted and aggregation is applied
 	 */
-	public void update(Long date, long[] message) throws ClosedException{
+	public void update(Long date, long[] message) throws ClosedException {
 		intel.checkCritical(message);
 		try {
 			// tags are Minutes -> Hours -> Days
@@ -234,6 +267,7 @@ public abstract class Component {
 			}
 			insert.executeUpdate();
 			conn.commit();
+			Globals.newUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			intel.databaseError(e);
@@ -294,41 +328,28 @@ public abstract class Component {
 		insert.executeUpdate();
 		conn.commit();
 	}
+
 	/*
-	// help function for update currently unused, but might be useful to keep
-	private void compressSEntries() throws SQLException {
-		int a = (60 * 1000) / Globals.POLLINGINTERVAL;
-		int[] b = new int[collumnList.length];
-		delete.setString(1, "S");
-		getlimit.setString(1, "S");
-		getlimit.setInt(2, a);
-		ResultSet r = getlimit.executeQuery();
-		long newdate = 0;
-		while (r.next()) {
-			for (int i = 0; i < b.length; ++i) {
-				// start at 3,because date and tag do not have to be
-				// averaged and are not relevant
-				b[i] += r.getInt(i + 3);
-			}
-			delete.setString(2, r.getString(1));
-			delete.executeUpdate();
-			newdate = Long.parseLong(r.getString(1)) - 3000;
-		}
-		insert.setString(1, Long.toString(newdate));
-		insert.setString(2, "M");
-		for (int i = 0; i < b.length; ++i) {
-			insert.setString(i + 3, Long.toString(b[i] / a));
-		}
-		insert.executeUpdate();
-		conn.commit();
-	}*/
+	 * // help function for update currently unused, but might be useful to keep
+	 * private void compressSEntries() throws SQLException { int a = (60 * 1000)
+	 * / Globals.POLLINGINTERVAL; int[] b = new int[collumnList.length];
+	 * delete.setString(1, "S"); getlimit.setString(1, "S"); getlimit.setInt(2,
+	 * a); ResultSet r = getlimit.executeQuery(); long newdate = 0; while
+	 * (r.next()) { for (int i = 0; i < b.length; ++i) { // start at 3,because
+	 * date and tag do not have to be // averaged and are not relevant b[i] +=
+	 * r.getInt(i + 3); } delete.setString(2, r.getString(1));
+	 * delete.executeUpdate(); newdate = Long.parseLong(r.getString(1)) - 3000;
+	 * } insert.setString(1, Long.toString(newdate)); insert.setString(2, "M");
+	 * for (int i = 0; i < b.length; ++i) { insert.setString(i + 3,
+	 * Long.toString(b[i] / a)); } insert.executeUpdate(); conn.commit(); }
+	 */
 
 	/**
 	 * Parses the input from the actual component into something that can be
 	 * entered into the database
 	 * 
 	 * @require message != null
-	 * @ensure \result != null && result.length == collumnList.length
+	 * @ensure \result != null
 	 */
 	public abstract long[] parseInput(String message);
 }

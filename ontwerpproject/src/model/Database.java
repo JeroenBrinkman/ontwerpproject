@@ -10,7 +10,7 @@ import model.intelligence.Intelligence.ClosedException;
 
 /**
  * Represents a database in the query system
- * 
+ * empty class for now
  * @author Jeroen
  *
  */
@@ -21,6 +21,7 @@ public class Database extends Component {
 		intel = new DatabaseIntelligence(this, mod, con);
 		String[] temp = {"cpu", "hdd", "mem"};
 		collumnList = temp;
+		Globals.log("Constructor for " + getTableName() + " completed");
 	}
 
 	@Override

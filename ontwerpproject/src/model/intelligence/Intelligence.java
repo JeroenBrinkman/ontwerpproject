@@ -55,7 +55,7 @@ public abstract class Intelligence {
 	 */
 	public static void errorMail(String message, String subject) {
 		// TODO reset password
-		/*String to = "test@test.test";// needs to be valid though
+		String to = "test@test.test";// needs to be valid though
 		String from = "monitoringontwerpproject@gmail.com";
 		final String username = "monitoringontwerpproject@gmail.com";
 		final String password = "T3st1234";
@@ -81,10 +81,10 @@ public abstract class Intelligence {
 			email.setSubject("Testing Subject");
 			email.setText("Hello, this is sample for to check send "
 					+ "email using JavaMailAPI ");
-			Transport.send(email);
+			//Transport.send(email); TODO uncomment when it works
 		} catch (MessagingException e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 
 	public void errorNotification(String at, String message) {
@@ -121,6 +121,7 @@ public abstract class Intelligence {
 							+ e.getMessage(), "Database error");
 		}
 		mod.removeComponent(comp);
+		Globals.log("databaseconnection failed, ClosedException thrown");
 		throw new ClosedException("alles kapot");
 	}
 
@@ -128,6 +129,7 @@ public abstract class Intelligence {
 		errorMail("Component " + comp.getTableName()
 				+ " disconnected from the system.", "Component disconnected");
 		mod.removeComponent(comp);
+
 		throw new ClosedException("alles kapot");
 	}
 
@@ -151,11 +153,12 @@ public abstract class Intelligence {
 						String message = cols[i] + " exceeded the critical value in " + comp.getTableName();
 						errorMail(message, "critical value");
 						errorNotification(cols[i], message);
+						Globals.log("error state found in " + comp.getTableName());
 					}
 				}
 			} catch (SQLException e) {
-				//databaseError(e);
-				//TODO hoort kapot
+				Globals.log("Failed to find critical value table");
+				errorMail("Failed to find the critical value table, will not be able to send alerts \n" + e.getMessage(), "unable to detect allerts");
 			}
 
 		}
