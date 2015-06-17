@@ -1,9 +1,7 @@
 package global;
-
-
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 
 public class Globals {
@@ -13,12 +11,13 @@ public class Globals {
 			System.out.println(System.currentTimeMillis() + " : " + message);
 		}
 		else {
-			PrintWriter writer;
 			try {
-				writer = new PrintWriter("the-file-name.txt", "UTF-8");
-				writer.println(System.currentTimeMillis() + " : " + message);
-				writer.close();
-			} catch (FileNotFoundException | UnsupportedEncodingException e) {
+				PrintWriter output = new PrintWriter(new FileWriter(
+						"log/log.txt", true));
+				output.println(message);
+				output.flush();
+				output.close();
+			} catch (IOException e) {
 				e.printStackTrace();
 				//shouldnt happen
 			}
@@ -94,7 +93,7 @@ public class Globals {
 			"ws_curr_fail_q_count_SPF", "ws_curr_fail_q_count_DS",
 			"ws_curr_fail_q_count_DNSKEY", "ws_curr_fail_q_count_NSEC",
 			"ws_curr_fail_q_count_NSEC3", "ws_curr_fail_q_count_NSEC3PARAM",
-			"ws_writer_threadcount", "ws_writer_total_out_size", 
+			"ws_writer_threadcount", "ws_writer_total_out_size",
 			"ws_writer_files_written" };
 
 	public static final int GUI_UPDATE = 5000;
