@@ -114,21 +114,11 @@ public class Retriever {
 		String thedata =(String)client.call("getData"); 
 		long[] parsed = this.comp.parseInput(thedata);
 		for(int index = 0; index < parsed.length; index++) { 
+			System.out.println("Loop " + index + " of " + (parsed.length-1));
 			this.updateData(comp.getCalls().length + index, parsed[index]);
 			//updateData(comp.getCalls().length + index, Integer.parseInt(parsed[index]));
 		}
-		//System.out.println(thedata);
-		
-		/*while(counter < calls.length+1) {
-			try {
-				synchronized(counter) {
-					counter.wait();
-				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}*/
+		System.out.println("Retriever retrieveAllData DONE");
 	}
 	
 	/**

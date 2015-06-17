@@ -52,24 +52,30 @@ public class ServerHandler {
 			default:
 				return false;
 			}
-			;
+		} catch (ClosedException e2) {
+			e2.printStackTrace();
+			return false;
+		}
+			
+		try {
 			model.addComponent(comp);
-			Retriever ret;
-			try {
-				ret = new Retriever(comp);
-			} catch (XMLRPCException e) {
-				model.removeComponent(comp);
-				return false;
-			}
+		} catch (ClosedException e1) {
+			e1.printStackTrace();
+			return false;
+		}
+		
+		Retriever ret;
+		try {
+			ret = new Retriever(comp);
+		} catch (XMLRPCException e) {
+			model.removeComponent(comp);
+			return false;
+		}
 
-			scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);
-			System.out.println("Component " + comp.getTableName() + " added");
+		scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);
+		System.out.println("Component " + comp.getTableName() + " added");
 
-			return true;
-		} catch (ClosedException e) {
-			e.printStackTrace();
-		} 
-		return false;
+		return true; 
 	}
 
 	public boolean remove(String hostname, int port) {

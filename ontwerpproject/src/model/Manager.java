@@ -48,10 +48,10 @@ public class Manager extends Component {
 	public long[] parseInput(String message) {
 		String[] parts;
 		String[] lines = message.split("\n");
-		long[] result = new long[lines.length];
+		long[] result = new long[Globals.MANAGER_COLS.length];
 		//String[] result = new String[collumnList.length];
 		String currentLine;
-		for (int i = 0; i < collumnList.length; i++) {
+		for (int i = 0; i < Globals.MANAGER_COLS.length; i++) {
 			currentLine = lines[i];
 			// regels met w[X] erin komen als het goed is alleen voor na alle
 			// relevante informatie.

@@ -47,19 +47,23 @@ public class Worker extends Component {
 	public long[] parseInput(String message) {
 		String[] parts;
 		String[] lines = message.split("\n");
-		long[] result = new long[lines.length]; // List<String> result = new
-												// ArrayList<String>();
+
+		long[] result = new long[Globals.WORKER_COLS.length]; //List<String> result = new ArrayList<String>();
+		int resultIndex = 0;
 		String currentLine;
-		for (int i = 0; i < lines.length; i++) {
+
+		for(int i = 0; i < lines.length; i++){
 			currentLine = lines[i];
 			if (!currentLine.contains("last")) {
 				parts = currentLine.split(":");
 				currentLine = parts[1];
 				currentLine = currentLine.replaceAll("\\s+", "");
-				result[i] = Integer.parseInt(currentLine);
-				// result.add(currentLine);
+
+				result[resultIndex++] = Long.parseLong(currentLine);
+
 			}
 		}
+		
 		return result;
 	}
 
@@ -72,4 +76,5 @@ public class Worker extends Component {
 	public String[] getCalls() {
 		return Globals.WORKER_CALLS;
 	}
+
 }
