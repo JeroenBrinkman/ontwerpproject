@@ -35,6 +35,7 @@ public class Model {
 	 * @requires Database accessible
 	 */
 	public Model() {
+		Globals.log("Model Constructor called");
 		components = new ArrayList<Component>();
 		Connection conn = createConnection();
 		DatabaseMetaData dbm;
@@ -49,8 +50,11 @@ public class Model {
 			st.close();
 			conn.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
-			Intelligence.errorMail("Database failed on constructor, Probably unreachable : " + e.getMessage(), "Database error");
+			Intelligence
+					.errorMail(
+							"Database failed on constructor, this will cause notifications on the site to stop working. "
+									+ e.getMessage(), "Database error");
+			Globals.log("database connection failed on Model constructor");
 		}
 
 	}
@@ -60,11 +64,14 @@ public class Model {
 	 * the component from our databases
 	 * 
 	 * @throws ClosedException
+	 *             To notify the controller/retriever that this component has
+	 *             been removed
 	 * 
 	 * @requires c != null
 	 * @ensures components.contains(c) = false;
 	 */
 	public void removeComponent(Component c) {
+		Globals.log("removing component : " + c.getTableName());
 		components.remove(c);
 	}
 
@@ -79,8 +86,11 @@ public class Model {
 	}
 
 	/**
-	 * Adds a component to the model (list of ative components). If there does
-	 * not exist a database table for this component it will be created as well
+	 * Adds a component to the model (list of active components). If there does
+	 * not exist a database table for this component it will be created. If the
+	 * current table in the database is missing a collumn, this collumn will be
+	 * added, however if the existing database has a collumn to many it will not
+	 * removed, this will generate errors later on when trying to update.
 	 * 
 	 * @throws ClosedException
 	 *             when something goes wrong
@@ -119,7 +129,7 @@ public class Model {
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Intelligence.errorMail("Failed to create table for component, database related " + e.getMessage(), "database error");
 		} finally {
 			try {
 				if (st != null)
@@ -130,12 +140,14 @@ public class Model {
 			}
 		}
 		components.add(c);
+		Globals.log("component " + c.getTableName() + " added");
 		c.startUp();
 	}
 
 	/**
 	 * Creates a connection to the mysql database en returns this connection
-	 * object If the database is not running this will generate a lot of errors
+	 * object. If the database is not running this will generate a error mail
+	 * and crash the program
 	 * 
 	 * @ensures \result != null if data is running
 	 * @requires Database running
