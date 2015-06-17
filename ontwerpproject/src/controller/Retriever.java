@@ -107,18 +107,17 @@ public class Retriever {
 			//client.callAsync(listener, calls[index]);
 			updateData(index, retrieveData(calls[index]));
 		}
-		System.out.println("retrieving getData");
+		if(Globals.DEBUGOUTPUT)
+			System.out.println("Calling getData for "+ comp.getTableName());
 		//client.callAsync(new RetrieverListeners.Data(this, counter), "getData");
 		
 		
 		String thedata =(String)client.call("getData"); 
 		long[] parsed = this.comp.parseInput(thedata);
 		for(int index = 0; index < parsed.length; index++) { 
-			System.out.println("Loop " + index + " of " + (parsed.length-1));
 			this.updateData(comp.getCalls().length + index, parsed[index]);
 			//updateData(comp.getCalls().length + index, Integer.parseInt(parsed[index]));
 		}
-		System.out.println("Retriever retrieveAllData DONE");
 	}
 	
 	/**
