@@ -53,7 +53,7 @@ public abstract class Intelligence {
 	 * @requires message != null
 	 * @requires subject != null
 	 */
-	public void errorMail(String message, String subject) {
+	public static void errorMail(String message, String subject) {
 		// TODO reset password
 		/*String to = "test@test.test";// needs to be valid though
 		String from = "monitoringontwerpproject@gmail.com";
@@ -98,7 +98,7 @@ public abstract class Intelligence {
 
 	}
 
-	public void errorSMS() {
+	public static void errorSMS() {
 		// TODO indien tmobile ofzo heel makkelijk, gewoon email naar
 		// \nummer/@tmobile.com en dit wordt een sms naar het nummer (kosten van
 		// ontvanger)

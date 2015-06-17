@@ -4,6 +4,7 @@ import global.Globals;
 
 import java.net.InetSocketAddress;
 
+import de.timroes.axmlrpc.XMLRPCException;
 import model.Component;
 import model.Database;
 import model.Manager;
@@ -61,6 +62,8 @@ public class ServerHandler {
 
 			return true;
 		} catch (ClosedException e) {
+			e.printStackTrace();
+		} catch (XMLRPCException e) {
 			e.printStackTrace();
 		}
 		return false;

@@ -3,25 +3,9 @@ package global;
 import java.lang.reflect.Array;
 
 public class Globals {
-	public static int POLLINGINTERVAL = 5000; // once every minute
+
 
 	public static Boolean GUI = true;
-	/**
-	 * Array indices to send from retriever to the update method.
-	 * The retriever receives data from a component in text format.
-	 * The retriever parses the text input into an array.
-	 * The indices of each attribute of the component are set.
-	 * I.e. each attribute has a fixed position in the array.
-	 * Note that for different component types, different lengths of arrays are needed.
-	 * This can be traced back through the UPDATE_COMP_TYPE.
-	 */
-	public static final int UPDATE_INDEX_COMP_TYPE = 0;
-	public static final int UPDATE_INDEX_TIME = 1;
-	public static final int UPDATE_INDEX_CPU = 2;
-	public static final int UPDATE_INDEX_MEM = 3;
-	public static final int UPDATE_INDEX_DISK = 4;
-
-	
 	public static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	public static final String DB_URL_DETAIL = "jdbc:mysql://localhost/detail";
 	public static final String DB_URL_RRD = "jdbc:mysql://localhost/detail";
@@ -30,6 +14,7 @@ public class Globals {
 	//amount of records in the database of a certain type
 	public static final int SQLMAXmin = 10080;//minimum = 60
 	public static final int SQLMAXhour = 8544;//minimum = 24
+	public static final int POLLINGINTERVAL = 5000; // once every minute
 
 	
 	//Intelligence shit
@@ -43,23 +28,12 @@ public class Globals {
 	public static final int SchedulerThreads = 4;
 	public static final int XMLRPC_PORT = 8000;
 	public static final boolean DEBUGOUTPUT = true;
-	
 	public static final String[] WORKER_CALLS 	= {"time", "hdd", "mem", "cpu"};
 	public static final String[] MANAGER_CALLS 	= {"time", "hdd", "mem", "cpu"};
 	public static final String[] DATABASE_CALLS = {"time", "hdd", "mem", "cpu"};
 	
 	public static final String SET_POLLING_TIME = "setPollingTime";
 
-
-	public static long LAST_UPDATE = 0;
-	public static long LAST_COMPONENT = 0;
-	public static long AMOUNT_UPDATES = 0;
-	
-	public static void newUpdate(){
-		LAST_UPDATE = System.currentTimeMillis();
-		AMOUNT_UPDATES++;
-	}
-	
 	public static <T> T[] concat (T[] a, T[] b) {
 	    int aLen = a.length;
 	    int bLen = b.length;
@@ -71,6 +45,7 @@ public class Globals {
 
 	    return c;
 	}
+	
 	public static final String[] MANAGER_COLS ={ "cms_version", "cms_start_time", "cms_now_time",
 		"cms_tot_domains", "cms_doms_last_day", "cms_doms_today",
 		"cms_worker_count" };
@@ -107,4 +82,14 @@ public class Globals {
 
 
 	public static final int GUI_UPDATE = 5000;
+	
+	//interface metadata
+	public static long LAST_UPDATE = 0;
+	public static long LAST_COMPONENT = 0;
+	public static long AMOUNT_UPDATES = 0;
+	
+	public static synchronized void newUpdate(){
+		LAST_UPDATE = System.currentTimeMillis();
+		AMOUNT_UPDATES++;
+	}
 }
