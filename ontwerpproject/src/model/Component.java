@@ -43,7 +43,8 @@ public abstract class Component {
 	 * @invariant model != null
 	 */
 	protected Connection conn;
-
+	
+	//prepared sql statements never null
 	protected PreparedStatement check;
 	protected PreparedStatement delete;
 	protected PreparedStatement insert;
@@ -51,6 +52,7 @@ public abstract class Component {
 
 	/**
 	 * The intelligence of this component, should never be null
+	 * @invariant != null
 	 */
 	protected Intelligence intel;
 

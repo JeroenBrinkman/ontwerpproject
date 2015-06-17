@@ -68,9 +68,7 @@ public class ServerHandler {
 			return true;
 		} catch (ClosedException e) {
 			e.printStackTrace();
-		} catch (XMLRPCException e) {
-			e.printStackTrace();
-		}
+		} 
 		return false;
 	}
 
