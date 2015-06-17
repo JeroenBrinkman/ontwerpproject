@@ -1,9 +1,9 @@
 package model;
 
-import java.net.InetSocketAddress;
 import java.sql.*;
 import java.util.ArrayList;
 
+import model.intelligence.Intelligence;
 import model.intelligence.Intelligence.ClosedException;
 import global.Globals;
 
@@ -29,7 +29,10 @@ public class Model {
 	private ArrayList<Component> components;
 
 	/**
-	 * Constructor for a new model. initializes the components list
+	 * Constructor for a new model. initializes the components list and creates
+	 * the notifications table in the database if it does not yet exist.
+	 * 
+	 * @requires Database accessible
 	 */
 	public Model() {
 		components = new ArrayList<Component>();
@@ -37,7 +40,7 @@ public class Model {
 		DatabaseMetaData dbm;
 
 		try {
-			Statement st= conn.createStatement();
+			Statement st = conn.createStatement();
 			dbm = conn.getMetaData();
 			ResultSet tables = dbm.getTables(null, null, "notifications", null);
 			if (!tables.next()) {
@@ -47,8 +50,8 @@ public class Model {
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			Intelligence.errorMail("Database failed on constructor, Probably unreachable : " + e.getMessage(), "Database error");
 		}
-
 
 	}
 
