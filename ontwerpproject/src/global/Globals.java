@@ -71,6 +71,9 @@ public class Globals {
 
 	    return c;
 	}
+	public static final String[] MANAGER_COLS ={ "cms_version", "cms_start_time", "cms_now_time",
+		"cms_tot_domains", "cms_doms_last_day", "cms_doms_today",
+		"cms_worker_count" };
 
 	public static final String[] WORKER_COLS= { "ws_version", "ws_connstate", "ws_worker_start_ts",
 		"ws_chunk_start_ts", "ws_worker_now_ts",
