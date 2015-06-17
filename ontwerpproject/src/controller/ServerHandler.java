@@ -54,13 +54,13 @@ public class ServerHandler {
 			}
 		} catch (ClosedException e2) {
 			e2.printStackTrace();
-			
 			return false;
 		}
 			
 		try {
 			model.addComponent(comp);
 		} catch (ClosedException e1) {
+			e1.printStackTrace();
 			return false;
 		}
 		
