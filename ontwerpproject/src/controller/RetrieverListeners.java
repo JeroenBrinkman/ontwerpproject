@@ -1,6 +1,6 @@
 package controller;
 
-import global.Globals;
+import global.Logger;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,7 +44,7 @@ public class RetrieverListeners {
 				}
 			}
 			
-			if(Globals.DEBUGOUTPUT)
+			if(Logger.PRINT_DEBUG)
 				System.out.println("Received getData");
 			
 			signalRetriever();
@@ -91,7 +91,7 @@ public class RetrieverListeners {
 		public void onResponse(long id, Object result) {
 			ret.updateData(index, Retriever.parse(result));
 			
-			if(Globals.DEBUGOUTPUT)
+			if(Logger.PRINT_DEBUG)
 				System.out.println("Received " + ret.getComponent().getKeys()[index] + ": " + result.toString());
 			
 			signalRetriever();

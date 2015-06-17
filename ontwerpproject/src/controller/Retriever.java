@@ -1,6 +1,7 @@
 package controller;
 
 import global.Globals;
+import global.Logger;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -112,17 +113,17 @@ public class Retriever {
 		String[] calls = comp.getCalls();
 		
 		for(int index = 0; index < calls.length; index++) {
-			if(Globals.DEBUGOUTPUT) {
+			if(Logger.PRINT_DEBUG) {
 				System.out.println("Calling " + calls[index] + " for "+ comp.getTableName());
 			}			
 			try{
 				updateData(index, retrieveData(calls[index]));
 			}
 			catch(XMLRPCTimeoutException e) {
-				Globals.log("Component " + comp.getTableName() + " had a timeout for function: " + calls[index]);
+				Logger.log("Component " + comp.getTableName() + " had a timeout for function: " + calls[index]);
 			}
 		}
-		if(Globals.DEBUGOUTPUT)
+		if(Logger.PRINT_DEBUG)
 			System.out.println("Calling getData for "+ comp.getTableName());
 		
 		String thedata = null;
@@ -130,7 +131,7 @@ public class Retriever {
 			thedata =(String)client.call("getData");
 		}
 		catch(XMLRPCTimeoutException e) {
-			Globals.log("Component " + comp.getTableName() + " had a timeout for function: getDate");
+			Logger.log("Component " + comp.getTableName() + " had a timeout for function: getDate");
 		}
 		
 		if(thedata != null && !thedata.isEmpty()) {
@@ -157,14 +158,14 @@ public class Retriever {
 		
 		// Retrieve all the data from the functions of the python server on the workers etc.
 		for(int index = 0; index < calls.length; index++) {
-			if(Globals.DEBUGOUTPUT) {
+			if(Logger.PRINT_DEBUG) {
 				System.out.println("Calling " + calls[index] + " for "+ comp.getTableName());
 			}
 			RetrieverListeners.Calls listener = new RetrieverListeners.Calls(this, index, lock, condition, counter, errorList);
 			client.callAsync(listener, calls[index]);
 		}
 		
-		if(Globals.DEBUGOUTPUT)
+		if(Logger.PRINT_DEBUG)
 			System.out.println("Calling getData for "+ comp.getTableName());
 		
 		// Retrieve getData is available

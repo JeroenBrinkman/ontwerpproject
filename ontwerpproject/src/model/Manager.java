@@ -1,6 +1,8 @@
 package model;
 
 import global.Globals;
+import global.Logger;
+import global.Misc;
 
 import java.net.InetSocketAddress;
 import java.sql.Connection;
@@ -28,7 +30,7 @@ public class Manager extends Component {
 			throws ClosedException {
 		super(addr, con);
 		intel = new ManagerIntelligence(this, mod, con);
-		collumnList = Globals.concat(Globals.MANAGER_CALLS,
+		collumnList = Misc.concat(Globals.MANAGER_CALLS,
 				Globals.MANAGER_COLS);
 		
 		String sql = "INSERT INTO " + getTableName() + " VALUES( ?,  ?";
@@ -41,7 +43,7 @@ public class Manager extends Component {
 		} catch (SQLException e) {
 			intel.databaseError(e);
 		}
-		Globals.log("Constructor for " + getTableName() + " completed");
+		Logger.log("Constructor for " + getTableName() + " completed");
 	}
 
 	@Override

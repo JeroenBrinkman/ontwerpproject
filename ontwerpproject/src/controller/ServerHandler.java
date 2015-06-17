@@ -1,6 +1,7 @@
 package controller;
 
 import global.Globals;
+import global.Logger;
 
 import java.net.InetSocketAddress;
 
@@ -13,16 +14,16 @@ import model.intelligence.Intelligence.ClosedException;
 
 public class ServerHandler {
 	public boolean online() {
-		if(Globals.DEBUGOUTPUT)
+		if(Logger.PRINT_DEBUG)
 			System.out.println("online called");
 		return true;
 	}
 
 	public boolean add(int type, String ip, int port) {
-		if (Globals.DEBUGOUTPUT)
+		if (Logger.PRINT_DEBUG)
 			System.out.println("add called");
 
-		if (Globals.DEBUGOUTPUT && (Controller.scheduler == null || Controller.model == null)) {
+		if (Logger.PRINT_DEBUG && (Controller.scheduler == null || Controller.model == null)) {
 			System.out.println("Scheduler or model is null, please initiate!");
 			return false;
 		}
@@ -30,7 +31,7 @@ public class ServerHandler {
 		InetSocketAddress adr= new InetSocketAddress(ip, port);
 		
 		if(Controller.scheduler.getRetriever(ip, port) != null) {
-			Globals.log("Add called for one that already exists!, hostname: " + ip + ", port: " + port);
+			Logger.log("Add called for one that already exists!, hostname: " + ip + ", port: " + port);
 			return false;
 		}
 		
@@ -51,7 +52,7 @@ public class ServerHandler {
 			}
 		} catch (ClosedException e2) {
 			e2.printStackTrace();
-			Globals.log("Component (" + ip + "," + port + ") constructor failed");
+			Logger.log("Component (" + ip + "," + port + ") constructor failed");
 			return false;
 		}
 			
@@ -59,7 +60,7 @@ public class ServerHandler {
 			Controller.model.addComponent(comp);
 		} catch (ClosedException e1) {
 			e1.printStackTrace();
-			Globals.log("Component " + comp.getTableName() + " failed to add to component");
+			Logger.log("Component " + comp.getTableName() + " failed to add to component");
 			return false;
 		}
 		
@@ -68,24 +69,24 @@ public class ServerHandler {
 			ret = new Retriever(comp);
 		} catch (XMLRPCException e) {
 			Controller.model.removeComponent(comp);
-			Globals.log("Component " + comp.getTableName() + " failed to create retriever");
+			Logger.log("Component " + comp.getTableName() + " failed to create retriever");
 			return false;
 		}
 
 		Controller.scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);
-		Globals.log("Component " + comp.getTableName() + " added in the scheduler");
+		Logger.log("Component " + comp.getTableName() + " added in the scheduler");
 
 		return true; 
 	}
 
 	public boolean remove(String hostname, int port) {
-		if (Globals.DEBUGOUTPUT)
+		if (Logger.PRINT_DEBUG)
 			System.out.println("Remove called!");
 
 		Retriever ret = Controller.scheduler.getRetriever(hostname, port);
 		synchronized (Controller.scheduler) {
 			if (ret == null) {
-				if (Globals.DEBUGOUTPUT)
+				if (Logger.PRINT_DEBUG)
 					System.out
 							.println("Retriever not found (hostname, port): ("
 									+ hostname + ", " + port + ")");

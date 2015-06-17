@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import model.intelligence.Intelligence;
 import model.intelligence.Intelligence.ClosedException;
 import global.Globals;
+import global.Logger;
 
 /**
  * The model class represents the actual query system, it has an entry in its
@@ -35,7 +36,7 @@ public class Model {
 	 * @requires Database accessible
 	 */
 	public Model() {
-		Globals.log("Model Constructor called");
+		Logger.log("Model Constructor called");
 		components = new ArrayList<Component>();
 		Connection conn = createConnection();
 		DatabaseMetaData dbm;
@@ -54,7 +55,7 @@ public class Model {
 					.errorMail(
 							"Database failed on constructor, this will cause notifications on the site to stop working. "
 									+ e.getMessage(), "Database error");
-			Globals.log("database connection failed on Model constructor");
+			Logger.log("database connection failed on Model constructor");
 		}
 
 	}
@@ -71,7 +72,7 @@ public class Model {
 	 * @ensures components.contains(c) = false;
 	 */
 	public void removeComponent(Component c) {
-		Globals.log("removing component : " + c.getTableName());
+		Logger.log("removing component : " + c.getTableName());
 		components.remove(c);
 	}
 
@@ -140,7 +141,7 @@ public class Model {
 			}
 		}
 		components.add(c);
-		Globals.log("Component " + c.getTableName() + " added in the database");
+		Logger.log("Component " + c.getTableName() + " added in the database");
 		c.startUp();
 	}
 

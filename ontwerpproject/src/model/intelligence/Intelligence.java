@@ -3,6 +3,7 @@ package model.intelligence;
 import model.Component;
 import model.Model;
 import global.Globals;
+import global.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -121,7 +122,7 @@ public abstract class Intelligence {
 							+ e.getMessage(), "Database error");
 		}
 		mod.removeComponent(comp);
-		Globals.log("databaseconnection failed, ClosedException thrown");
+		Logger.log("databaseconnection failed, ClosedException thrown");
 		throw new ClosedException("alles kapot");
 	}
 
@@ -153,12 +154,12 @@ public abstract class Intelligence {
 						String message = cols[i] + " exceeded the critical value in " + comp.getTableName();
 						errorMail(message, "critical value");
 						errorNotification(cols[i], message);
-						Globals.log("error state found in " + comp.getTableName());
+						Logger.log("error state found in " + comp.getTableName());
 					}
 				}
 			} catch (SQLException e) {
-				if(Globals.DEBUGOUTPUT)
-					Globals.log("Failed to find critical value table");
+				//TODO: WTF WAAROM GAAT DEZE ZO VAAK AF???
+				Logger.log("Failed to find critical value table");
 				errorMail("Failed to find the critical value table, will not be able to send alerts \n" + e.getMessage(), "unable to detect allerts");
 			}
 

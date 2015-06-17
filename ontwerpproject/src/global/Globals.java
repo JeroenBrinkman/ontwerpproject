@@ -1,30 +1,6 @@
 package global;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.reflect.Array;
 
 public class Globals {
-	// logging
-	public static synchronized void log(String message) {
-		if(LOG_TO_SYSTEMOUT) {
-			System.out.println(System.currentTimeMillis() + " : " + message);
-		}
-		else {
-			try {
-				PrintWriter output = new PrintWriter(new FileWriter(
-						"log/log.txt", true));
-				output.println(message);
-				output.flush();
-				output.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				//shouldnt happen
-			}
-		}
-
-	}
-
 	// constants
 	public static Boolean GUI = true;
 	public static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -44,13 +20,8 @@ public class Globals {
 	/* LUUKS SHIT */
 	public static final int XMLRPCTIMEOUT_IN_SECONDS = 1;
 	public static final int XMLRPC_PORT = 8000;
-	public static final int SchedulerTimerThreads = 16;
-	public static final int SchedulerThreads = 4;
-	
-	
-	public static final boolean DEBUGOUTPUT = true;
-	public static final boolean LOG_TO_SYSTEMOUT = true;
-	
+	public static final int CLIENT_THREADS = 16;
+	public static final int SCHEDULER_THREADS = 1;	
 	
 	public static final String[] WORKER_CALLS = { "time", "hdd", "mem", "cpu" };
 	public static final String[] MANAGER_CALLS = { "time", "hdd", "mem", "cpu" };
@@ -59,19 +30,6 @@ public class Globals {
 	public static final int ID_WORKER = 0;
 	public static final int ID_MANAGER = 1;
 	public static final int ID_DATABASE = 2;
-
-	public static <T> T[] concat(T[] a, T[] b) {
-		int aLen = a.length;
-		int bLen = b.length;
-
-		@SuppressWarnings("unchecked")
-		T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen
-				+ bLen);
-		System.arraycopy(a, 0, c, 0, aLen);
-		System.arraycopy(b, 0, c, aLen, bLen);
-
-		return c;
-	}
 
 	public static final String[] MANAGER_COLS = { "cms_version",
 			"cms_start_time", "cms_now_time", "cms_tot_domains",

@@ -1,6 +1,7 @@
 package model;
 
 import global.Globals;
+import global.Logger;
 
 import java.net.InetSocketAddress;
 import java.sql.Connection;
@@ -33,7 +34,7 @@ public class Database extends Component {
 			intel.databaseError(e);
 		}
 		
-		Globals.log("Constructor for " + getTableName() + " completed");
+		Logger.log("Constructor for " + getTableName() + " completed");
 	}
 
 	@Override
