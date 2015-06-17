@@ -260,7 +260,7 @@ public abstract class Component {
 		insert.setString(1, Long.toString(newdate));
 		insert.setString(2, "H");
 		for (int i = 0; i < b.length; ++i) {
-			insert.setString(i + 3, Integer.toString(b[i] / 24));
+			insert.setString(i + 3, Long.toString(b[i] / 24));
 		}
 		insert.executeUpdate();
 		conn.commit();
@@ -287,7 +287,7 @@ public abstract class Component {
 		insert.setString(1, Long.toString(newdate));
 		insert.setString(2, "H");
 		for (int i = 0; i < b.length; ++i) {
-			insert.setString(i + 3, Integer.toString(b[i] / 60));
+			insert.setString(i + 3, Long.toString(b[i] / 60));
 		}
 		insert.executeUpdate();
 		conn.commit();
@@ -315,7 +315,7 @@ public abstract class Component {
 		insert.setString(1, Long.toString(newdate));
 		insert.setString(2, "M");
 		for (int i = 0; i < b.length; ++i) {
-			insert.setString(i + 3, Integer.toString(b[i] / a));
+			insert.setString(i + 3, Long.toString(b[i] / a));
 		}
 		insert.executeUpdate();
 		conn.commit();
