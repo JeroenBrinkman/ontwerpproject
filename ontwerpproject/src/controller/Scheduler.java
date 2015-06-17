@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -29,29 +30,42 @@ public class Scheduler {
 
 		@Override
 		public void run() {			
+			if(Globals.DEBUGOUTPUT)
+				System.out.println("----------------START @" + System.currentTimeMillis() + "----------------");
+			
 			queueMap.get(period).addAll(retrieverMap.get(period));
 			ConcurrentLinkedQueue<Retriever> queue 	= queueMap.get(period);
 			ConcurrentLinkedQueue<Retriever> failed	= new ConcurrentLinkedQueue<Retriever>();
 			ExecutorService threadPool				= Executors.newFixedThreadPool(Globals.SchedulerTimerThreads);
 			
+			ArrayList<Callable<Boolean>> tasks = new ArrayList<Callable<Boolean>>();
 			for (Retriever r; (r = queue.poll()) != null;){
-				threadPool.submit(new RetrieverThread(r, failed));		
+				tasks.add(new RetrieverThread(r, failed));
+				//threadPool.submit(new RetrieverThread(r, failed));		
 			}
-			
 			try {
+				threadPool.invokeAll(tasks, Globals.POLLINGINTERVAL, TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e2) {
+				if(Globals.DEBUGOUTPUT) {
+					System.out.println("ThreadPool was interrupted (in scheduler)");
+					e2.printStackTrace();
+				}
+			}			
+			
+			/*try {
 				if(!threadPool.awaitTermination(Globals.POLLINGINTERVAL, TimeUnit.MILLISECONDS)) {
-					System.out.println("Threads has been interupptedksdlk, please call an adult");
+					if(Globals.DEBUGOUTPUT)
+						System.out.println("Threads has been interupptedksdlk, please call an adult");
 				}
 				List<Runnable> list = threadPool.shutdownNow();
 				if(!list.isEmpty()) {
-					System.out.println("Shutdown now not empty");
+					Globals.log("shutdownNow returned a non empty list!");
 				}
 			} catch (InterruptedException e1) {
 				System.out.println("Interrupted Exeception of threadPool in SchedulerTimer: ");
 				e1.printStackTrace();
-			}
+			}*/
 			
-			System.out.println("For loop thingie");
 			for(Retriever ret : failed) {
 				if(retrieverMap.get(period).contains(ret)) {
 					try {
@@ -64,7 +78,8 @@ public class Scheduler {
 				removeRetriever(ret);
 			}
 			
-			System.out.println("Stopping Timer Task");
+			if(Globals.DEBUGOUTPUT)
+				System.out.println("----------------STOP @" + System.currentTimeMillis() + "----------------");
 		}		
 	}
 	

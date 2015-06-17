@@ -4,6 +4,7 @@ import global.Globals;
 
 import java.net.InetSocketAddress;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import model.intelligence.DatabaseIntelligence;
 import model.intelligence.Intelligence.ClosedException;
@@ -19,8 +20,19 @@ public class Database extends Component {
 	public Database(InetSocketAddress addr, Connection con, Model mod) throws ClosedException {
 		super(addr, con);
 		intel = new DatabaseIntelligence(this, mod, con);
-		String[] temp = {"cpu", "hdd", "mem"};
-		collumnList = temp;
+		collumnList = Globals.DATABASE_CALLS;
+		
+		String sql = "INSERT INTO " + getTableName() + " VALUES( ?,  ?";
+		for (int i = 0; i < collumnList.length; ++i) {
+			sql += ",  ?";
+		}
+		sql += ")";
+		try {
+			insert = conn.prepareStatement(sql);
+		} catch (SQLException e) {
+			intel.databaseError(e);
+		}
+		
 		Globals.log("Constructor for " + getTableName() + " completed");
 	}
 

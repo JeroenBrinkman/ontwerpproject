@@ -74,9 +74,6 @@ public abstract class Component {
 		this.adr.getHostName();
 		conn = con;
 
-		System.out
-				.println("Constructor called of component: " + getTableName());
-
 		try {
 			conn.setAutoCommit(false);
 
@@ -129,6 +126,7 @@ public abstract class Component {
 	 */
 	protected void startUp() throws ClosedException {
 		// check if there are old entries in the database
+		long startTime = System.currentTimeMillis();
 		if (Globals.DEBUGOUTPUT)
 			System.out.println("Wachten op jeroen!");
 
@@ -164,7 +162,7 @@ public abstract class Component {
 		}
 
 		if (Globals.DEBUGOUTPUT)
-			System.out.println("Jeroen klaar gekomen!");
+			System.out.println("Jeroen klaar gekomen in " + (System.currentTimeMillis() - startTime) + "!");
 	}
 
 	/**

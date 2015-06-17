@@ -2,17 +2,20 @@ package controller;
 
 import global.Globals;
 
-import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import model.Component;
 import model.intelligence.Intelligence.ClosedException;
 import de.timroes.axmlrpc.XMLRPCClient;
 import de.timroes.axmlrpc.XMLRPCException;
-import de.timroes.axmlrpc.XMLRPCServerException;
 import de.timroes.axmlrpc.XMLRPCTimeoutException;
 
 public class Retriever {
@@ -66,7 +69,7 @@ public class Retriever {
 		}
 		
 		client = new XMLRPCClient(xmlrpcUrl);
-		client.setTimeout(Globals.SchedulerTimerTimeout/1000);
+		client.setTimeout(Globals.XMLRPCTimeout);
 	}
 	
 	/**
@@ -98,26 +101,56 @@ public class Retriever {
 	
 	public void retrieveAllData() throws XMLRPCException{
 		String[] calls = comp.getCalls();
-		Integer counter = 0;
+		Lock lock = new ReentrantLock();
+		Condition condition = lock.newCondition();
+		AtomicInteger counter = new AtomicInteger(calls.length + 1);
+		List<XMLRPCException> errorList = new ArrayList<XMLRPCException>();
+		
 		for(int index = 0; index < calls.length; index++) {
 			if(Globals.DEBUGOUTPUT) {
 				System.out.println("Calling " + calls[index] + " for "+ comp.getTableName());
 			}
-			//RetrieverListeners.Calls listener = new RetrieverListeners.Calls(this, index, counter, waitObject);
-			//client.callAsync(listener, calls[index]);
-			updateData(index, retrieveData(calls[index]));
+			RetrieverListeners.Calls listener = new RetrieverListeners.Calls(this, index, lock, condition, counter, errorList);
+			client.callAsync(listener, calls[index]);
+			
+			/*try{
+				updateData(index, retrieveData(calls[index]));
+			}
+			catch(XMLRPCTimeoutException e) {
+				Globals.log("Component " + comp.getTableName() + " had a timeout for function: " + calls[index]);
+			}*/
 		}
 		if(Globals.DEBUGOUTPUT)
 			System.out.println("Calling getData for "+ comp.getTableName());
-		//client.callAsync(new RetrieverListeners.Data(this, counter), "getData");
+		client.callAsync(new RetrieverListeners.Data(this, lock, condition, counter, errorList), "getData");
 		
-		
-		String thedata =(String)client.call("getData"); 
-		long[] parsed = this.comp.parseInput(thedata);
-		for(int index = 0; index < parsed.length; index++) { 
-			this.updateData(comp.getCalls().length + index, parsed[index]);
-			//updateData(comp.getCalls().length + index, Integer.parseInt(parsed[index]));
+		lock.lock();
+		try {
+			while(counter.get() > 0) {
+				condition.await();
+				if(!errorList.isEmpty()) throw errorList.get(0);
+			}
+		} catch (InterruptedException e) {
+			System.out.println("Retriever interrupted");
+			e.printStackTrace();
 		}
+		lock.unlock();
+		
+		/*String thedata = null;
+		try {
+			thedata =(String)client.call("getData");
+		}
+		catch(XMLRPCTimeoutException e) {
+			Globals.log("Component " + comp.getTableName() + " had a timeout for function: getDate");
+		}
+		
+		if(thedata != null && !thedata.isEmpty()) {
+			long[] parsed = this.comp.parseInput(thedata);
+			for(int index = 0; index < parsed.length; index++) { 
+				this.updateData(comp.getCalls().length + index, parsed[index]);
+				//updateData(comp.getCalls().length + index, Integer.parseInt(parsed[index]));
+			}
+		}*/
 	}
 	
 	/**

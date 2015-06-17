@@ -45,11 +45,10 @@ public class Manager extends Component {
 	}
 
 	@Override
-	public long[] parseInput(String message) {
+	public long[] parseInput(String message) {		
 		String[] parts;
 		String[] lines = message.split("\n");
 		long[] result = new long[Globals.MANAGER_COLS.length];
-		//String[] result = new String[collumnList.length];
 		String currentLine;
 		for (int i = 0; i < Globals.MANAGER_COLS.length; i++) {
 			currentLine = lines[i];

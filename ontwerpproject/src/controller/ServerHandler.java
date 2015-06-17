@@ -17,7 +17,8 @@ public class ServerHandler {
 	public static Model model = null;
 
 	public boolean online() {
-		System.out.println("online called");
+		if(Globals.DEBUGOUTPUT)
+			System.out.println("online called");
 		return true;
 	}
 
@@ -33,20 +34,20 @@ public class ServerHandler {
 		InetSocketAddress adr= new InetSocketAddress(ip, port);
 		
 		if(scheduler.getRetriever(ip, port) != null) {
-			System.out.println("Add called for one that already exists!, hostname: " + ip + ", port: " + port);
+			Globals.log("Add called for one that already exists!, hostname: " + ip + ", port: " + port);
 			return false;
 		}
 		
 		Component comp = null;
 		try {
 			switch (type) {
-			case 0:
+			case Globals.ID_WORKER:
 				comp = new Worker(adr, model.createConnection(), model);
 				break;
-			case 1:
+			case Globals.ID_DATABASE:
 				comp = new Database(adr, model.createConnection(), model);
 				break;
-			case 2:
+			case Globals.ID_MANAGER:
 				comp = new Manager(adr, model.createConnection(), model);
 				break;
 			default:
@@ -54,6 +55,7 @@ public class ServerHandler {
 			}
 		} catch (ClosedException e2) {
 			e2.printStackTrace();
+			Globals.log("Component (" + ip + "," + port + ") constructor failed");
 			return false;
 		}
 			
@@ -61,6 +63,7 @@ public class ServerHandler {
 			model.addComponent(comp);
 		} catch (ClosedException e1) {
 			e1.printStackTrace();
+			Globals.log("Component " + comp.getTableName() + " failed to add to component");
 			return false;
 		}
 		
@@ -69,11 +72,12 @@ public class ServerHandler {
 			ret = new Retriever(comp);
 		} catch (XMLRPCException e) {
 			model.removeComponent(comp);
+			Globals.log("Component " + comp.getTableName() + " failed to create retriever");
 			return false;
 		}
 
 		scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);
-		System.out.println("Component " + comp.getTableName() + " added");
+		Globals.log("Component " + comp.getTableName() + " added in the scheduler");
 
 		return true; 
 	}

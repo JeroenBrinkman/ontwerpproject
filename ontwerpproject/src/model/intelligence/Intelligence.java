@@ -157,7 +157,8 @@ public abstract class Intelligence {
 					}
 				}
 			} catch (SQLException e) {
-				Globals.log("Failed to find critical value table");
+				if(Globals.DEBUGOUTPUT)
+					Globals.log("Failed to find critical value table");
 				errorMail("Failed to find the critical value table, will not be able to send alerts \n" + e.getMessage(), "unable to detect allerts");
 			}
 

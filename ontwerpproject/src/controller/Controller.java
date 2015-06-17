@@ -21,8 +21,8 @@ public class Controller {
 		ServerHandler.model = new Model();
 		Connection conn = null;
 		while((conn = ServerHandler.model.createConnection()) == null) {
-			System.out.println("Could not connect to SQL Database!");
-			System.out.println("Press enter to try again or exit to quit.");
+			Globals.log("Could not connect to SQL Database!");
+			Globals.log("Press enter to try again or exit to quit.");
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			String input = null;
@@ -63,7 +63,7 @@ public class Controller {
 			e.printStackTrace();
 		}
 		try {
-			System.out.println(Arrays.toString(phm.getListMethods()));
+			Globals.log("Server supports the following functions: " + Arrays.toString(phm.getListMethods()));
 		} catch (XmlRpcException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -82,7 +82,7 @@ public class Controller {
 			webServer.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("Couldn't start the webserver!");
+			Globals.log("Couldn't start the webserver!");
 			e.printStackTrace();
 			return;
 		}		
@@ -90,10 +90,10 @@ public class Controller {
 	
 	public static void main(String[] args) {
 		connectDatabase();
-		System.out.println("Database connection succesfull");		
+		Globals.log("Database connection succesfull");		
 		createScheduler();
-		System.out.println("Scheduler created");
+		Globals.log("Scheduler created");
 		createServers();
-		System.out.println("Server created and online");
+		Globals.log("Server created and online");
 	}
 }

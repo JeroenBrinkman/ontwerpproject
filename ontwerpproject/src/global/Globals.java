@@ -9,14 +9,19 @@ import java.lang.reflect.Array;
 public class Globals {
 	// logging
 	public static synchronized void log(String message) {
-		PrintWriter writer;
-		try {
-			writer = new PrintWriter("the-file-name.txt", "UTF-8");
-			writer.println(System.currentTimeMillis() + " : " + message);
-			writer.close();
-		} catch (FileNotFoundException | UnsupportedEncodingException e) {
-			e.printStackTrace();
-			//shouldnt happen
+		if(LOG_TO_SYSTEMOUT) {
+			System.out.println(System.currentTimeMillis() + " : " + message);
+		}
+		else {
+			PrintWriter writer;
+			try {
+				writer = new PrintWriter("the-file-name.txt", "UTF-8");
+				writer.println(System.currentTimeMillis() + " : " + message);
+				writer.close();
+			} catch (FileNotFoundException | UnsupportedEncodingException e) {
+				e.printStackTrace();
+				//shouldnt happen
+			}
 		}
 
 	}
@@ -38,16 +43,23 @@ public class Globals {
 																// half uur
 
 	/* LUUKS SHIT */
-	public static final int SchedulerTimerTimeout = 5000;
+	public static final int XMLRPCTimeout = 1;
+	public static final int XMLRPC_PORT = 8000;
 	public static final int SchedulerTimerThreads = 16;
 	public static final int SchedulerThreads = 4;
-	public static final int XMLRPC_PORT = 8000;
+	
+	
 	public static final boolean DEBUGOUTPUT = true;
+	public static final boolean LOG_TO_SYSTEMOUT = true;
+	
+	
 	public static final String[] WORKER_CALLS = { "time", "hdd", "mem", "cpu" };
 	public static final String[] MANAGER_CALLS = { "time", "hdd", "mem", "cpu" };
 	public static final String[] DATABASE_CALLS = { "time", "hdd", "mem", "cpu" };
-
-	public static final String SET_POLLING_TIME = "setPollingTime";
+	
+	public static final int ID_WORKER = 0;
+	public static final int ID_MANAGER = 1;
+	public static final int ID_DATABASE = 2;
 
 	public static <T> T[] concat(T[] a, T[] b) {
 		int aLen = a.length;

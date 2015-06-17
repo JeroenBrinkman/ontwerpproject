@@ -140,7 +140,7 @@ public class Model {
 			}
 		}
 		components.add(c);
-		Globals.log("component " + c.getTableName() + " added");
+		Globals.log("Component " + c.getTableName() + " added in the database");
 		c.startUp();
 	}
 
