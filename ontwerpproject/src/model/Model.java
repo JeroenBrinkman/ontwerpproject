@@ -123,7 +123,7 @@ public class Model {
 						String end = (x - 1) < 0 ? " FIRST" : " AFTER "
 								+ Integer.toString(x - 1);
 						sql = "ALTER TABLE " + c.getTableName() + " ADD "
-								+ cols[x] + " INTEGER" + end;
+								+ cols[x] + " BIGINT(64)" + end;
 						st.executeUpdate(sql);
 					}
 				}

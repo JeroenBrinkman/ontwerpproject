@@ -130,7 +130,7 @@ public abstract class Component {
 				v.next();
 				long current = v.getLong(1) + Globals.POLLINGINTERVAL;
 				long end = System.currentTimeMillis();
-				int[] str = new int[collumnList.length];
+				long[] str = new long[collumnList.length];
 				for(int i =0; i< str.length; ++i){
 					str[i] = 0;
 				}
@@ -193,7 +193,7 @@ public abstract class Component {
 		String sql = "CREATE TABLE " + getTableName()
 				+ " (date BIGINT(64) not NULL, " + " tag CHAR(1) not NULL , ";
 		for (String a : collumnList) {
-			sql += a + " INTEGER, ";
+			sql += a + " BIGINT(64), ";
 		}
 		sql += "PRIMARY KEY ( date), INDEX (tag))";
 		return sql;
@@ -205,7 +205,7 @@ public abstract class Component {
 	 * @requires message != null && message.length == collumnList.length +1
 	 * @ensures data is correctly inserted
 	 */
-	public void update(Long date, int[] message) throws ClosedException{
+	public void update(Long date, long[] message) throws ClosedException{
 		intel.checkCritical(message);
 		try {
 			// tags are Minutes -> Hours -> Days
@@ -228,7 +228,7 @@ public abstract class Component {
 			insert.setString(1, Long.toString(date));
 			insert.setString(2, "M");
 			for (int i = 0; i < message.length; ++i) {
-				insert.setInt(i + 3, message[i]);
+				insert.setLong(i + 3, message[i]);
 			}
 			insert.executeUpdate();
 			conn.commit();

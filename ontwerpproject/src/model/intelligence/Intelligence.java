@@ -139,7 +139,7 @@ public abstract class Intelligence {
 	 * @requires newin != null
 	 * @ensures correct errormessages are send
 	 */
-	public void checkCritical(int[] newin) throws ClosedException {
+	public void checkCritical(long[] newin) throws ClosedException {
 		String[] cols = comp.getKeys();
 		for (int i = 0; i < newin.length; ++i) {
 			ResultSet r;
