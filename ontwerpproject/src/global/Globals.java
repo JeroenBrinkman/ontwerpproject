@@ -42,7 +42,7 @@ public class Globals {
 																// half uur
 
 	/* LUUKS SHIT */
-	public static final int XMLRPCTimeout = 1;
+	public static final int XMLRPCTIMEOUT_IN_SECONDS = 1;
 	public static final int XMLRPC_PORT = 8000;
 	public static final int SchedulerTimerThreads = 16;
 	public static final int SchedulerThreads = 4;
@@ -97,6 +97,7 @@ public class Globals {
 			"ws_writer_files_written" };
 
 	public static final int GUI_UPDATE = 5000;
+	public static final boolean ASYNC = true;
 
 	// interface metadata
 	public static long LAST_UPDATE = 0;

@@ -8,14 +8,10 @@ import de.timroes.axmlrpc.XMLRPCException;
 import model.Component;
 import model.Database;
 import model.Manager;
-import model.Model;
 import model.Worker;
 import model.intelligence.Intelligence.ClosedException;
 
 public class ServerHandler {
-	public static Scheduler scheduler = null;
-	public static Model model = null;
-
 	public boolean online() {
 		if(Globals.DEBUGOUTPUT)
 			System.out.println("online called");
@@ -26,14 +22,14 @@ public class ServerHandler {
 		if (Globals.DEBUGOUTPUT)
 			System.out.println("add called");
 
-		if (Globals.DEBUGOUTPUT && (scheduler == null || model == null)) {
+		if (Globals.DEBUGOUTPUT && (Controller.scheduler == null || Controller.model == null)) {
 			System.out.println("Scheduler or model is null, please initiate!");
 			return false;
 		}
 
 		InetSocketAddress adr= new InetSocketAddress(ip, port);
 		
-		if(scheduler.getRetriever(ip, port) != null) {
+		if(Controller.scheduler.getRetriever(ip, port) != null) {
 			Globals.log("Add called for one that already exists!, hostname: " + ip + ", port: " + port);
 			return false;
 		}
@@ -42,13 +38,13 @@ public class ServerHandler {
 		try {
 			switch (type) {
 			case Globals.ID_WORKER:
-				comp = new Worker(adr, model.createConnection(), model);
+				comp = new Worker(adr, Controller.model.createConnection(), Controller.model);
 				break;
 			case Globals.ID_DATABASE:
-				comp = new Database(adr, model.createConnection(), model);
+				comp = new Database(adr, Controller.model.createConnection(), Controller.model);
 				break;
 			case Globals.ID_MANAGER:
-				comp = new Manager(adr, model.createConnection(), model);
+				comp = new Manager(adr, Controller.model.createConnection(), Controller.model);
 				break;
 			default:
 				return false;
@@ -60,7 +56,7 @@ public class ServerHandler {
 		}
 			
 		try {
-			model.addComponent(comp);
+			Controller.model.addComponent(comp);
 		} catch (ClosedException e1) {
 			e1.printStackTrace();
 			Globals.log("Component " + comp.getTableName() + " failed to add to component");
@@ -71,12 +67,12 @@ public class ServerHandler {
 		try {
 			ret = new Retriever(comp);
 		} catch (XMLRPCException e) {
-			model.removeComponent(comp);
+			Controller.model.removeComponent(comp);
 			Globals.log("Component " + comp.getTableName() + " failed to create retriever");
 			return false;
 		}
 
-		scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);
+		Controller.scheduler.addRetriever(Globals.POLLINGINTERVAL, ret);
 		Globals.log("Component " + comp.getTableName() + " added in the scheduler");
 
 		return true; 
@@ -86,8 +82,8 @@ public class ServerHandler {
 		if (Globals.DEBUGOUTPUT)
 			System.out.println("Remove called!");
 
-		Retriever ret = scheduler.getRetriever(hostname, port);
-		synchronized (scheduler) {
+		Retriever ret = Controller.scheduler.getRetriever(hostname, port);
+		synchronized (Controller.scheduler) {
 			if (ret == null) {
 				if (Globals.DEBUGOUTPUT)
 					System.out
@@ -95,10 +91,10 @@ public class ServerHandler {
 									+ hostname + ", " + port + ")");
 				return false;
 			}
-			scheduler.removeRetriever(ret);
+			Controller.scheduler.removeRetriever(ret);
 		}
 
-		model.removeComponent(ret.getComponent());
+		Controller.model.removeComponent(ret.getComponent());
 
 		return true;
 	}

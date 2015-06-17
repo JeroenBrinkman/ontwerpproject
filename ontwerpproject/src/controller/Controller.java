@@ -16,11 +16,13 @@ import org.apache.xmlrpc.webserver.WebServer;
 import global.Globals;
 
 public class Controller {
+	public static Scheduler scheduler = null;
+	public static Model model = null;
 	
 	public static void connectDatabase() {
-		ServerHandler.model = new Model();
+		model = new Model();
 		Connection conn = null;
-		while((conn = ServerHandler.model.createConnection()) == null) {
+		while((conn = model.createConnection()) == null) {
 			Globals.log("Could not connect to SQL Database!");
 			Globals.log("Press enter to try again or exit to quit.");
 			
@@ -45,7 +47,7 @@ public class Controller {
 	}
 	
 	public static void createScheduler() {
-		ServerHandler.scheduler = new Scheduler();	
+		scheduler = new Scheduler();	
 	}
 	
 	public static void createServers() {
