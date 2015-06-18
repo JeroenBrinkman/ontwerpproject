@@ -128,8 +128,7 @@ public abstract class Component {
 	protected void startUp() throws ClosedException {
 		// check if there are old entries in the database
 		long startTime = System.currentTimeMillis();
-		if (Logger.PRINT_DEBUG)
-			System.out.println("Wachten op jeroen!");
+		Logger.log_debug("Wachten op jeroen!");
 
 		String sql = "SELECT COUNT(*) FROM " + getTableName();
 		try {
@@ -162,8 +161,7 @@ public abstract class Component {
 			intel.databaseError(e);
 		}
 
-		if (Logger.PRINT_DEBUG)
-			System.out.println("Jeroen klaar gekomen in " + (System.currentTimeMillis() - startTime) + "!");
+		Logger.log_debug("Jeroen klaar gekomen in " + (System.currentTimeMillis() - startTime) + "!");
 	}
 
 	/**

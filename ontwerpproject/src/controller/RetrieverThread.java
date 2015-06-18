@@ -1,5 +1,6 @@
 package controller;
 
+import global.Globals;
 import global.Logger;
 
 import java.io.PrintWriter;
@@ -52,7 +53,7 @@ public class RetrieverThread implements Callable<Boolean> {
 			else {
 				Logger.log("Unexpected exception: " + e.getMessage());
 				Logger.log(e.getStackTrace().toString());
-				if(Logger.PRINT_DEBUG)
+				if(Globals.PRINT_DEBUG)
 					e.printStackTrace();
 			}		
 			

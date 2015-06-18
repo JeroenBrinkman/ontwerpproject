@@ -14,8 +14,7 @@ import model.intelligence.Intelligence.ClosedException;
 
 public class ServerHandler {
 	public boolean online() {
-		if(Logger.PRINT_DEBUG)
-			System.out.println("online called");
+		Logger.log_debug("online called");
 		return true;
 	}
 

@@ -113,9 +113,7 @@ public class Retriever {
 		String[] calls = comp.getCalls();
 		
 		for(int index = 0; index < calls.length; index++) {
-			if(Logger.PRINT_DEBUG) {
-				System.out.println("Calling " + calls[index] + " for "+ comp.getTableName());
-			}			
+			Logger.log_debug("Calling " + calls[index] + " for "+ comp.getTableName());		
 			try{
 				updateData(index, retrieveData(calls[index]));
 			}
@@ -123,8 +121,7 @@ public class Retriever {
 				Logger.log("Component " + comp.getTableName() + " had a timeout for function: " + calls[index]);
 			}
 		}
-		if(Logger.PRINT_DEBUG)
-			System.out.println("Calling getData for "+ comp.getTableName());
+		Logger.log_debug("Calling getData for "+ comp.getTableName());
 		
 		String thedata = null;
 		try {

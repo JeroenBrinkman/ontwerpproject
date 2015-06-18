@@ -80,6 +80,11 @@ public class Globals {
 	public static final int SQLMAXmin = 10080;// minimum = 60
 	public static final int SQLMAXhour = 8544;// minimum = 24
 	public static int POLLINGINTERVAL = Default.POLLINGINTERVAL; // once every minute
+	
+	//logging
+	public static boolean PRINT_DEBUG = false;
+	public static boolean PRINT_DEBUG_CONCURRENT = false;
+	public static boolean TO_CONSOLE = true;
 
 	// Intelligence shit
 	public static long LAST_DATABASE_ERROR = -1;

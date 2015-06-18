@@ -78,8 +78,7 @@ public class Controller {
 		config.setEnabledForExceptions(true);
 		config.setContentLengthOptional(false);
 		
-		if(Logger.PRINT_DEBUG)
-			System.out.println("Starting webServer...");
+		Logger.log_debug("Starting webServer...");
 		
 		try {
 			webServer.start();
@@ -89,6 +88,14 @@ public class Controller {
 			e.printStackTrace();
 			return;
 		}		
+	}
+	
+	public static void restart() {
+		
+	}
+	
+	public static void quit() {
+		
 	}
 	
 	public static void main(String[] args) {
@@ -102,5 +109,25 @@ public class Controller {
 		Logger.log("Scheduler created");
 		createServers();
 		Logger.log("Server created and online");
+		
+		while(true) {
+	        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	        String line = null;
+	        try {
+				line = br.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+	        switch(line) {
+	        case "restart": restart(); break;
+	        case "quit": 	quit(); break;
+	        case "debug on": Globals.PRINT_DEBUG = true; break;
+	        case "debug off": Globals.PRINT_DEBUG = false; break;
+	        case "globals": System.out.println(Globals.staticToString()); break;
+	        default: System.out.println("command not recognized"); break;
+	        }
+		}
 	}
 }

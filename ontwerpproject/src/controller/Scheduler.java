@@ -141,9 +141,7 @@ public class Scheduler {
 
 	private void checkAndDestroy(long milliseconds) {
 		if (retrieverMap.get(milliseconds).isEmpty()) {
-			if (Logger.PRINT_DEBUG)
-				System.out
-						.println("Retriever map is empty, destroying the thread");
+			Logger.log_debug("Retriever map is empty, destroying the thread");
 
 			retrieverMap.remove(milliseconds);
 			queueMap.remove(milliseconds);
@@ -160,8 +158,7 @@ public class Scheduler {
 			queueMap.put(milliseconds, new ConcurrentLinkedQueue<Retriever>());
 			taskMap.put(milliseconds, new SchedulerTimer(milliseconds));
 
-			if (Logger.PRINT_DEBUG)
-				System.out.println("Schedule added at " + milliseconds
+			Logger.log_debug("Schedule added at " + milliseconds
 						+ " milliseconds");
 			timer.scheduleAtFixedRate(taskMap.get(milliseconds), milliseconds,
 					milliseconds, TimeUnit.MILLISECONDS);
