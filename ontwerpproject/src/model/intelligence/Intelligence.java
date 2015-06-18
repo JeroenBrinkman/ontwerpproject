@@ -128,6 +128,7 @@ public abstract class Intelligence {
 	 * 
 	 */
 	public void databaseError(SQLException e) throws ClosedException {
+		e.printStackTrace();
 		if (Globals.LAST_DATABASE_ERROR == -1
 				|| (System.currentTimeMillis() - Globals.LAST_DATABASE_ERROR) > Globals.MIN_DATABASE_ERROR_DELAY) {
 			errorMail(
