@@ -173,11 +173,13 @@ public class Retriever {
 				condition.await();
 			}
 			if(!errorList.isEmpty()) {
-				Logger.log("Received " + errorList.size() + " error(s) in component " + comp.getTableName());
+				Logger.log_debug_rec("Received " + errorList.size() + " error(s) in component " + comp.getTableName());
+				
+				// Throw the first that is not a timeout exception or throw the fist
 				for(XMLRPCException e : errorList) {
-					Logger.log(e.getMessage());
+					if(!(e instanceof XMLRPCTimeoutException))
+						throw e;
 				}
-				Logger.log_debug("Throwing the first...");
 				throw errorList.get(0); 
 			}
 			

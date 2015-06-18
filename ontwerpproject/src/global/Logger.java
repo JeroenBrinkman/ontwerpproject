@@ -34,4 +34,9 @@ public class Logger {
 		if(Globals.PRINT_DEBUG_CONCURRENT)
 			log(message);
 	}
+	
+	public static synchronized void log_debug_rec(String message) {
+		if(Globals.PRINT_DEBUG_RECEIVER)
+			log(message);
+	}
 }

@@ -34,7 +34,7 @@ public class Scheduler {
 		//TODO: After InvokeAll, should there be a clean up?
 		public void run() {			
 			//The start sign
-			Logger.log_debug("----------------START @" + System.currentTimeMillis() + "----------------");
+			Logger.log("---------- comps: " + retrieverMap.get(period).size() + " ----------");
 			
 			queueMap.get(period).addAll(retrieverMap.get(period));
 			ConcurrentLinkedQueue<Retriever> queue = queueMap.get(period);
@@ -125,9 +125,13 @@ public class Scheduler {
 	}
 	
 	public Retriever[] getAllRetrievers(long milliseconds) {
-		if(retrieverMap.containsKey(milliseconds))
-			return (Retriever[]) retrieverMap.get(milliseconds).toArray();
-		return null;
+		Retriever[] result = null;
+		if(retrieverMap.containsKey(milliseconds)) {
+			result = new Retriever[retrieverMap.get(milliseconds).size()];
+			for(int index = 0; index < retrieverMap.get(milliseconds).size(); index++)
+				result[index] = retrieverMap.get(milliseconds).get(index);
+		}
+		return result;
 	}
 
 	public void removeRetriever(Retriever ret) {

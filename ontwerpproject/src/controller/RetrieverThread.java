@@ -82,7 +82,7 @@ public class RetrieverThread implements Callable<Boolean> {
 			Logger.log_debug("Pushed data from \"" + ret.getComponent().getTableName() + "\"");
 		}
 		
-		Logger.log("Completed thread run, joining...");
+		Logger.log_debug_con("Completed thread run, joining...");
 		
 		return failed;
 	}

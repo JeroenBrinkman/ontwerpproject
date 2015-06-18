@@ -31,6 +31,9 @@ public class RetrieverListeners {
 		
 		@Override
 		public void onError(long arg0, XMLRPCException arg1) {
+			synchronized(errors) {
+				errors.add(arg1);
+			}
 			signalRetriever();
 		}
 		
@@ -44,13 +47,16 @@ public class RetrieverListeners {
 				}
 			}
 			
-			Logger.log_debug("Received getData");
+			Logger.log_debug_rec("Received getData");
 			
 			signalRetriever();
 		}
 		
 		@Override
 		public void onServerError(long arg0, XMLRPCServerException arg1) {
+			synchronized(errors) {
+				errors.add(arg1);
+			}
 			signalRetriever();
 		}	
 		
@@ -83,18 +89,24 @@ public class RetrieverListeners {
 		
 		@Override
 		public void onError(long arg0, XMLRPCException arg1) {
+			synchronized(errors) {
+				errors.add(arg1);
+			}
 			signalRetriever();
 		}
 		
 		@Override
 		public void onResponse(long id, Object result) {
 			ret.updateData(index, Retriever.parse(result));			
-			Logger.log("Received " + ret.getComponent().getKeys()[index] + ": " + result.toString());			
+			Logger.log_debug_rec("Received " + ret.getComponent().getKeys()[index] + ": " + result.toString());			
 			signalRetriever();
 		}
 		
 		@Override
 		public void onServerError(long arg0, XMLRPCServerException arg1) {
+			synchronized(errors) {
+				errors.add(arg1);
+			}
 			signalRetriever();
 		}
 		

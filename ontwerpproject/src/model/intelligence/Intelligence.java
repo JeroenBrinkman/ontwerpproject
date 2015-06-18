@@ -7,7 +7,6 @@ import global.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
@@ -146,7 +145,6 @@ public abstract class Intelligence {
 		errorMail("Component " + comp.getTableName()
 				+ " disconnected from the system.", "Component disconnected");
 		mod.removeComponent(comp);
-		Logger.log("component connection failed, ClosedException thrown");
 	}
 
 	/**

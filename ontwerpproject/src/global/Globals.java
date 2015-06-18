@@ -84,6 +84,7 @@ public class Globals {
 	//logging
 	public static boolean PRINT_DEBUG = false;
 	public static boolean PRINT_DEBUG_CONCURRENT = false;
+	public static boolean PRINT_DEBUG_RECEIVER = false;
 	public static boolean TO_CONSOLE = true;
 
 	// Intelligence shit

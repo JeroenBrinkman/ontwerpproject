@@ -23,7 +23,9 @@ public class Controller {
 	public static WebServer webServer;
 	public static XmlRpcServer server;
 	
-	public static void connectDatabase() {
+	public static boolean exit = false;
+	
+	public static Boolean connectDatabase() {
 		model = new Model();
 		Connection conn = null;
 		while((conn = model.createConnection()) == null) {
@@ -39,7 +41,7 @@ public class Controller {
 			}
 			
 			if(input.equals("exit")) {
-				return;
+				return false;
 			}
 		}
 		try {
@@ -48,6 +50,8 @@ public class Controller {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
+		
+		return true;
 	}
 	
 	public static void createScheduler() {
@@ -102,7 +106,7 @@ public class Controller {
 			typeList	= new int[retList.length];
 			for(int index = 0; index < retList.length; index++) {
 				addressList[index] = retList[index].getComponent().getAddress();
-				retList[index].getComponent().getType();			
+				typeList[index] = retList[index].getComponent().getType();			
 			}
 		}
 		
@@ -143,7 +147,11 @@ public class Controller {
 		Logger.log("Starting program with the following global settings: ");
 		Logger.log(Globals.staticToString());
 		
-		connectDatabase();
+		if(!connectDatabase()) {
+			Logger.log("Failed to start the database.");
+			exit = true;
+			return;
+		}
 		Logger.log("Database connection succesfull");		
 		createScheduler();
 		Logger.log("Scheduler created");
@@ -153,9 +161,8 @@ public class Controller {
 	
 	public static void main(String[] args) {
 		start();
-		
-		boolean exit = true;
-		while(exit) {
+	
+		while(!exit) {
 	        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	        String line = null;
 	        try {
@@ -166,12 +173,16 @@ public class Controller {
 			}
 	        
 	        switch(line) {
-	        case "restart": restart(); break;
-	        case "quit": 	quit(); exit = false; break;
-	        case "debug on": Globals.PRINT_DEBUG = true; break;
-	        case "debug off": Globals.PRINT_DEBUG = false; break;
-	        case "globals": System.out.println(Globals.staticToString()); break;
-	        default: System.out.println("command not recognized"); break;
+		        case "restart": restart(); break;
+		        case "quit": 	quit(); exit = true; break;
+		        case "debug on": Globals.PRINT_DEBUG = true; break;
+		        case "debug off": Globals.PRINT_DEBUG = false; break;
+		        case "debug rec on": Globals.PRINT_DEBUG_RECEIVER = true; break;
+		        case "debug rec off": Globals.PRINT_DEBUG_RECEIVER = false; break;
+		        case "debug con on": Globals.PRINT_DEBUG_CONCURRENT = true; break;
+		        case "debug con off": Globals.PRINT_DEBUG_CONCURRENT = false; break;
+		        case "globals": System.out.println(Globals.staticToString()); break;
+		        default: System.out.println("command not recognized"); break;
 	        }
 		}
 	}
