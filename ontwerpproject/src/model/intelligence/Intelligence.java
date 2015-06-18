@@ -15,17 +15,30 @@ import javax.mail.*;
 import javax.mail.internet.*;
 
 public abstract class Intelligence {
-	
+
 	public class ClosedException extends Exception {
-		  /**
+		/**
 		 * for some reason it needs this
 		 */
 		private static final long serialVersionUID = 2400467736031885588L;
-		public ClosedException() { super(); }
-		  public ClosedException(String message) { super(message); }
-		  public ClosedException(String message, Throwable cause) { super(message, cause); }
-		  public ClosedException(Throwable cause) { super(cause); }
+
+		public ClosedException() {
+			super();
 		}
+
+		public ClosedException(String message) {
+			super(message);
+		}
+
+		public ClosedException(String message, Throwable cause) {
+			super(message, cause);
+		}
+
+		public ClosedException(Throwable cause) {
+			super(cause);
+		}
+	}
+
 	protected PreparedStatement st;
 	protected Connection con;
 	protected Component comp;
@@ -81,7 +94,7 @@ public abstract class Intelligence {
 			email.setSubject("Testing Subject");
 			email.setText("Hello, this is sample for to check send "
 					+ "email using JavaMailAPI ");
-			//Transport.send(email); TODO uncomment when it works
+			// Transport.send(email); TODO uncomment when it works
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
@@ -90,7 +103,9 @@ public abstract class Intelligence {
 	public void errorNotification(String at, String message) {
 		try {
 			Statement st = con.createStatement();
-			String sql = "INSERT INTO notifications VALUES( "+ comp.getTableName() + ", " + at + ", " + message +")";
+			String sql = "INSERT INTO notifications VALUES( "
+					+ comp.getTableName() + ", " + at + ", " + message + ", "
+					+ System.currentTimeMillis() + ")";
 			st.executeUpdate(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -111,7 +126,7 @@ public abstract class Intelligence {
 	 * @ensure component disconnected and error mail send
 	 * 
 	 */
-	public void databaseError(SQLException e) throws ClosedException{
+	public void databaseError(SQLException e) throws ClosedException {
 		if (Globals.LAST_DATABASE_ERROR == -1
 				|| (System.currentTimeMillis() - Globals.LAST_DATABASE_ERROR) > Globals.MIN_DATABASE_ERROR_DELAY) {
 			errorMail(
@@ -125,7 +140,7 @@ public abstract class Intelligence {
 		throw new ClosedException("alles kapot");
 	}
 
-	public void connectionError() throws ClosedException{
+	public void connectionError() throws ClosedException {
 		errorMail("Component " + comp.getTableName()
 				+ " disconnected from the system.", "Component disconnected");
 		mod.removeComponent(comp);
@@ -136,7 +151,9 @@ public abstract class Intelligence {
 	/**
 	 * Checks the new input data for the component for critical values, and
 	 * sends the correct error messages if it finds these
-	 * @throws ClosedException when the database dies
+	 * 
+	 * @throws ClosedException
+	 *             when the database dies
 	 * 
 	 * @requires newin != null
 	 * @ensures correct errormessages are send
@@ -150,15 +167,20 @@ public abstract class Intelligence {
 				r = st.executeQuery();
 				if (r.next()) {
 					if (newin[i] > r.getLong(1)) {
-						String message = cols[i] + " exceeded the critical value in " + comp.getTableName();
+						String message = cols[i]
+								+ " exceeded the critical value in "
+								+ comp.getTableName();
 						errorMail(message, "critical value");
 						errorNotification(cols[i], message);
-						Globals.log("error state found in " + comp.getTableName());
+						Globals.log("error state found in "
+								+ comp.getTableName());
 					}
 				}
 			} catch (SQLException e) {
 				Globals.log("Failed to find critical value table");
-				errorMail("Failed to find the critical value table, will not be able to send alerts \n" + e.getMessage(), "unable to detect allerts");
+				errorMail(
+						"Failed to find the critical value table, will not be able to send alerts \n"
+								+ e.getMessage(), "unable to detect allerts");
 			}
 
 		}

@@ -45,7 +45,7 @@ public class Model {
 			dbm = conn.getMetaData();
 			ResultSet tables = dbm.getTables(null, null, "notifications", null);
 			if (!tables.next()) {
-				st.executeUpdate("CREATE TABLE notifications (component VARCHAR(240),  attribute VARCHAR(240), message VARCHAR(240))");
+				st.executeUpdate("CREATE TABLE notifications (component VARCHAR(128),  attribute VARCHAR(128), message VARCHAR(240), date BIGINT(64))");
 			}
 			st.close();
 			conn.close();
