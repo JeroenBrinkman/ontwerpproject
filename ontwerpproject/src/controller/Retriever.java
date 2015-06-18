@@ -1,18 +1,22 @@
 package controller;
 
 import global.Globals;
+import global.Logger;
 
-import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import model.Component;
 import model.intelligence.Intelligence.ClosedException;
 import de.timroes.axmlrpc.XMLRPCClient;
 import de.timroes.axmlrpc.XMLRPCException;
-import de.timroes.axmlrpc.XMLRPCServerException;
 import de.timroes.axmlrpc.XMLRPCTimeoutException;
 
 public class Retriever {
@@ -20,26 +24,30 @@ public class Retriever {
 	private long[]				data;
 	private Component			comp;
 	
-	static int parse(Object object) {
-		Integer result = null;
+	// PARE THE OBJECT INTO A LONG
+	// SO THE DATABASE CAN HANDLE IT
+	// TODO PARSEDOUBLE CAN GO BOOOOOOOOM!
+	static long parse(Object object) {
+		Long result = null;
 		
 		if(object.getClass() == String.class) {
-			result = (int) Double.parseDouble((String)object);
+			String str = (String)object;
+			result = ((Double)Double.parseDouble(str)).longValue();
 		}
 		else if(object.getClass() == Double.class) {
-			result = ((Double)object).intValue();
+			result = ((Double)object).longValue();
 		}
 		else if(object.getClass() == Integer.class) {
-			result = ((Integer)object);
+			result = ((Integer)object).longValue();
 		}
 		else if(object.getClass() == Long.class) {
-			result = ((Long)object).intValue();
+			result = ((Long)object);
 		}
 		else if(object.getClass() == Boolean.class) {
-			result = ((Boolean)object) == true ? 1 : 0;
+			result = (long) (((Boolean)object) == true ? 1 : 0);
 		}
 		else if(object.getClass() == Date.class) {
-			result = (int) ((Date)object).getTime();
+			result = ((Date)object).getTime();
 		}
 		else {
 			System.err.println("Could not convert tmpObject to a string. tmpObject class: " + object.getClass().toString());
@@ -66,7 +74,7 @@ public class Retriever {
 		}
 		
 		client = new XMLRPCClient(xmlrpcUrl);
-		client.setTimeout(Globals.SchedulerTimerTimeout/1000);
+		client.setTimeout(Globals.XMLRPCTIMEOUT_IN_SECONDS);
 	}
 	
 	/**
@@ -97,34 +105,92 @@ public class Retriever {
 	}
 	
 	public void retrieveAllData() throws XMLRPCException{
+		if(Globals.ASYNC) retrieveAllData_ASync();
+		else retrieveAllData_Sync();
+	}
+	
+	public void retrieveAllData_Sync() throws XMLRPCException {
 		String[] calls = comp.getCalls();
-		Integer counter = 0;
+		
 		for(int index = 0; index < calls.length; index++) {
-			if(Globals.DEBUGOUTPUT) {
+			if(Logger.PRINT_DEBUG) {
+				System.out.println("Calling " + calls[index] + " for "+ comp.getTableName());
+			}			
+			try{
+				updateData(index, retrieveData(calls[index]));
+			}
+			catch(XMLRPCTimeoutException e) {
+				Logger.log("Component " + comp.getTableName() + " had a timeout for function: " + calls[index]);
+			}
+		}
+		if(Logger.PRINT_DEBUG)
+			System.out.println("Calling getData for "+ comp.getTableName());
+		
+		String thedata = null;
+		try {
+			thedata =(String)client.call("getData");
+		}
+		catch(XMLRPCTimeoutException e) {
+			Logger.log("Component " + comp.getTableName() + " had a timeout for function: getDate");
+		}
+		
+		if(thedata != null && !thedata.isEmpty()) {
+			long[] parsed = this.comp.parseInput(thedata);
+			for(int index = 0; index < parsed.length; index++) { 
+				this.updateData(comp.getCalls().length + index, parsed[index]);
+			}
+		}
+	}
+	
+	public void retrieveAllData_ASync() throws XMLRPCException {
+		String[] calls = comp.getCalls();
+		
+		//Lock to synchronize the AtomicInteger and to use the condition
+		Lock lock = new ReentrantLock();
+		// Condition is so that this thread can wait till all the data has been retrieved or returned in a error
+		Condition condition = lock.newCondition();
+		// counter to count the connections that have retrieved an error or retrieved data
+		// Starts at the number of calls it makes and goes graduadly down
+		AtomicInteger counter = new AtomicInteger(calls.length + 1);
+		// If an error was retrieved it goes in this list
+		// TODO - This should be a concurrentlist
+		List<XMLRPCException> errorList = new ArrayList<XMLRPCException>();
+		
+		// Retrieve all the data from the functions of the python server on the workers etc.
+		for(int index = 0; index < calls.length; index++) {
+			if(Logger.PRINT_DEBUG) {
 				System.out.println("Calling " + calls[index] + " for "+ comp.getTableName());
 			}
-			//RetrieverListeners.Calls listener = new RetrieverListeners.Calls(this, index, counter, waitObject);
-			//client.callAsync(listener, calls[index]);
-			updateData(index, retrieveData(calls[index]));
+			RetrieverListeners.Calls listener = new RetrieverListeners.Calls(this, index, lock, condition, counter, errorList);
+			client.callAsync(listener, calls[index]);
 		}
-		if(Globals.DEBUGOUTPUT)
+		
+		if(Logger.PRINT_DEBUG)
 			System.out.println("Calling getData for "+ comp.getTableName());
-		//client.callAsync(new RetrieverListeners.Data(this, counter), "getData");
 		
+		// Retrieve getData is available
+		client.callAsync(new RetrieverListeners.Data(this, lock, condition, counter, errorList), "getData");
 		
-		String thedata =(String)client.call("getData"); 
-		long[] parsed = this.comp.parseInput(thedata);
-		for(int index = 0; index < parsed.length; index++) { 
-			this.updateData(comp.getCalls().length + index, parsed[index]);
-			//updateData(comp.getCalls().length + index, Integer.parseInt(parsed[index]));
+		// Wait for all the data to be retrieved
+		// TODO handle interruptions beter!!
+		lock.lock();
+		try {
+			while(counter.get() > 0) {
+				condition.await();
+				if(!errorList.isEmpty()) throw errorList.get(0);
+			}
+		} catch (InterruptedException e) {
+			System.out.println("Retriever interrupted");
+			e.printStackTrace();
 		}
+		lock.unlock();
 	}
 	
 	/**
 	 * This method uses XML RPC to retrieve data from a particular component and stores it in the array. 
 	 * @throws XMLRPCException 
 	 */
-	public int retrieveData(String key) throws XMLRPCException{
+	public long retrieveData(String key) throws XMLRPCException{
 		return parse(client.call(key));
 	}
 	

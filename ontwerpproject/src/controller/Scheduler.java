@@ -1,6 +1,7 @@
 package controller;
 
 import global.Globals;
+import global.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -8,18 +9,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+//TODO Scheduler is multithreaded, but should probably be singlethreaded, The scheduledthreadtimer may be overkill, but to be fair, i like to keep my options open.
 public class Scheduler {
 	
+	//TODO: OR make this class pretty OR move it from the class if possible
 	class SchedulerTimer extends TimerTask {		
 		private long period;
 		
@@ -28,30 +29,36 @@ public class Scheduler {
 		}
 
 		@Override
+		//TODO: After InvokeAll, should there be a clean up?
 		public void run() {			
+			//The start sign
+			if(Logger.PRINT_DEBUG)
+				System.out.println("----------------START @" + System.currentTimeMillis() + "----------------");
+			
+			
 			queueMap.get(period).addAll(retrieverMap.get(period));
 			ConcurrentLinkedQueue<Retriever> queue 	= queueMap.get(period);
 			ConcurrentLinkedQueue<Retriever> failed	= new ConcurrentLinkedQueue<Retriever>();
-			ExecutorService threadPool				= Executors.newFixedThreadPool(Globals.SchedulerTimerThreads);
+			ExecutorService threadPool				= Executors.newFixedThreadPool(Globals.CLIENT_THREADS);
 			
+			// Get all the retrievers and put them in a list to invoke them all
+			ArrayList<Callable<Boolean>> tasks = new ArrayList<Callable<Boolean>>();
 			for (Retriever r; (r = queue.poll()) != null;){
-				threadPool.submit(new RetrieverThread(r, failed));		
+				tasks.add(new RetrieverThread(r, failed));
 			}
 			
+			//INVOKEALL CALLS ALL THE RETRIEVERS, IF IT TAKES TO LONG IT INTERRUPTS IT
 			try {
-				if(!threadPool.awaitTermination(Globals.POLLINGINTERVAL, TimeUnit.MILLISECONDS)) {
-					System.out.println("Threads has been interupptedksdlk, please call an adult");
+				threadPool.invokeAll(tasks, Globals.POLLINGINTERVAL, TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e2) {
+				if(Logger.PRINT_DEBUG) {
+					System.out.println("ThreadPool was interrupted (in scheduler)");
+					e2.printStackTrace();
 				}
-				List<Runnable> list = threadPool.shutdownNow();
-				if(!list.isEmpty()) {
-					System.out.println("Shutdown now not empty");
-				}
-			} catch (InterruptedException e1) {
-				System.out.println("Interrupted Exeception of threadPool in SchedulerTimer: ");
-				e1.printStackTrace();
-			}
+			}			
 			
-			System.out.println("For loop thingie");
+			//TODO: When do retrievers fail and when should they be removed from the scheduler?
+			// Checks if there are any failed retrievers, if so, remove them from the scheduler
 			for(Retriever ret : failed) {
 				if(retrieverMap.get(period).contains(ret)) {
 					try {
@@ -64,7 +71,9 @@ public class Scheduler {
 				removeRetriever(ret);
 			}
 			
-			System.out.println("Stopping Timer Task");
+			// The stop sign
+			if(Logger.PRINT_DEBUG)
+				System.out.println("----------------STOP @" + System.currentTimeMillis() + "----------------");
 		}		
 	}
 	
@@ -77,7 +86,7 @@ public class Scheduler {
 		retrieverMap = new HashMap<Long, List<Retriever>>();
 		queueMap = new HashMap<Long, ConcurrentLinkedQueue<Retriever>>();
 		taskMap = new HashMap<Long, SchedulerTimer>();
-		timer = new ScheduledThreadPoolExecutor(Globals.SchedulerThreads);
+		timer = new ScheduledThreadPoolExecutor(Globals.SCHEDULER_THREADS);
 	}
 	
 	public void addRetriever(long milliseconds, Retriever r) {
@@ -133,7 +142,7 @@ public class Scheduler {
 	
 	private void checkAndDestroy(long milliseconds) {		
 		if(retrieverMap.get(milliseconds).isEmpty()) {
-			if(Globals.DEBUGOUTPUT)
+			if(Logger.PRINT_DEBUG)
 				System.out.println("Retriever map is empty, destroying the thread");
 			
 			retrieverMap.remove(milliseconds);
@@ -151,7 +160,7 @@ public class Scheduler {
 			queueMap.put(milliseconds, new ConcurrentLinkedQueue<Retriever>());
 			taskMap.put(milliseconds, new SchedulerTimer(milliseconds));
 			
-			if(Globals.DEBUGOUTPUT)
+			if(Logger.PRINT_DEBUG)
 				System.out.println("Schedule added at " + milliseconds + " milliseconds");
 			timer.scheduleAtFixedRate(taskMap.get(milliseconds), milliseconds, milliseconds, TimeUnit.MILLISECONDS);			
 		}

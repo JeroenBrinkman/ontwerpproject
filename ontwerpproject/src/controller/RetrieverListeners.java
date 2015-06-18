@@ -1,5 +1,12 @@
 package controller;
 
+import global.Logger;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+
 import model.Component;
 import de.timroes.axmlrpc.XMLRPCCallback;
 import de.timroes.axmlrpc.XMLRPCException;
@@ -8,78 +15,100 @@ import de.timroes.axmlrpc.XMLRPCServerException;
 public class RetrieverListeners {
 	
 	public static class Data implements XMLRPCCallback {
-		Integer counter;
 		Retriever ret;
+		Lock lock;
+		Condition condition;
+		List<XMLRPCException> errors;
+		AtomicInteger counter;
 		
-		public Data(Retriever ret, Integer counter) {
+		public Data(Retriever ret, Lock lock, Condition condition, AtomicInteger counter, List<XMLRPCException> errors) {
 			this.ret = ret;
+			this.lock = lock;
+			this.condition = condition;
+			this.errors = errors;
 			this.counter = counter;
 		}
 		
 		@Override
 		public void onError(long arg0, XMLRPCException arg1) {
-			synchronized(counter) {
-				counter++;
-			}
-			counter.notify();
+			signalRetriever();
 		}
 		
 		@Override
 		public void onResponse(long id, Object result) {
 			Component comp = ret.getComponent();
-			long[] parsed = comp.parseInput((String)result);
-			for(int index = 0; index < parsed.length; index++) { 
-				ret.updateData(comp.getCalls().length + index, parsed[index]);
+			if(!((String)result).isEmpty()) {
+				long[] parsed = comp.parseInput((String)result);
+				for(int index = 0; index < parsed.length; index++) { 
+					ret.updateData(comp.getCalls().length + index, parsed[index]);
+				}
 			}
-			synchronized(counter) {
-				counter++;
-			}	
-			counter.notify();
+			
+			if(Logger.PRINT_DEBUG)
+				System.out.println("Received getData");
+			
+			signalRetriever();
 		}
 		
 		@Override
 		public void onServerError(long arg0, XMLRPCServerException arg1) {
-			synchronized(counter) {
-				counter++;
-			}	
-			counter.notify();
-		}		
+			signalRetriever();
+		}	
+		
+		private void signalRetriever() {
+			lock.lock();
+			if(counter.decrementAndGet() == 0) {
+				System.out.println("Signalling receiver thread");
+				condition.signal();
+			}
+			lock.unlock();
+		}
 	}
 	
 	public static class Calls implements XMLRPCCallback {
-		Integer counter;
 		Retriever ret;
 		int index;
+		Lock lock;
+		Condition condition;
+		List<XMLRPCException> errors;
+		AtomicInteger counter;
 		
-		public Calls(Retriever ret, int index, Integer counter) {
+		public Calls(Retriever ret, int index, Lock lock, Condition condition, AtomicInteger counter, List<XMLRPCException> errors) {
 			this.ret = ret;
-			this.counter = counter;
 			this.index = index;
+			this.lock = lock;
+			this.condition = condition;
+			this.errors = errors;
+			this.counter = counter;
 		}
 		
 		@Override
 		public void onError(long arg0, XMLRPCException arg1) {
-			synchronized(counter) {
-				counter++;
-			}	
-			counter.notify();
+			signalRetriever();
 		}
 		
 		@Override
 		public void onResponse(long id, Object result) {
 			ret.updateData(index, Retriever.parse(result));
-			synchronized(counter) {
-				counter++;
-			}		
-			counter.notify();
+			
+			if(Logger.PRINT_DEBUG)
+				System.out.println("Received " + ret.getComponent().getKeys()[index] + ": " + result.toString());
+			
+			signalRetriever();
 		}
 		
 		@Override
 		public void onServerError(long arg0, XMLRPCServerException arg1) {
-			synchronized(counter) {
-				counter++;
-			}	
-			counter.notify();
+			signalRetriever();
+		}
+		
+		private void signalRetriever() {
+			lock.lock();
+			if(counter.decrementAndGet() == 0) {
+				System.out.println("Everything is received, waking up retriever...");
+				condition.signal();
+			}
+			lock.unlock();
 		}
 	}
 

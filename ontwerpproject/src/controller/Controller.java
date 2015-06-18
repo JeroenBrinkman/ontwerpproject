@@ -14,15 +14,18 @@ import org.apache.xmlrpc.server.*;
 import org.apache.xmlrpc.webserver.WebServer;
 
 import global.Globals;
+import global.Logger;
 
 public class Controller {
+	public static Scheduler scheduler = null;
+	public static Model model = null;
 	
 	public static void connectDatabase() {
-		ServerHandler.model = new Model();
+		model = new Model();
 		Connection conn = null;
-		while((conn = ServerHandler.model.createConnection()) == null) {
-			System.out.println("Could not connect to SQL Database!");
-			System.out.println("Press enter to try again or exit to quit.");
+		while((conn = model.createConnection()) == null) {
+			Logger.log("Could not connect to SQL Database!");
+			Logger.log("Press enter to try again or exit to quit.");
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			String input = null;
@@ -45,7 +48,7 @@ public class Controller {
 	}
 	
 	public static void createScheduler() {
-		ServerHandler.scheduler = new Scheduler();	
+		scheduler = new Scheduler();	
 	}
 	
 	public static void createServers() {
@@ -63,7 +66,7 @@ public class Controller {
 			e.printStackTrace();
 		}
 		try {
-			System.out.println(Arrays.toString(phm.getListMethods()));
+			Logger.log("Server supports the following functions: " + Arrays.toString(phm.getListMethods()));
 		} catch (XmlRpcException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -75,14 +78,14 @@ public class Controller {
 		config.setEnabledForExceptions(true);
 		config.setContentLengthOptional(false);
 		
-		if(Globals.DEBUGOUTPUT)
+		if(Logger.PRINT_DEBUG)
 			System.out.println("Starting webServer...");
 		
 		try {
 			webServer.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("Couldn't start the webserver!");
+			Logger.log("Couldn't start the webserver!");
 			e.printStackTrace();
 			return;
 		}		
@@ -90,10 +93,10 @@ public class Controller {
 	
 	public static void main(String[] args) {
 		connectDatabase();
-		System.out.println("Database connection succesfull");		
+		Logger.log("Database connection succesfull");		
 		createScheduler();
-		System.out.println("Scheduler created");
+		Logger.log("Scheduler created");
 		createServers();
-		System.out.println("Server created and online");
+		Logger.log("Server created and online");
 	}
 }

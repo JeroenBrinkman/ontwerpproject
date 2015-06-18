@@ -1,6 +1,7 @@
 package model;
 
 import global.Globals;
+import global.Logger;
 
 import java.net.InetSocketAddress;
 import java.sql.Connection;
@@ -74,9 +75,6 @@ public abstract class Component {
 		this.adr.getHostName();
 		conn = con;
 
-		System.out
-				.println("Constructor called of component: " + getTableName());
-
 		try {
 			conn.setAutoCommit(false);
 
@@ -129,7 +127,8 @@ public abstract class Component {
 	 */
 	protected void startUp() throws ClosedException {
 		// check if there are old entries in the database
-		if (Globals.DEBUGOUTPUT)
+		long startTime = System.currentTimeMillis();
+		if (Logger.PRINT_DEBUG)
 			System.out.println("Wachten op jeroen!");
 
 		String sql = "SELECT COUNT(*) FROM " + getTableName();
@@ -163,8 +162,8 @@ public abstract class Component {
 			intel.databaseError(e);
 		}
 
-		if (Globals.DEBUGOUTPUT)
-			System.out.println("Jeroen klaar gekomen!");
+		if (Logger.PRINT_DEBUG)
+			System.out.println("Jeroen klaar gekomen in " + (System.currentTimeMillis() - startTime) + "!");
 	}
 
 	/**
