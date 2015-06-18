@@ -30,7 +30,7 @@ public class Worker extends Component {
 			throws ClosedException {
 		super(addr, con);
 		intel = new WorkerIntelligence(this, mod, con);
-		collumnList = Misc.concat(Globals.WORKER_CALLS, Globals.WORKER_COLS);
+		collumnList = Misc.concat(Globals.WORKER_CALLS, Globals.WORKER_STATS);
 
 		String sql = "INSERT INTO " + getTableName() + " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
@@ -50,7 +50,7 @@ public class Worker extends Component {
 		String[] parts;
 		String[] lines = message.split("\n");
 
-		long[] result = new long[Globals.WORKER_COLS.length]; //List<String> result = new ArrayList<String>();
+		long[] result = new long[Globals.WORKER_STATS.length]; //List<String> result = new ArrayList<String>();
 		int resultIndex = 0;
 		String currentLine;
 

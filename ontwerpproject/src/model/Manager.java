@@ -31,7 +31,7 @@ public class Manager extends Component {
 		super(addr, con);
 		intel = new ManagerIntelligence(this, mod, con);
 		collumnList = Misc.concat(Globals.MANAGER_CALLS,
-				Globals.MANAGER_COLS);
+				Globals.MANAGER_STATS);
 		
 		String sql = "INSERT INTO " + getTableName() + " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
@@ -50,9 +50,9 @@ public class Manager extends Component {
 	public long[] parseInput(String message) {		
 		String[] parts;
 		String[] lines = message.split("\n");
-		long[] result = new long[Globals.MANAGER_COLS.length];
+		long[] result = new long[Globals.MANAGER_STATS.length];
 		String currentLine;
-		for (int i = 0; i < Globals.MANAGER_COLS.length; i++) {
+		for (int i = 0; i < Globals.MANAGER_STATS.length; i++) {
 			currentLine = lines[i];
 			// regels met w[X] erin komen als het goed is alleen voor na alle
 			// relevante informatie.

@@ -1,0 +1,13 @@
+mysql_user:                 henk
+mysql_password:             henk
+
+xmlrpc_async:               true
+xmlrpc_timeout_in_sec: 	    1
+xmlrpc_port:                8000
+client_threads:             16
+scheduler_threads:          1
+pollinginterval:            60000
+
+worker_calls:               time, hdd, mem, cpu
+manager_calls:              time, hdd, mem, cpu
+database_calls:             time, hdd, mem, cpu

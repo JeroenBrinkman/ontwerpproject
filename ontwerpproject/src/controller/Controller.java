@@ -92,6 +92,10 @@ public class Controller {
 	}
 	
 	public static void main(String[] args) {
+		Globals.loadConfig();
+		Logger.log("Starting program with the following global settings: ");
+		Logger.log(Globals.staticToString());
+		
 		connectDatabase();
 		Logger.log("Database connection succesfull");		
 		createScheduler();

@@ -2,6 +2,7 @@ package model;
 
 import global.Globals;
 import global.Logger;
+import global.Misc;
 
 import java.net.InetSocketAddress;
 import java.sql.Connection;
@@ -21,7 +22,8 @@ public class Database extends Component {
 	public Database(InetSocketAddress addr, Connection con, Model mod) throws ClosedException {
 		super(addr, con);
 		intel = new DatabaseIntelligence(this, mod, con);
-		collumnList = Globals.DATABASE_CALLS;
+		collumnList = Misc.concat(Globals.DATABASE_CALLS,
+				Globals.DATABASE_STATS);
 		
 		String sql = "INSERT INTO " + getTableName() + " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
