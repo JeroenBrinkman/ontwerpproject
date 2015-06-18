@@ -2,6 +2,8 @@ package controller;
 
 import global.Logger;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -27,9 +29,8 @@ public class RetrieverThread implements Callable<Boolean> {
 		try {
 				ret.retrieveAllData();
 		}catch (XMLRPCTimeoutException e) {
-			if(Thread.interrupted()) {		
-				if(Logger.PRINT_DEBUG)
-					System.out.println("Dubbel Timeout!: Returning");
+			Logger.log("Component " + ret.getComponent().getTableName() + " had a timeout!");
+			if(Thread.interrupted()) {
 				return false;
 			}			
 		}catch (XMLRPCException e) {
@@ -50,6 +51,7 @@ public class RetrieverThread implements Callable<Boolean> {
 			}
 			else {
 				Logger.log("Unexpected exception: " + e.getMessage());
+				Logger.log(e.getStackTrace().toString());
 				if(Logger.PRINT_DEBUG)
 					e.printStackTrace();
 			}		
@@ -58,7 +60,10 @@ public class RetrieverThread implements Callable<Boolean> {
 			failedList.add(ret);
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			Logger.log(sw.toString());
 		}
 		
 		if(!failed) {
@@ -70,7 +75,10 @@ public class RetrieverThread implements Callable<Boolean> {
 				ret.pushData();
 			}
 			catch(Exception e) {
-				e.printStackTrace();
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				Logger.log(sw.toString());
 			}
 			if(Logger.PRINT_DEBUG) System.out.println("Pushed data from \"" + ret.getComponent().getTableName() + "\"");
 		}

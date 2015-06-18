@@ -1,5 +1,8 @@
 package global;
 
+//TODO: Ik wil verschillende dingen in global kunnen laden d.m.v een file, 
+//TODO: namelijk de polling interval, de collumns van de stats van de components 
+//TODO: en de python client calls, de timeout tijd, async en port
 public class Globals {
 	// constants
 	public static Boolean GUI = true;
@@ -10,23 +13,29 @@ public class Globals {
 	public static final String PASS = "henk";
 	public static final int SQLMAXmin = 10080;// minimum = 60
 	public static final int SQLMAXhour = 8544;// minimum = 24
-	public static final int POLLINGINTERVAL = 5000; // once every minute
+	public static final int POLLINGINTERVAL = 60000; // once every minute
 
 	// Intelligence shit
 	public static long LAST_DATABASE_ERROR = -1;
 	public static final int MIN_DATABASE_ERROR_DELAY = 30000;// max 1 keer per
 																// half uur
 
-	/* LUUKS SHIT */
+	// XMLRPC
 	public static final int XMLRPCTIMEOUT_IN_SECONDS = 1;
 	public static final int XMLRPC_PORT = 8000;
+	public static final boolean ASYNC = true;
+
+	// Retriever
 	public static final int CLIENT_THREADS = 16;
-	public static final int SCHEDULER_THREADS = 1;	
-	
+	public static final int SCHEDULER_THREADS = 1;
+
+	// Stuff to call for the python client
 	public static final String[] WORKER_CALLS = { "time", "hdd", "mem", "cpu" };
 	public static final String[] MANAGER_CALLS = { "time", "hdd", "mem", "cpu" };
 	public static final String[] DATABASE_CALLS = { "time", "hdd", "mem", "cpu" };
-	
+
+	// IDS of workers, managers and databases
+	// TODO: Make this into a enum
 	public static final int ID_WORKER = 0;
 	public static final int ID_MANAGER = 1;
 	public static final int ID_DATABASE = 2;
@@ -55,7 +64,6 @@ public class Globals {
 			"ws_writer_files_written" };
 
 	public static final int GUI_UPDATE = 5000;
-	public static final boolean ASYNC = true;
 
 	// interface metadata
 	public static long LAST_UPDATE = 0;

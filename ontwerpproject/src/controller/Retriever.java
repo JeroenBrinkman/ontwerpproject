@@ -177,8 +177,16 @@ public class Retriever {
 		try {
 			while(counter.get() > 0) {
 				condition.await();
-				if(!errorList.isEmpty()) throw errorList.get(0);
 			}
+			if(!errorList.isEmpty()) {
+				Logger.log("Received " + errorList.size() + " error(s) in component " + comp.getTableName());
+				for(XMLRPCException e : errorList) {
+					Logger.log(e.getMessage());
+				}
+				Logger.log("Throwing the first...");
+				throw errorList.get(0); 
+			}
+			
 		} catch (InterruptedException e) {
 			System.out.println("Retriever interrupted");
 			e.printStackTrace();
