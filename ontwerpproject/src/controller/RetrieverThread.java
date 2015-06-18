@@ -35,8 +35,8 @@ public class RetrieverThread implements Callable<Boolean> {
 				return false;
 			}			
 		}catch (XMLRPCException e) {
-			if(e.getMessage().equals("java.net.ConnectException: Connection timed out: connect")) {
-				Logger.log("Connection time out: Check IP and if the host is up");
+			if(e.getMessage().contains("java.net.ConnectException")) {
+				Logger.log("Connection Exception: Check IP and if the host is up");
 			}
 			else if(e.getMessage().equals("java.net.SocketException: Connection reset")) {
 				Logger.log("Connection reset, Check if the server is up");

@@ -162,7 +162,7 @@ public class Controller {
 	public static void main(String[] args) {
 		start();
 	
-		while(!exit) {
+		/*while(!exit) {
 	        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	        String line = null;
 	        try {
@@ -184,6 +184,6 @@ public class Controller {
 		        case "globals": System.out.println(Globals.staticToString()); break;
 		        default: System.out.println("command not recognized"); break;
 	        }
-		}
+		}*/
 	}
 }

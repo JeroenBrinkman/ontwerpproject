@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class Logger {
-	public static final String LOGFILENAME = "log/log.txt";
+	public static final String LOGFILENAME = "log.txt";
 	
 	public static synchronized void log(String message) {
 		if(Globals.TO_CONSOLE) {
