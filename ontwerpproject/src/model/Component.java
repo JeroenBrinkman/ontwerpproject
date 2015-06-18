@@ -349,4 +349,9 @@ public abstract class Component {
 	 * @ensure \result != null
 	 */
 	public abstract long[] parseInput(String message);
+	
+	/**
+	 * Returns the type of the component as defined in Globals
+	 */
+	public abstract int getType();
 }

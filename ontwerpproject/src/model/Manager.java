@@ -76,4 +76,9 @@ public class Manager extends Component {
 		return Globals.MANAGER_CALLS;
 	}
 
+	@Override
+	public int getType() {
+		return Globals.ID_MANAGER;
+	}
+
 }

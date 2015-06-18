@@ -123,6 +123,10 @@ public class Scheduler {
 
 		return null;
 	}
+	
+	public Retriever[] getAllRetrievers(long milliseconds) {
+		return (Retriever[]) retrieverMap.get(milliseconds).toArray();
+	}
 
 	public void removeRetriever(Retriever ret) {
 		synchronized (retrieverMap) {

@@ -79,4 +79,9 @@ public class Worker extends Component {
 		return Globals.WORKER_CALLS;
 	}
 
+	@Override
+	public int getType() {
+		return Globals.ID_WORKER;
+	}
+
 }

@@ -3,6 +3,7 @@ package controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -91,14 +92,29 @@ public class Controller {
 	}
 	
 	public static void restart() {
+		Retriever[] retList = scheduler.getAllRetrievers(Globals.POLLINGINTERVAL);
+		InetSocketAddress[] addressList = new InetSocketAddress[retList.length];
+		int[] typeList = new int[retList.length];
+		for(int index = 0; index < retList.length; index++) {
+			addressList[index] = retList[index].getComponent().getAddress();
+			retList[index].getComponent().getType();			
+		}
 		
+		
+		quit();
+		start();
+		
+		//Add them all
+		ServerHandler handler = new ServerHandler();
+		for(int index = 0; index < typeList.length; index++) 
+			handler.add(typeList[index], addressList[index].getHostName(), addressList[index].getPort());		
 	}
 	
 	public static void quit() {
-		
+		//TODO IMPLEMENT A QUIT!
 	}
 	
-	public static void main(String[] args) {
+	public static void start() {
 		Globals.loadConfig();
 		Logger.log("Starting program with the following global settings: ");
 		Logger.log(Globals.staticToString());
@@ -109,6 +125,10 @@ public class Controller {
 		Logger.log("Scheduler created");
 		createServers();
 		Logger.log("Server created and online");
+	}
+	
+	public static void main(String[] args) {
+		start();
 		
 		while(true) {
 	        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

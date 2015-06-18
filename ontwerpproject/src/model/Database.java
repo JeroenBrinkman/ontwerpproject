@@ -54,4 +54,9 @@ public class Database extends Component {
 		return Globals.DATABASE_CALLS;
 	}
 
+	@Override
+	public int getType() {
+		return Globals.ID_DATABASE;
+	}
+
 }
