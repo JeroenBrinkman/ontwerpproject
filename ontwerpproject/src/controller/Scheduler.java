@@ -3,6 +3,8 @@ package controller;
 import global.Globals;
 import global.Logger;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,8 +34,7 @@ public class Scheduler {
 		//TODO: After InvokeAll, should there be a clean up?
 		public void run() {			
 			//The start sign
-			if(Logger.PRINT_DEBUG)
-				System.out.println("----------------START @" + System.currentTimeMillis() + "----------------");
+			Logger.log_debug("----------------START @" + System.currentTimeMillis() + "----------------");
 			
 			
 			queueMap.get(period).addAll(retrieverMap.get(period));
@@ -51,10 +52,11 @@ public class Scheduler {
 			try {
 				threadPool.invokeAll(tasks, Globals.POLLINGINTERVAL, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e2) {
-				if(Logger.PRINT_DEBUG) {
-					System.out.println("ThreadPool was interrupted (in scheduler)");
-					e2.printStackTrace();
-				}
+				Logger.log("ThreadPool was interrupted (in scheduler)");
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e2.printStackTrace(pw);
+				Logger.log_debug_con(sw.toString());
 			}			
 			
 			//TODO: When do retrievers fail and when should they be removed from the scheduler?
@@ -72,8 +74,7 @@ public class Scheduler {
 			}
 			
 			// The stop sign
-			if(Logger.PRINT_DEBUG)
-				System.out.println("----------------STOP @" + System.currentTimeMillis() + "----------------");
+			Logger.log_debug("----------------STOP @" + System.currentTimeMillis() + "----------------");
 		}		
 	}
 	

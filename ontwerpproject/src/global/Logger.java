@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class Logger {
-	public static final boolean PRINT_DEBUG = true;
+	public static final boolean PRINT_DEBUG = false;
+	public static final boolean PRINT_DEBUG_CONCURRENT = false;
 	public static final boolean TO_CONSOLE = true;
 	public static final String LOGFILENAME = "log/log.txt";
 	
@@ -34,6 +35,11 @@ public class Logger {
 	
 	public static synchronized void log_debug(String message) {
 		if(PRINT_DEBUG) 
+			log(message);
+	}
+	
+	public static synchronized void log_debug_con(String message) {
+		if(PRINT_DEBUG_CONCURRENT)
 			log(message);
 	}
 }

@@ -44,8 +44,7 @@ public class RetrieverListeners {
 				}
 			}
 			
-			if(Logger.PRINT_DEBUG)
-				System.out.println("Received getData");
+			Logger.log_debug("Received getData");
 			
 			signalRetriever();
 		}
@@ -58,7 +57,7 @@ public class RetrieverListeners {
 		private void signalRetriever() {
 			lock.lock();
 			if(counter.decrementAndGet() == 0) {
-				System.out.println("Signalling receiver thread");
+				Logger.log_debug_con("Everything is received, waking up retriever...");
 				condition.signal();
 			}
 			lock.unlock();
@@ -89,11 +88,8 @@ public class RetrieverListeners {
 		
 		@Override
 		public void onResponse(long id, Object result) {
-			ret.updateData(index, Retriever.parse(result));
-			
-			if(Logger.PRINT_DEBUG)
-				System.out.println("Received " + ret.getComponent().getKeys()[index] + ": " + result.toString());
-			
+			ret.updateData(index, Retriever.parse(result));			
+			Logger.log("Received " + ret.getComponent().getKeys()[index] + ": " + result.toString());			
 			signalRetriever();
 		}
 		
@@ -105,7 +101,7 @@ public class RetrieverListeners {
 		private void signalRetriever() {
 			lock.lock();
 			if(counter.decrementAndGet() == 0) {
-				System.out.println("Everything is received, waking up retriever...");
+				Logger.log_debug_con("Everything is received, waking up retriever...");
 				condition.signal();
 			}
 			lock.unlock();

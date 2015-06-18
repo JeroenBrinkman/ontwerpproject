@@ -20,11 +20,10 @@ public class ServerHandler {
 	}
 
 	public boolean add(int type, String ip, int port) {
-		if (Logger.PRINT_DEBUG)
-			System.out.println("add called");
+		Logger.log_debug("add called");
 
-		if (Logger.PRINT_DEBUG && (Controller.scheduler == null || Controller.model == null)) {
-			System.out.println("Scheduler or model is null, please initiate!");
+		if (Controller.scheduler == null || Controller.model == null) {
+			Logger.log("Scheduler or model is null, please initiate!");
 			return false;
 		}
 
@@ -80,15 +79,12 @@ public class ServerHandler {
 	}
 
 	public boolean remove(String hostname, int port) {
-		if (Logger.PRINT_DEBUG)
-			System.out.println("Remove called!");
+		Logger.log_debug("Remove called!");
 
 		Retriever ret = Controller.scheduler.getRetriever(hostname, port);
 		synchronized (Controller.scheduler) {
 			if (ret == null) {
-				if (Logger.PRINT_DEBUG)
-					System.out
-							.println("Retriever not found (hostname, port): ("
+				Logger.log_debug("Retriever not found (hostname, port): ("
 									+ hostname + ", " + port + ")");
 				return false;
 			}

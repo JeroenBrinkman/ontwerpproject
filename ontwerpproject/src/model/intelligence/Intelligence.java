@@ -161,7 +161,7 @@ public abstract class Intelligence {
 	 * @ensures correct errormessages are send
 	 */
 	public void checkCritical(long[] newin) throws ClosedException {
-		String[] cols = comp.getKeys();
+		/*String[] cols = comp.getKeys();
 		for (int i = 0; i < newin.length; ++i) {
 			ResultSet r;
 			try {
@@ -184,7 +184,7 @@ public abstract class Intelligence {
 								+ e.getMessage(), "unable to detect allerts");
 				Logger.log("Failed to find critical value table");
 			}
-		}
+		}*/
 	}
 
 }
