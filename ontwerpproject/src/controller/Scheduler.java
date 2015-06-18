@@ -125,7 +125,9 @@ public class Scheduler {
 	}
 	
 	public Retriever[] getAllRetrievers(long milliseconds) {
-		return (Retriever[]) retrieverMap.get(milliseconds).toArray();
+		if(retrieverMap.containsKey(milliseconds))
+			return (Retriever[]) retrieverMap.get(milliseconds).toArray();
+		return null;
 	}
 
 	public void removeRetriever(Retriever ret) {
@@ -141,6 +143,14 @@ public class Scheduler {
 			queueMap.get(milliseconds).remove(ret);
 			checkAndDestroy(milliseconds);
 		}
+	}
+	
+	public void destroy() {
+		for(long key : retrieverMap.keySet()) {
+			retrieverMap.get(key).clear();
+			checkAndDestroy(key);
+		}
+		this.timer.shutdownNow();
 	}
 
 	private void checkAndDestroy(long milliseconds) {

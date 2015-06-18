@@ -206,6 +206,14 @@ public abstract class Component {
 	public String[] getKeys() {
 		return this.collumnList;
 	}
+	
+	/**
+	 * 
+	 * @return the connection
+	 */ 
+	public Connection getConnection() {
+		return this.conn;
+	}
 
 	/**
 	 * Getter for calls

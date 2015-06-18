@@ -73,6 +73,7 @@ public class Model {
 	 */
 	public void removeComponent(Component c) {
 		Logger.log("removing component : " + c.getTableName());
+		c.closeConnection();
 		components.remove(c);
 	}
 
@@ -168,5 +169,13 @@ public class Model {
 		}
 		return conn;
 	}
-
+	
+	/**
+	 * TODO IK WEET NIET OF DIT WERKT?
+	 */
+	public void destroy() {
+		for(Component c : this.components)
+			c.closeConnection();
+		this.components.clear();
+	}
 }

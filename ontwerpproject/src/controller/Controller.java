@@ -20,6 +20,8 @@ import global.Logger;
 public class Controller {
 	public static Scheduler scheduler = null;
 	public static Model model = null;
+	public static WebServer webServer;
+	public static XmlRpcServer server;
 	
 	public static void connectDatabase() {
 		model = new Model();
@@ -53,8 +55,8 @@ public class Controller {
 	}
 	
 	public static void createServers() {
-		WebServer webServer = new WebServer(Globals.XMLRPC_PORT);
-		XmlRpcServer server = webServer.getXmlRpcServer();
+		webServer = new WebServer(Globals.XMLRPC_PORT);
+		server = webServer.getXmlRpcServer();
 		
 		PropertyHandlerMapping phm = new PropertyHandlerMapping();
 		try {
@@ -93,11 +95,15 @@ public class Controller {
 	
 	public static void restart() {
 		Retriever[] retList = scheduler.getAllRetrievers(Globals.POLLINGINTERVAL);
-		InetSocketAddress[] addressList = new InetSocketAddress[retList.length];
-		int[] typeList = new int[retList.length];
-		for(int index = 0; index < retList.length; index++) {
-			addressList[index] = retList[index].getComponent().getAddress();
-			retList[index].getComponent().getType();			
+		InetSocketAddress[] addressList = null;
+		int[] typeList = null;
+		if(retList != null) {
+			addressList = new InetSocketAddress[retList.length];
+			typeList	= new int[retList.length];
+			for(int index = 0; index < retList.length; index++) {
+				addressList[index] = retList[index].getComponent().getAddress();
+				retList[index].getComponent().getType();			
+			}
 		}
 		
 		
@@ -105,13 +111,31 @@ public class Controller {
 		start();
 		
 		//Add them all
-		ServerHandler handler = new ServerHandler();
-		for(int index = 0; index < typeList.length; index++) 
-			handler.add(typeList[index], addressList[index].getHostName(), addressList[index].getPort());		
+		if(retList != null){
+			ServerHandler handler = new ServerHandler();
+			for(int index = 0; index < typeList.length; index++) 
+				handler.add(typeList[index], addressList[index].getHostName(), addressList[index].getPort());
+		}
 	}
 	
-	public static void quit() {
-		//TODO IMPLEMENT A QUIT!
+	public static void quit() {		
+		scheduler.destroy();
+		model.destroy();
+		webServer.shutdown();
+		
+		while(Thread.activeCount()  <= 1) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		scheduler = null;
+		model = null;
+		webServer = null;
+		server = null;
 	}
 	
 	public static void start() {
@@ -130,7 +154,8 @@ public class Controller {
 	public static void main(String[] args) {
 		start();
 		
-		while(true) {
+		boolean exit = true;
+		while(exit) {
 	        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	        String line = null;
 	        try {
@@ -142,7 +167,7 @@ public class Controller {
 	        
 	        switch(line) {
 	        case "restart": restart(); break;
-	        case "quit": 	quit(); break;
+	        case "quit": 	quit(); exit = false; break;
 	        case "debug on": Globals.PRINT_DEBUG = true; break;
 	        case "debug off": Globals.PRINT_DEBUG = false; break;
 	        case "globals": System.out.println(Globals.staticToString()); break;
