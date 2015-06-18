@@ -128,7 +128,7 @@ public abstract class Intelligence {
 	 * 
 	 */
 	public void databaseError(SQLException e) throws ClosedException {
-		e.printStackTrace();
+		Logger.log(e.getMessage());
 		if (Globals.LAST_DATABASE_ERROR == -1
 				|| (System.currentTimeMillis() - Globals.LAST_DATABASE_ERROR) > Globals.MIN_DATABASE_ERROR_DELAY) {
 			errorMail(
@@ -142,12 +142,11 @@ public abstract class Intelligence {
 		throw new ClosedException("alles kapot");
 	}
 
-	public void connectionError() throws ClosedException {
+	public void connectionError() {
 		errorMail("Component " + comp.getTableName()
 				+ " disconnected from the system.", "Component disconnected");
 		mod.removeComponent(comp);
-
-		throw new ClosedException("alles kapot");
+		Logger.log("component connection failed, ClosedException thrown");
 	}
 
 	/**
