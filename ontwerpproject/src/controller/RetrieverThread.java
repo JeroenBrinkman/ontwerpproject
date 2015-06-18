@@ -25,7 +25,7 @@ public class RetrieverThread implements Callable<Boolean> {
 
 	@Override
 	public Boolean call() throws Exception {
-		if(Logger.PRINT_DEBUG) System.out.println("Retrieving data from " + ret.getComponent().getTableName() + "...");
+		Logger.log_debug("Retrieving data from " + ret.getComponent().getTableName() + "...");
 		try {
 				ret.retrieveAllData();
 		}catch (XMLRPCTimeoutException e) {
@@ -67,10 +67,8 @@ public class RetrieverThread implements Callable<Boolean> {
 		}
 		
 		if(!failed) {
-			if(Logger.PRINT_DEBUG) {
-				System.out.println("Retrieved data from \"" + ret.getComponent().getTableName() + "\": " + Arrays.toString(ret.getData()));
-				System.out.println("Pushing data from " + ret.getComponent().getTableName() + "...");
-			}
+				Logger.log_debug("Retrieved data from \"" + ret.getComponent().getTableName() + "\": " + Arrays.toString(ret.getData()));
+				Logger.log_debug("Pushing data from " + ret.getComponent().getTableName() + "...");
 			try {
 				ret.pushData();
 			}
@@ -80,11 +78,10 @@ public class RetrieverThread implements Callable<Boolean> {
 				e.printStackTrace(pw);
 				Logger.log(sw.toString());
 			}
-			if(Logger.PRINT_DEBUG) System.out.println("Pushed data from \"" + ret.getComponent().getTableName() + "\"");
+			Logger.log_debug("Pushed data from \"" + ret.getComponent().getTableName() + "\"");
 		}
 		
-		if(Logger.PRINT_DEBUG)
-			System.out.println("Completed thread run, joining...");
+		Logger.log("Completed thread run, joining...");
 		
 		return failed;
 	}

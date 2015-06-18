@@ -158,15 +158,12 @@ public class Retriever {
 		
 		// Retrieve all the data from the functions of the python server on the workers etc.
 		for(int index = 0; index < calls.length; index++) {
-			if(Logger.PRINT_DEBUG) {
-				System.out.println("Calling " + calls[index] + " for "+ comp.getTableName());
-			}
+			Logger.log_debug("Calling " + calls[index] + " for "+ comp.getTableName());
+			
 			RetrieverListeners.Calls listener = new RetrieverListeners.Calls(this, index, lock, condition, counter, errorList);
 			client.callAsync(listener, calls[index]);
 		}
-		
-		if(Logger.PRINT_DEBUG)
-			System.out.println("Calling getData for "+ comp.getTableName());
+		Logger.log_debug("Calling getData for "+ comp.getTableName());
 		
 		// Retrieve getData is available
 		client.callAsync(new RetrieverListeners.Data(this, lock, condition, counter, errorList), "getData");
@@ -183,12 +180,12 @@ public class Retriever {
 				for(XMLRPCException e : errorList) {
 					Logger.log(e.getMessage());
 				}
-				Logger.log("Throwing the first...");
+				Logger.log_debug("Throwing the first...");
 				throw errorList.get(0); 
 			}
 			
 		} catch (InterruptedException e) {
-			System.out.println("Retriever interrupted");
+			Logger.log_debug_con("Retriever interrupted");
 			e.printStackTrace();
 		}
 		lock.unlock();
