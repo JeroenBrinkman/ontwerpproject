@@ -84,6 +84,7 @@ public class Controller {
 		XmlRpcServerConfigImpl config = (XmlRpcServerConfigImpl) server.getConfig();
 		config.setEnabledForExceptions(true);
 		config.setContentLengthOptional(false);
+		config.setKeepAliveEnabled(false);
 		
 		Logger.log_debug("Starting webServer...");
 		

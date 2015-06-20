@@ -66,15 +66,21 @@ public class Retriever {
 		this.comp = comp;
 		this.data = new long[comp.getKeys().length];
 		
+		this.client = createClient("/RPC2");
+	}
+	
+	public XMLRPCClient createClient(String address) {
 		URL xmlrpcUrl = null;
 		try {
-			xmlrpcUrl = new URL("http", comp.getAddress().getHostName(), comp.getAddress().getPort(), "/RPC2");
+			xmlrpcUrl = new URL("http", comp.getAddress().getHostName(), comp.getAddress().getPort(), address);
 		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
+			Logger.log("In createClient (Retriever), URL was malformed: " + e1.getMessage());
 		}
 		
 		client = new XMLRPCClient(xmlrpcUrl);
 		client.setTimeout(Globals.XMLRPCTIMEOUT_IN_SECONDS);
+		
+		return client;
 	}
 	
 	/**

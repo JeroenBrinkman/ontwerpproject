@@ -59,7 +59,10 @@ public class Scheduler {
 				PrintWriter pw = new PrintWriter(sw);
 				e2.printStackTrace(pw);
 				Logger.log_debug_con(sw.toString());
-			}			
+			}		
+			
+			Logger.log("threadPool.invokeAll done!~~");
+			threadPool.shutdownNow();
 			
 			//TODO: When do retrievers fail and when should they be removed from the scheduler?
 			// Checks if there are any failed retrievers, if so, remove them from the scheduler
