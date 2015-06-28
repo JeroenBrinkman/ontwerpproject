@@ -1,0 +1,105 @@
+#########################################################################
+#									#
+#  Using the xml-rpc-server:						#
+#  1. Install the xml-rpc-server on the desired machine by running	#
+#     install.sh.							#
+#     Note that this requires a remote ssh connection, if the 		#
+#     xml-rpc-server is already on the desired machine, this step is	#
+#     not necessary. See "Installation of xml-rpc-server" below for	#
+#     more information about the installation.				#
+#  									#
+#  2. Run start.sh to start the xml-rpc-server				#
+#     Note that this does only execute when the monitoring system is	#
+#     running.								#
+#  									#
+#  3. Run stop.sh to stop the xml-rpc server				#
+#  									#
+#########################################################################
+
+
+
+#########################################################################
+#									#
+#  Installation of xml-rpc-server:					#
+#  1. Dependencies, make sure the machine running xml-rpc-server meet	#
+#     these requirements: 						#
+#     - Unix:								#
+#       The xml-rpc-server uses methods to retrieve resource usage of	#
+#       the machine it runs on, these methods are unix based.		#
+#     - Python 2.x.x:							#
+#       The xml-rpc-server runs on python 2.x.x.			#
+#       Note that server is not compatible with python 3.x.x 		#
+#     - SimpleXMLRPCServer:						#
+#       This is a standard python 2.x.x library.			#
+#       See https://docs.python.org/2/library/simplexmlrpcserver.html	#
+#       for more information.						#
+#  									#
+#  2. Installation to a remote machine (this is not necessary when	#
+#     the server already is on the desired machine.			#
+#     The easiest way is to run the script install.sh which will	#
+#     install all files to the specified host at the specified		#
+#     location. For help run "install.sh -h". If this does not work,	#
+#     you can try installing it on your own by following these steps:	#
+#     2.1. Copy the files "start.sh", "stop.sh", and "nohupRemover.sh"	#
+#  	to the remote machine using `scp /path/to/file			#
+#  		username@remotehost:/path/to/destination`		#
+#     2.2. Copy the directory "server", including its contents to	#
+#  	the remote machine using `scp -r /path/to/local/server_dir	#
+#  		       user@remotehost:/path/to/remote/dir`		#
+#     2.3. Optionally: Copy files "README" and "install.sh" to the	#
+#  	remote machine using the same step as 2.1. This ensures		#
+#  	documentation is available at the remote machine.		#
+#  									#
+#  3. Configuration of xml-rpc-server:					#
+#     The xml-rpc-server must connect to the monitoring system		#
+#     which polls this xml-rpc-server periodically. This monitoring	#
+#     system must also know what type of xml-rpc-server is running,	#
+#     i.e. if it is a worker, manager, or database. Therefore these	#
+#     attributes must be configured. Two steps need to be executed:	#
+#     3.1. Open the file server/constants.py.				#
+#     3.2. Set the "MONITOR_SYSTEM_IP" to that of the monitoring system	#
+#  	This is 'www.dp.dnsjedi.org' by default.			#
+#     3.3. Set the COMPONENT_TYPE to the component type of the server	#
+#  	it intends to run on. WORKER = 0, MANAGER = 1, DATABASE = 2	#
+#  	this is 0, i.e. worker by default.				#
+#									#
+#########################################################################
+
+
+
+#########################################################################
+#									#
+#  General methods from the xml-rpc server				#
+#  Returns the methods the server offers				#
+#  system.listMethods()	      : List<String>				#
+#  Returns a text description of method given as parameter		#
+#  system.methodHelp(String)     : String				#
+#  Returns a list of signatures of method given as parameter		#
+#  system.methodSignature(String): String[]				#
+#									#
+#  Server has specific methods to retrieve data from that machine.	#
+#  cpu()    : double	#Returns the CPU usage in %			#
+#  mem()    : String	#Returns the memory usage in %			#
+#  hdd()    : String	#Returns the hard disk usage in %		#
+#  time()   : double	#Returns the local time of the machine.		#
+#  getData(): String	#Returns the data from dnsjedi-wstats on	#
+#  			 a worker and dnsjedi-cmstats on a manager.	#
+#  									#
+#########################################################################
+
+
+
+#########################################################################
+#									#
+#  Intended workings of xml-rpc server					#
+#  The monitoring system which polls the local xml-rpc servers		#
+#  periodically must be turned on before using local xml-rpc servers.	#
+#  By invoking start.sh, the local xml-rpc server sends a registration	#
+#  message to the monitoring system. Afterwards, the monitoring system	#
+#  starts to periodically poll the local xml-rpc serverto retrieve	#
+#  information about cpu, memory, hard disk, system time and data if 	#
+#  it is a worker or manager. If a component disconnects from the	#
+#  server, it should invoke stop.sh. This tells the server a component 	#
+#  is meant to disconnect.						#
+#									#
+#########################################################################
