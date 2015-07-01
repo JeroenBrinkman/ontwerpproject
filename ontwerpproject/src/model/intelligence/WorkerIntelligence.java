@@ -38,6 +38,7 @@ public class WorkerIntelligence extends Intelligence {
 		super.checkCritical(newin);
 		// check once per hour, to avoid false positives due to short trends
 		if (counter == 0) {
+			//create hashmap for easy extending
 			HashMap<String, Long> map = new HashMap<String, Long>();
 			String[] cols = comp.getKeys();
 			for (int i = 0; i < cols.length; ++i) {
@@ -71,6 +72,7 @@ public class WorkerIntelligence extends Intelligence {
 			failure += map.get("ws_curr_succ_q_count_NSEC3");
 			failure += map.get("ws_curr_succ_q_count_NSEC3PARAM");
 
+			// NOTE: its succes/failure, and not total/failure
 			if (((double) (succes - lastsucces))
 					/ ((double) (failure - lastfailed)) >= Globals.QUERYRATIO) {
 				// errorstate, too many queries failing
