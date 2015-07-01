@@ -7,6 +7,7 @@ import global.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
@@ -14,6 +15,13 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
+/**
+ * responsible for everything error related, has a couple of static methods for
+ * sending mails and setting notifications
+ * 
+ * @author Jeroen
+ *
+ */
 public abstract class Intelligence {
 
 	public class ClosedException extends Exception {
@@ -22,6 +30,10 @@ public abstract class Intelligence {
 		 */
 		private static final long serialVersionUID = 2400467736031885588L;
 
+		/**
+		 * Thrown whenever a component has disconnect or has to disconnect, for
+		 * example when the database connection fails
+		 */
 		public ClosedException() {
 			super();
 		}
@@ -39,19 +51,23 @@ public abstract class Intelligence {
 		}
 	}
 
+	/**
+	 * statement to query the critical values table, should be initialised in
+	 * the constructor of the subclass
+	 */
 	protected PreparedStatement st;
+	/**
+	 * connection, same connection as the corresponding component
+	 */
 	protected Connection con;
+	/**
+	 * pointer to the component
+	 */
 	protected Component comp;
+	/**
+	 * pointer to the model
+	 */
 	protected Model mod;
-	protected int[] LIMITS; /*
-							 * list of counters, keeps track of when we send a
-							 * mail
-							 */
-	protected final static int LIMIT = 60 * 12; /*
-												 * send mail max once per hour
-												 * per issue
-												 */// TODO update this to
-													// correct value
 
 	public Intelligence(Component comp, Model mod, Connection conn) {
 		this.comp = comp;
@@ -100,6 +116,11 @@ public abstract class Intelligence {
 		}
 	}
 
+	/**
+	 * sets a notification in the database, used by the website to generate notifications
+	 * @param at Metric in which the error is detected
+	 * @param message Error message to be set
+	 */
 	public void errorNotification(String at, String message) {
 		try {
 			Statement st = con.createStatement();
@@ -158,30 +179,44 @@ public abstract class Intelligence {
 	 * @ensures correct errormessages are send
 	 */
 	public void checkCritical(long[] newin) throws ClosedException {
-		/*String[] cols = comp.getKeys();
+		String[] cols = comp.getKeys();
 		for (int i = 0; i < newin.length; ++i) {
 			ResultSet r;
 			try {
-				st.setString(1, cols[i]);
-				r = st.executeQuery();
-				if (r.next()) {
-					if (newin[i] > r.getLong(1)) {
-						String message = cols[i]
-								+ " exceeded the critical value in "
-								+ comp.getTableName();
-						errorMail(message, "critical value");
-						errorNotification(cols[i], message);
-						Logger.log("error state found in "
-								+ comp.getTableName());
+				// only implement for cpu mem and hdd here
+				if (cols[i].equals("cpu") || cols[i].equals("hdd")
+						|| cols[i].equals("mem")) {
+					st.setString(1, cols[i]);
+					r = st.executeQuery();
+					if (r.next()) {
+						if (newin[i] > r.getLong(1)) {
+							String message = cols[i]
+									+ " exceeded the critical value in "
+									+ comp.getTableName();
+							errorMail(message, "critical value");
+							errorNotification(cols[i], message);
+							Logger.log("error state found in "
+									+ comp.getTableName());
+						}
+					} else {
+						// no value in table -> error
+						errorMail(
+								"Failed to find critical value, seems to be missing from the table, for "
+										+ cols[i] + " in "
+										+ comp.getTableName(),
+								"unable to detect allerts");
+						Logger.log("Failed to find critical value table");
 					}
 				}
 			} catch (SQLException e) {
+				// error in sql, send error message as well for easier bug
+				// identification
 				errorMail(
-						"Failed to find the critical value table, will not be able to send alerts \n"
+						"Failed to find the critical value for component with sql error \n"
 								+ e.getMessage(), "unable to detect allerts");
 				Logger.log("Failed to find critical value table");
 			}
-		}*/
+		}
 	}
 
 }

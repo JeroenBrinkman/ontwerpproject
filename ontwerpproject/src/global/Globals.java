@@ -85,6 +85,7 @@ public class Globals {
 	public static boolean TO_CONSOLE = true;
 
 	// Intelligence shit
+	public final static double QUERYRATIO = 0.95;
 	public static long LAST_DATABASE_ERROR = -1;
 	public static final int MIN_DATABASE_ERROR_DELAY = 30000;// max 1 keer per
 																// half uur

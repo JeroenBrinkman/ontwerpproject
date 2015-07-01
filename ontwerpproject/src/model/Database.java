@@ -13,7 +13,6 @@ import model.intelligence.Intelligence.ClosedException;
 
 /**
  * Represents a database in the query system
- * empty class for now
  * @author Jeroen
  *
  */

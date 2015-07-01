@@ -334,21 +334,6 @@ public abstract class Component {
 		conn.commit();
 	}
 
-	/*
-	 * // help function for update currently unused, but might be useful to keep
-	 * private void compressSEntries() throws SQLException { int a = (60 * 1000)
-	 * / Globals.POLLINGINTERVAL; int[] b = new int[collumnList.length];
-	 * delete.setString(1, "S"); getlimit.setString(1, "S"); getlimit.setInt(2,
-	 * a); ResultSet r = getlimit.executeQuery(); long newdate = 0; while
-	 * (r.next()) { for (int i = 0; i < b.length; ++i) { // start at 3,because
-	 * date and tag do not have to be // averaged and are not relevant b[i] +=
-	 * r.getInt(i + 3); } delete.setString(2, r.getString(1));
-	 * delete.executeUpdate(); newdate = Long.parseLong(r.getString(1)) - 3000;
-	 * } insert.setString(1, Long.toString(newdate)); insert.setString(2, "M");
-	 * for (int i = 0; i < b.length; ++i) { insert.setString(i + 3,
-	 * Long.toString(b[i] / a)); } insert.executeUpdate(); conn.commit(); }
-	 */
-
 	/**
 	 * Parses the input from the actual component into something that can be
 	 * entered into the database
