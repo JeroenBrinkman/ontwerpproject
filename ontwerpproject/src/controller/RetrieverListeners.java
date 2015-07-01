@@ -1,6 +1,7 @@
 package controller;
 
 import global.Logger;
+import global.Globals;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,6 +13,11 @@ import de.timroes.axmlrpc.XMLRPCCallback;
 import de.timroes.axmlrpc.XMLRPCException;
 import de.timroes.axmlrpc.XMLRPCServerException;
 
+/**
+ * Used when {@link Globals#ASYNC} is true, see {@link Retriever#retrieveAllData()}
+ * @author Luuk
+ *
+ */
 public class RetrieverListeners {
 	
 	public static class Data implements XMLRPCCallback {

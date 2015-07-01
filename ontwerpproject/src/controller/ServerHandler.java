@@ -12,12 +12,31 @@ import model.Manager;
 import model.Worker;
 import model.intelligence.Intelligence.ClosedException;
 
+/**
+ * ServerHandler handles all the methods
+ * that can be called through the XMLRPC server
+ * @author Luuk
+ *
+ */
 public class ServerHandler {
+	/**
+	 * A debug method, always returns true.
+	 * @return true
+	 */
 	public boolean online() {
 		Logger.log_debug("online called");
 		return true;
 	}
 
+	/**
+	 * Adds a component to the scheduler. Does not adds the component to the scheduler
+	 * if the ip and port combination already exists in the scheduler
+	 * 
+	 * @param type See {@link Globals#ID_DATABASE}, {@link Globals#ID_MANAGER} and {@link Globals#ID_WORKER}
+	 * @param ip 	the ip of the component
+	 * @param port	the port of the component
+	 * @return true if the component was added to the scheduler, else false
+	 */
 	public boolean add(int type, String ip, int port) {
 		Logger.log_debug("add called");
 
@@ -77,6 +96,13 @@ public class ServerHandler {
 		return true; 
 	}
 
+	/**
+	 * Removes the component from the scheduler using 
+	 * the hostname and the port
+	 * @param hostname hostname of the retriever that should be removed
+	 * @param port port of the retriever that should be removed
+	 * @return true
+	 */
 	public boolean remove(String hostname, int port) {
 		Logger.log_debug("Remove called!");
 

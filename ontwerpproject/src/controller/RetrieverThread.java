@@ -9,21 +9,37 @@ import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import controller.Scheduler.SchedulerTimer;
 import de.timroes.axmlrpc.XMLRPCException;
 import de.timroes.axmlrpc.XMLRPCTimeoutException;
 
+/**
+ * See {@link SchedulerTimer#run()}
+ * @author Luuk
+ *
+ */
 public class RetrieverThread implements Callable<Boolean> {
 	private Retriever ret;
 	private boolean failed;
 	private ConcurrentLinkedQueue<Retriever> failedList;
 	
 	
+	/**
+	 * @require r != null and failedList != null
+	 * @param failedList a link in which the this object can add the retriever to if it failed to retrieve the data unexpectedly.
+	 */
 	public RetrieverThread(Retriever r, ConcurrentLinkedQueue<Retriever> failedList) {
 		this.ret = r;
 		failed = false;
 		this.failedList = failedList;
 	}
 
+	/**
+	 * Used in the Scheduler, see {@link SchedulerTimer#run()}
+	 * Uses the retriever and uses {@link Retriever#retrieveAllData()} to
+	 * try to retriever all data. If no errors where caugth, it puts the 
+	 * retrieved data in the database using {@link Retriever#updateData(int, long)}
+	 */
 	@Override
 	public Boolean call() throws Exception {
 		Logger.log_debug("Retrieving data from " + ret.getComponent().getTableName() + "...");
@@ -82,7 +98,6 @@ public class RetrieverThread implements Callable<Boolean> {
 			Logger.log_debug("Pushed data from \"" + ret.getComponent().getTableName() + "\"");
 		}
 		
-		Logger.log("Completed thread run");
 		Logger.log_debug_con("Completed thread run, joining...");
 		
 		return failed;

@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-//TODO: Ik wil verschillende dingen in global kunnen laden d.m.v een file, 
-//TODO: namelijk de polling interval, de collumns van de stats van de components 
-//TODO: en de python client calls, de timeout tijd, async en port
 public class Globals {
 	
 	//Load config file
@@ -82,7 +79,7 @@ public class Globals {
 	public static int POLLINGINTERVAL = Default.POLLINGINTERVAL; // once every minute
 	
 	//logging
-	public static boolean PRINT_DEBUG = false;
+	public static boolean PRINT_DEBUG = true;
 	public static boolean PRINT_DEBUG_CONCURRENT = false;
 	public static boolean PRINT_DEBUG_RECEIVER = false;
 	public static boolean TO_CONSOLE = true;
@@ -95,6 +92,8 @@ public class Globals {
 	// XMLRPC
 	public static int XMLRPCTIMEOUT_IN_SECONDS = Default.XMLRPCTIMEOUT_IN_SECONDS;
 	public static int XMLRPC_PORT = Default.XMLRPC_PORT;
+	public static String XMLRPC_PATH = Default.XMLRPC_PATH;
+	public static String XMLRPC_GETDATA = Default.XMLRPC_GETDATA;
 	public static boolean ASYNC = Default.ASYNC;
 
 	// Retriever
@@ -107,7 +106,7 @@ public class Globals {
 	public static String[] DATABASE_CALLS 	= Default.DATABASE_CALLS;
 
 	// IDS of workers, managers and databases
-	// TODO: Make this into a enum
+	// TODO: Make this into a enum, maybe?
 	public static final int ID_WORKER = 0;
 	public static final int ID_MANAGER = 1;
 	public static final int ID_DATABASE = 2;
@@ -136,6 +135,8 @@ public class Globals {
 		
 		public static final int XMLRPCTIMEOUT_IN_SECONDS = 1;
 		public static final int XMLRPC_PORT = 8000;
+		public static final String XMLRPC_PATH = "/RPC2";
+		public static final String XMLRPC_GETDATA = "getData";
 		public static final boolean ASYNC = true;
 
 		public static final int CLIENT_THREADS = 16;
@@ -206,9 +207,4 @@ public class Globals {
 
 		  return result.toString();
 	}
-	
-	/*public static void main(String[] args) {
-		loadConfig();
-		System.out.println(staticToString());
-	}*/
 }

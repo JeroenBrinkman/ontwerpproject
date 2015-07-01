@@ -20,13 +20,19 @@ import de.timroes.axmlrpc.XMLRPCException;
 import de.timroes.axmlrpc.XMLRPCTimeoutException;
 
 public class Retriever {
+	/** XMLRPC Client for connecting to the python server on the components */
 	private XMLRPCClient		client;
+	/** Data file to push into the database */
 	private long[]				data;
+	/** Component object representing the server the client is connected to*/
 	private Component			comp;
 	
-	// PARE THE OBJECT INTO A LONG
-	// SO THE DATABASE CAN HANDLE IT
-	// TODO PARSEDOUBLE CAN GO BOOOOOOOOM!
+	/**
+	 * Parses a object gotten from the client and turns it into a long
+	 * @param object gotten from the XMLRPCClient
+	 * @require object is a Stirng, Double, Integer, Long, Boolean or Date
+	 * @return the object parsed into a long
+	 */
 	static long parse(Object object) {
 		Long result = null;
 		
@@ -50,7 +56,7 @@ public class Retriever {
 			result = ((Date)object).getTime();
 		}
 		else {
-			System.err.println("Could not convert tmpObject to a string. tmpObject class: " + object.getClass().toString());
+			Logger.log("Could not convert tmpObject to a string. tmpObject class: " + object.getClass().toString());
 		}
 		
 		return result;
@@ -59,16 +65,22 @@ public class Retriever {
 	/**
 	 * @require ip is a valid IP address and id is a unique int value
 	 * @ensure The retriever gets assigned an id and IP address. 
-	 * @param ip The IP address this retriever will connect to 
-	 * @param id The ID of this retriever 
-	 * @throws XMLRPCException */
+	 * @param comp, a initialized component
+	 * @throws XMLRPCException 
+	 */
 	public Retriever(Component comp) throws XMLRPCException{
 		this.comp = comp;
 		this.data = new long[comp.getKeys().length];
 		
-		this.client = createClient("/RPC2");
+		this.client = createClient(Globals.XMLRPC_PATH);
 	}
-	
+	/**
+	 * Creates a XMLRPC client based on the ip and port of the component
+	 * and given address.
+	 * @require The component has a correct InetSocketAddress
+	 * @param address is the address used to connect with the XMLRPC server
+	 * @return a initialized XMLRPC Client
+	 */
 	public XMLRPCClient createClient(String address) {
 		URL xmlrpcUrl = null;
 		try {
@@ -96,26 +108,46 @@ public class Retriever {
 	
 	/**
 	 * Method to return the data[] variable
-	 * @return data
+	 * @return this.data
 	 */
 	public long[] getData(){
 		return data;
 	}
 	
+	/**
+	 * Returns the component this retriever uses	
+	 * @return this.comp
+	 */
 	public Component getComponent() {
 		return this.comp;
 	}
 	
+	/**
+	 * Return the XMLRPCClient this retriever uses
+	 * @return this.client
+	 */
 	public XMLRPCClient getClient() {
 		return this.client;
 	}
 	
+	/**
+	 * Tries to retrieves all data from the component using the XMLRPC connection
+	 * of the XMLRPCClient object. The calls that are made are the ones in
+	 * {@link Component#getCalls()} and {@link Globals#XMLRPC_GETDATA}
+	 * 
+	 * Does not garantuee that it retrieves anything at all!
+	 * @throws XMLRPCException
+	 */
 	public void retrieveAllData() throws XMLRPCException{
 		if(Globals.ASYNC) retrieveAllData_ASync();
 		else retrieveAllData_Sync();
 	}
 	
-	public void retrieveAllData_Sync() throws XMLRPCException {
+	/**
+	 * The synchronized version of retrieveAllDAta, see {@link #retrieveAllData()}
+	 * @throws XMLRPCException
+	 */
+	private void retrieveAllData_Sync() throws XMLRPCException {
 		String[] calls = comp.getCalls();
 		
 		for(int index = 0; index < calls.length; index++) {
@@ -131,7 +163,7 @@ public class Retriever {
 		
 		String thedata = null;
 		try {
-			thedata =(String)client.call("getData");
+			thedata =(String)client.call(Globals.XMLRPC_GETDATA);
 		}
 		catch(XMLRPCTimeoutException e) {
 			Logger.log("Component " + comp.getTableName() + " had a timeout for function: getDate");
@@ -145,7 +177,11 @@ public class Retriever {
 		}
 	}
 	
-	public void retrieveAllData_ASync() throws XMLRPCException {
+	/**
+	 * The asynchronized version of retrieveAllDAta, see {@link #retrieveAllData()}
+	 * @throws XMLRPCException
+	 */
+	private void retrieveAllData_ASync() throws XMLRPCException {
 		String[] calls = comp.getCalls();
 		
 		//Lock to synchronize the AtomicInteger and to use the condition
@@ -156,7 +192,6 @@ public class Retriever {
 		// Starts at the number of calls it makes and goes graduadly down
 		AtomicInteger counter = new AtomicInteger(calls.length + 1);
 		// If an error was retrieved it goes in this list
-		// TODO - This should be a concurrentlist
 		List<XMLRPCException> errorList = new ArrayList<XMLRPCException>();
 		
 		// Retrieve all the data from the functions of the python server on the workers etc.
@@ -172,7 +207,6 @@ public class Retriever {
 		client.callAsync(new RetrieverListeners.Data(this, lock, condition, counter, errorList), "getData");
 		
 		// Wait for all the data to be retrieved
-		// TODO handle interruptions beter!!
 		lock.lock();
 		try {
 			while(counter.get() > 0) {
