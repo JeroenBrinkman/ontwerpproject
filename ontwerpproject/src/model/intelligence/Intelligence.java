@@ -6,7 +6,6 @@ import global.Globals;
 import global.Logger;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
@@ -14,6 +13,13 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
+/**
+ * responsible for everything error related, has a couple of static methods for
+ * sending mails and setting notifications
+ * 
+ * @author Jeroen
+ *
+ */
 public abstract class Intelligence {
 
 	public class ClosedException extends Exception {
@@ -22,6 +28,10 @@ public abstract class Intelligence {
 		 */
 		private static final long serialVersionUID = 2400467736031885588L;
 
+		/**
+		 * Thrown whenever a component has disconnect or has to disconnect, for
+		 * example when the database connection fails
+		 */
 		public ClosedException() {
 			super();
 		}
@@ -39,19 +49,18 @@ public abstract class Intelligence {
 		}
 	}
 
-	protected PreparedStatement st;
+	/**
+	 * connection, same connection as the corresponding component
+	 */
 	protected Connection con;
+	/**
+	 * pointer to the component
+	 */
 	protected Component comp;
+	/**
+	 * pointer to the model
+	 */
 	protected Model mod;
-	protected int[] LIMITS; /*
-							 * list of counters, keeps track of when we send a
-							 * mail
-							 */
-	protected final static int LIMIT = 60 * 12; /*
-												 * send mail max once per hour
-												 * per issue
-												 */// TODO update this to
-													// correct value
 
 	public Intelligence(Component comp, Model mod, Connection conn) {
 		this.comp = comp;
@@ -66,14 +75,14 @@ public abstract class Intelligence {
 	 * @requires message != null
 	 * @requires subject != null
 	 */
-	public static void errorMail(String message, String subject) {
+	public static void errorMail() {
 		// TODO reset password
-		String to = "test@test.test";// needs to be valid though
-		String from = "monitoringontwerpproject@gmail.com";
-		final String username = "monitoringontwerpproject@gmail.com";
-		final String password = "T3st1234";
+		String to = Globals.MAILTARGET;
+		String from = Globals.MAILACCOUNT;
+		final String username = Globals.MAILACCOUNT;
+		final String password = Globals.MAILPASS;
+		// Config for sending with gmail
 		String host = "smtp.gmail.com";
-
 		Properties props = new Properties();
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", "true");
@@ -94,12 +103,21 @@ public abstract class Intelligence {
 			email.setSubject("Testing Subject");
 			email.setText("Hello, this is sample for to check send "
 					+ "email using JavaMailAPI ");
-			// Transport.send(email); TODO uncomment when it works
+			Transport.send(email);
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * sets a notification in the database, used by the website to generate
+	 * notifications
+	 * 
+	 * @param at
+	 *            Metric in which the error is detected
+	 * @param message
+	 *            Error message to be set
+	 */
 	public void errorNotification(String at, String message) {
 		try {
 			Statement st = con.createStatement();
@@ -120,7 +138,8 @@ public abstract class Intelligence {
 	}
 
 	/**
-	 * send error, and disconnect the relevant component
+	 * send error, and disconnect the relevant component, should be called when
+	 * the database disconnects
 	 * 
 	 * @require e != null
 	 * @ensure component disconnected and error mail send
@@ -128,22 +147,30 @@ public abstract class Intelligence {
 	 */
 	public void databaseError(SQLException e) throws ClosedException {
 		Logger.log(e.getMessage());
-		if (Globals.LAST_DATABASE_ERROR == -1
-				|| (System.currentTimeMillis() - Globals.LAST_DATABASE_ERROR) > Globals.MIN_DATABASE_ERROR_DELAY) {
-			errorMail(
+		if (Globals.LAST_ERROR == -1
+				|| (System.currentTimeMillis() - Globals.LAST_ERROR) > Globals.MIN_ERROR_DELAY) {
+			errorNotification(
+					"cpu",
 					"Database fail in "
 							+ comp.getTableName()
 							+ ". The component has been disconnected from the system with error : "
-							+ e.getMessage(), "Database error");
+							+ e.getMessage());
+			errorMail();
 		}
 		mod.removeComponent(comp);
 		Logger.log("databaseconnection failed, ClosedException thrown");
 		throw new ClosedException("alles kapot");
 	}
 
+	/**
+	 * Called when the component disconnects from the system attempts to send an
+	 * error mail, removes the component from the model. also sets a
+	 * notification
+	 */
 	public void connectionError() {
-		errorMail("Component " + comp.getTableName()
-				+ " disconnected from the system.", "Component disconnected");
+		errorNotification("cpu", "Component " + comp.getTableName()
+				+ " disconnected from the system.");
+		Logger.log("componentdisconnected, sending mail");
 		mod.removeComponent(comp);
 	}
 
@@ -158,30 +185,35 @@ public abstract class Intelligence {
 	 * @ensures correct errormessages are send
 	 */
 	public void checkCritical(long[] newin) throws ClosedException {
-		/*String[] cols = comp.getKeys();
+		String[] cols = comp.getKeys();
 		for (int i = 0; i < newin.length; ++i) {
-			ResultSet r;
-			try {
-				st.setString(1, cols[i]);
-				r = st.executeQuery();
-				if (r.next()) {
-					if (newin[i] > r.getLong(1)) {
-						String message = cols[i]
-								+ " exceeded the critical value in "
-								+ comp.getTableName();
-						errorMail(message, "critical value");
-						errorNotification(cols[i], message);
-						Logger.log("error state found in "
-								+ comp.getTableName());
-					}
-				}
-			} catch (SQLException e) {
-				errorMail(
-						"Failed to find the critical value table, will not be able to send alerts \n"
-								+ e.getMessage(), "unable to detect allerts");
-				Logger.log("Failed to find critical value table");
+			// only implement for cpu mem and hdd here
+			switch(cols[i]){
+			case "cpu":
+				if(newin[i]>Globals.CPUCRIT){
+					errorNotification(cols[i], cols[i]
+							+ " exceeded the critical value in "
+							+ comp.getTableName());
+					errorMail();
+					Logger.log("error state found in " + comp.getTableName());
+				};
+			case "mem":
+				if(newin[i]>Globals.MEMCRIT){
+					errorNotification(cols[i], cols[i]
+							+ " exceeded the critical value in "
+							+ comp.getTableName());
+					errorMail();
+					Logger.log("error state found in " + comp.getTableName());
+				};
+			case "hdd":
+				if(newin[i]>Globals.HDDCRIT){
+					errorNotification(cols[i], cols[i]
+							+ " exceeded the critical value in "
+							+ comp.getTableName());
+					errorMail();
+					Logger.log("error state found in " + comp.getTableName());
+				};
 			}
-		}*/
+		}
 	}
-
 }

@@ -135,7 +135,7 @@ public abstract class Component {
 			Statement s = conn.createStatement();
 			ResultSet v = s.executeQuery(sql);
 			v.next();
-			if (v.getInt(1) > 0) {
+			if (v.getLong(1) > 0) {
 				v.close();
 				// enter new entries until now
 				// first get the startpoint
@@ -255,11 +255,11 @@ public abstract class Component {
 			ResultSet v;
 			check.setString(1, "M");
 			v = check.executeQuery();
-			if (v.next() && v.getInt(1) == Globals.SQLMAXmin) {
+			if (v.next() && v.getLong(1) == Globals.SQLMAXmin) {
 				compressMEntries();
 				check.setString(1, "H");
 				v = check.executeQuery();
-				if (v.next() && v.getInt(1) == Globals.SQLMAXhour) {
+				if (v.next() && v.getLong(1) == Globals.SQLMAXhour) {
 					compressHEntries();
 				}
 			}
@@ -291,7 +291,7 @@ public abstract class Component {
 			for (int i = 0; i < b.length; ++i) {
 				// start at 3,because date and tag do not have to be
 				// averaged and are not relevant
-				b[i] += r.getInt(i + 3);
+				b[i] += r.getLong(i + 3);
 			}
 			delete.setString(2, r.getString(1));
 			delete.executeUpdate();
@@ -319,7 +319,7 @@ public abstract class Component {
 			for (int i = 0; i < b.length; ++i) {
 				// start at 3,because date and tag do not have to be
 				// averaged and are not relevant
-				b[i] += r.getInt(i + 3);
+				b[i] += r.getLong(i + 3);
 			}
 			delete.setString(2, r.getString(1));
 			delete.executeUpdate();
@@ -333,21 +333,6 @@ public abstract class Component {
 		insert.executeUpdate();
 		conn.commit();
 	}
-
-	/*
-	 * // help function for update currently unused, but might be useful to keep
-	 * private void compressSEntries() throws SQLException { int a = (60 * 1000)
-	 * / Globals.POLLINGINTERVAL; int[] b = new int[collumnList.length];
-	 * delete.setString(1, "S"); getlimit.setString(1, "S"); getlimit.setInt(2,
-	 * a); ResultSet r = getlimit.executeQuery(); long newdate = 0; while
-	 * (r.next()) { for (int i = 0; i < b.length; ++i) { // start at 3,because
-	 * date and tag do not have to be // averaged and are not relevant b[i] +=
-	 * r.getInt(i + 3); } delete.setString(2, r.getString(1));
-	 * delete.executeUpdate(); newdate = Long.parseLong(r.getString(1)) - 3000;
-	 * } insert.setString(1, Long.toString(newdate)); insert.setString(2, "M");
-	 * for (int i = 0; i < b.length; ++i) { insert.setString(i + 3,
-	 * Long.toString(b[i] / a)); } insert.executeUpdate(); conn.commit(); }
-	 */
 
 	/**
 	 * Parses the input from the actual component into something that can be

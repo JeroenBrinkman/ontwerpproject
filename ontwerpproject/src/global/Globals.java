@@ -10,24 +10,27 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Globals {
-	
-	//Load config file
+
+	// Load config file
 	public static final String CONFIG_PATH = "config";
+
 	public static void loadConfig() {
 		List<String> config = new ArrayList<String>();
-		try(BufferedReader br = new BufferedReader(new FileReader(CONFIG_PATH))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(CONFIG_PATH))) {
 			String line;
-	       while((line = br.readLine()) != null) 
-	    	   config.add(line);	        
-	    } catch (FileNotFoundException e) {
-			Logger.log("Could not find " + CONFIG_PATH + ", going with default settings");
+			while ((line = br.readLine()) != null)
+				config.add(line);
+		} catch (FileNotFoundException e) {
+			Logger.log("Could not find " + CONFIG_PATH
+					+ ", going with default settings");
 			return;
 		} catch (IOException e) {
-			Logger.log("IOException in " + CONFIG_PATH + ", going with default settings");
+			Logger.log("IOException in " + CONFIG_PATH
+					+ ", going with default settings");
 			return;
 		}
-		
-		for(String line : config) {
+
+		for (String line : config) {
 			line = line.replaceAll("\\s+", "");
 			String[] split = line.split(":");
 			if(split.length == 2) {
@@ -74,7 +77,7 @@ public class Globals {
 			}
 		}
 	}
-	
+
 	// constants
 	public static Boolean GUI = true;
 	public static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -84,8 +87,8 @@ public class Globals {
 	public static String PASS = Default.PASS;
 	public static final int SQLMAXmin = 10080;// minimum = 60
 	public static final int SQLMAXhour = 8544;// minimum = 24
-	public static int POLLINGINTERVAL = Default.POLLINGINTERVAL; // once every minute
-	
+	public static int POLLINGINTERVAL = Default.POLLINGINTERVAL; // once every
+																	// minute
 	//logging
 	public static boolean PRINT_DEBUG = Default.PRINT_DEBUG;
 	public static boolean PRINT_DEBUG_CONCURRENT = Default.PRINT_DEBUG_CONCURRENT;
@@ -93,9 +96,16 @@ public class Globals {
 	public static boolean TO_CONSOLE = Default.TO_CONSOLE;
 
 	// Intelligence shit
-	public static long LAST_DATABASE_ERROR = -1;
-	public static final int MIN_DATABASE_ERROR_DELAY = 30000;// max 1 keer per
-																// half uur
+	public static final String MAILPASS = " ";
+	public static final String MAILACCOUNT = " ";
+	public static final String MAILTARGET = " ";
+	public final static double QUERYRATIO = 0.95;
+	public static long LAST_ERROR = -1;
+	public static final int MIN_ERROR_DELAY = 30000;// max 1 keer per
+	// critical values, ook intelligence// half uur
+	public static final long CPUCRIT = 99999999;
+	public static final long MEMCRIT = 99999999;
+	public static final long HDDCRIT = 99999999;
 
 	// XMLRPC
 	public static int XMLRPCTIMEOUT_IN_SECONDS = Default.XMLRPCTIMEOUT_IN_SECONDS;
@@ -109,9 +119,9 @@ public class Globals {
 	public static int SCHEDULER_THREADS = Default.SCHEDULER_THREADS;
 
 	// Stuff to call for the python client
-	public static String[] WORKER_CALLS		=  Default.WORKER_CALLS;
-	public static String[] MANAGER_CALLS 	= Default.MANAGER_CALLS;
-	public static String[] DATABASE_CALLS 	= Default.DATABASE_CALLS;
+	public static String[] WORKER_CALLS = Default.WORKER_CALLS;
+	public static String[] MANAGER_CALLS = Default.MANAGER_CALLS;
+	public static String[] DATABASE_CALLS = Default.DATABASE_CALLS;
 
 	// IDS of workers, managers and databases
 	// TODO: Make this into a enum, maybe?
@@ -134,18 +144,18 @@ public class Globals {
 		LAST_UPDATE = System.currentTimeMillis();
 		AMOUNT_UPDATES++;
 	}
-	
+
 	public static class Default {
 		public static final String USER = "henk";
 		public static final String PASS = "henk";
-		
+
 		public static final int POLLINGINTERVAL = 60000; // once every minute
 		
 		public static final boolean PRINT_DEBUG = false;
 		public static final boolean PRINT_DEBUG_CONCURRENT = false;
 		public static final boolean PRINT_DEBUG_RECEIVER = false;
 		public static final boolean TO_CONSOLE = true;
-		
+
 		public static final int XMLRPCTIMEOUT_IN_SECONDS = 1;
 		public static final int XMLRPC_PORT = 8000;
 		public static final String XMLRPC_PATH = "/RPC2";
@@ -154,70 +164,72 @@ public class Globals {
 
 		public static final int CLIENT_THREADS = 16;
 		public static final int SCHEDULER_THREADS = 1;
-		
-		// Stuff to call for the python client
-		public static final String[] WORKER_CALLS =		{ "time", "hdd", "mem", "cpu" };
-		public static final String[] MANAGER_CALLS = 	{ "time", "hdd", "mem", "cpu" };
-		public static final String[] DATABASE_CALLS =	{ "time", "hdd", "mem", "cpu" };
-		
-		public static final String[] MANAGER_COLS = { "cms_version",
-			"cms_start_time", "cms_now_time", "cms_tot_domains",
-			"cms_doms_last_day", "cms_doms_today", "cms_worker_count" 
-		};
 
-		public static final String[] WORKER_COLS = { "ws_version", "ws_connstate",
-				"ws_worker_start_ts", "ws_chunk_start_ts", "ws_worker_now_ts",
-				"ws_measure_queue_len", "ws_result_queue_len", "ws_total_scanned",
-				"ws_worker_state", "ws_total_q_count", "ws_current_q_count",
+		// Stuff to call for the python client
+		public static final String[] WORKER_CALLS = { "time", "hdd", "mem",
+				"cpu" };
+		public static final String[] MANAGER_CALLS = { "time", "hdd", "mem",
+				"cpu" };
+		public static final String[] DATABASE_CALLS = { "time", "hdd", "mem",
+				"cpu" };
+
+		public static final String[] MANAGER_COLS = { "cms_version",
+				"cms_start_time", "cms_now_time", "cms_tot_domains",
+				"cms_doms_last_day", "cms_doms_today", "cms_worker_count" };
+
+		public static final String[] WORKER_COLS = { "ws_version",
+				"ws_connstate", "ws_worker_start_ts", "ws_chunk_start_ts",
+				"ws_worker_now_ts", "ws_measure_queue_len",
+				"ws_result_queue_len", "ws_total_scanned", "ws_worker_state",
+				"ws_total_q_count", "ws_current_q_count",
 				"ws_curr_succ_q_count_SOA", "ws_curr_succ_q_count_A",
 				"ws_curr_succ_q_count_AAAA", "ws_curr_succ_q_count_NS",
 				"ws_curr_succ_q_count_MX", "ws_curr_succ_q_count_TXT",
 				"ws_curr_succ_q_count_SPF", "ws_curr_succ_q_count_DS",
 				"ws_curr_succ_q_count_DNSKEY", "ws_curr_succ_q_count_NSEC",
-				"ws_curr_succ_q_count_NSEC3", "ws_curr_succ_q_count_NSEC3PARAM",
-				"ws_curr_fail_q_count_SOA", "ws_curr_fail_q_count_A",
-				"ws_curr_fail_q_count_AAAA", "ws_curr_fail_q_count_NS",
-				"ws_curr_fail_q_count_MX", "ws_curr_fail_q_count_TXT",
-				"ws_curr_fail_q_count_SPF", "ws_curr_fail_q_count_DS",
-				"ws_curr_fail_q_count_DNSKEY", "ws_curr_fail_q_count_NSEC",
-				"ws_curr_fail_q_count_NSEC3", "ws_curr_fail_q_count_NSEC3PARAM",
-				"ws_writer_threadcount", "ws_writer_total_out_size",
-				"ws_writer_files_written" 
-		};
-		
-		public static final String[] DATABASE_COLS = {
-		};
+				"ws_curr_succ_q_count_NSEC3",
+				"ws_curr_succ_q_count_NSEC3PARAM", "ws_curr_fail_q_count_SOA",
+				"ws_curr_fail_q_count_A", "ws_curr_fail_q_count_AAAA",
+				"ws_curr_fail_q_count_NS", "ws_curr_fail_q_count_MX",
+				"ws_curr_fail_q_count_TXT", "ws_curr_fail_q_count_SPF",
+				"ws_curr_fail_q_count_DS", "ws_curr_fail_q_count_DNSKEY",
+				"ws_curr_fail_q_count_NSEC", "ws_curr_fail_q_count_NSEC3",
+				"ws_curr_fail_q_count_NSEC3PARAM", "ws_writer_threadcount",
+				"ws_writer_total_out_size", "ws_writer_files_written" };
+
+		public static final String[] DATABASE_COLS = {};
 	}
-	
+
 	public static String staticToString() {
-		  StringBuilder result = new StringBuilder();
-		  String newLine = System.getProperty("line.separator");
+		StringBuilder result = new StringBuilder();
+		String newLine = System.getProperty("line.separator");
 
-		  result.append( Globals.class.getName() );
-		  result.append( " Object {" );
-		  result.append(newLine);
+		result.append(Globals.class.getName());
+		result.append(" Object {");
+		result.append(newLine);
 
-		  //determine fields declared in this class only (no fields of superclass)
-		  Field[] fields = Globals.class.getDeclaredFields();
+		// determine fields declared in this class only (no fields of
+		// superclass)
+		Field[] fields = Globals.class.getDeclaredFields();
 
-		  //print field names paired with their values
-		  for ( Field field : fields  ) {
-		    result.append("  ");
-		    try {
-		      result.append( field.getName() );
-		      result.append(": ");
-		      //requires access to private field:
-		      if(field.get(null) instanceof Object[])
-		    	  result.append(Arrays.toString((Object[])field.get(null)));
-		      else
-		    	  result.append( field.get(null) );
-		    } catch ( IllegalAccessException ex ) {
-		      System.out.println(ex);
-		    }
-		    result.append(newLine);
-		  }
-		  result.append("}");
+		// print field names paired with their values
+		for (Field field : fields) {
+			result.append("  ");
+			try {
+				result.append(field.getName());
+				result.append(": ");
+				// requires access to private field:
+				if (field.get(null) instanceof Object[])
+					result.append(Arrays.toString((Object[]) field.get(null)));
+				else
+					result.append(field.get(null));
+			} catch (IllegalAccessException ex) {
+				System.out.println(ex);
+			}
+			result.append(newLine);
+		}
+		result.append("}");
 
-		  return result.toString();
+		return result.toString();
 	}
 }
