@@ -32,6 +32,14 @@ public class Globals {
 			String[] split = line.split(":");
 			if(split.length == 2) {
 				switch(split[0]) {
+					case "print_debug":
+						PRINT_DEBUG = Boolean.parseBoolean(split[1]); break;
+					case "print_debug_concurrent":
+						PRINT_DEBUG_CONCURRENT = Boolean.parseBoolean(split[1]); break;
+					case "print_debug_receiver":
+						PRINT_DEBUG_RECEIVER = Boolean.parseBoolean(split[1]); break;
+					case "print_to_console":
+						TO_CONSOLE = Boolean.parseBoolean(split[1]); break;
 					case "mysql_user":
 						USER = split[1]; break;
 					case "mysql_password":
@@ -79,10 +87,10 @@ public class Globals {
 	public static int POLLINGINTERVAL = Default.POLLINGINTERVAL; // once every minute
 	
 	//logging
-	public static boolean PRINT_DEBUG = true;
-	public static boolean PRINT_DEBUG_CONCURRENT = false;
-	public static boolean PRINT_DEBUG_RECEIVER = false;
-	public static boolean TO_CONSOLE = true;
+	public static boolean PRINT_DEBUG = Default.PRINT_DEBUG;
+	public static boolean PRINT_DEBUG_CONCURRENT = Default.PRINT_DEBUG_CONCURRENT;
+	public static boolean PRINT_DEBUG_RECEIVER = Default.PRINT_DEBUG_RECEIVER;
+	public static boolean TO_CONSOLE = Default.TO_CONSOLE;
 
 	// Intelligence shit
 	public static long LAST_DATABASE_ERROR = -1;
@@ -132,6 +140,11 @@ public class Globals {
 		public static final String PASS = "henk";
 		
 		public static final int POLLINGINTERVAL = 60000; // once every minute
+		
+		public static final boolean PRINT_DEBUG = false;
+		public static final boolean PRINT_DEBUG_CONCURRENT = false;
+		public static final boolean PRINT_DEBUG_RECEIVER = false;
+		public static final boolean TO_CONSOLE = true;
 		
 		public static final int XMLRPCTIMEOUT_IN_SECONDS = 1;
 		public static final int XMLRPC_PORT = 8000;

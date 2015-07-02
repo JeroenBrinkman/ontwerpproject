@@ -34,7 +34,7 @@ public class Scheduler {
 		//TODO: After InvokeAll, should there be a clean up?
 		public void run() {			
 			//The start sign
-			Logger.log_debug("---------- STRAT - comps: " + retrieverMap.get(period).size() + " ----------");
+			Logger.log_debug("---------- START - comps: " + retrieverMap.get(period).size() + " ----------");
 			
 			queueMap.get(period).addAll(retrieverMap.get(period));
 			ConcurrentLinkedQueue<Retriever> queue = queueMap.get(period);
