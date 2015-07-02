@@ -165,9 +165,9 @@ public class Model {
 	}
 	
 	/**
-	 * TODO IK WEET NIET OF DIT WERKT?
+	 * Clears the model
 	 */
-	public void destroy() {
+	public void clear() {
 		for(Component c : this.components)
 			c.closeConnection();
 		this.components.clear();

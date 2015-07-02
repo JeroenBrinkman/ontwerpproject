@@ -76,36 +76,41 @@ public abstract class Intelligence {
 	 * @requires subject != null
 	 */
 	public static void errorMail() {
-		// TODO reset password
-		String to = Globals.MAILTARGET;
-		String from = Globals.MAILACCOUNT;
-		final String username = Globals.MAILACCOUNT;
-		final String password = Globals.MAILPASS;
-		// Config for sending with gmail
-		String host = "smtp.gmail.com";
-		Properties props = new Properties();
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.smtp.host", host);
-		props.put("mail.smtp.port", "587");
-		Session session = Session.getInstance(props,
-				new javax.mail.Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(username, password);
-					}
-				});
+		if (System.currentTimeMillis() - Globals.LAST_ERROR > Globals.MIN_ERROR_DELAY) {
+			String to = Globals.MAILTARGET;
+			String from = Globals.MAILACCOUNT;
+			final String username = Globals.MAILACCOUNT;
+			final String password = Globals.MAILPASS;
+			// Config for sending with gmail
+			String host = "smtp.gmail.com";
+			Properties props = new Properties();
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.starttls.enable", "true");
+			props.put("mail.smtp.host", host);
+			props.put("mail.smtp.port", "587");
+			Session session = Session.getInstance(props,
+					new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(username,
+									password);
+						}
+					});
 
-		try {
-			Message email = new MimeMessage(session);
-			email.setFrom(new InternetAddress(from));
-			email.setRecipients(Message.RecipientType.TO,
-					InternetAddress.parse(to));
-			email.setSubject("Testing Subject");
-			email.setText("Hello, this is sample for to check send "
-					+ "email using JavaMailAPI ");
-			Transport.send(email);
-		} catch (MessagingException e) {
-			e.printStackTrace();
+			try {
+				Message email = new MimeMessage(session);
+				email.setFrom(new InternetAddress(from));
+				email.setRecipients(Message.RecipientType.TO,
+						InternetAddress.parse(to));
+				email.setSubject("Monitoring system notifications!");
+				//TODO create shit
+				String message = "";
+				String sql ="";
+				email.setText("Hello, this is sample for to check send "
+						+ "email using JavaMailAPI ");
+				Transport.send(email);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -188,31 +193,37 @@ public abstract class Intelligence {
 		String[] cols = comp.getKeys();
 		for (int i = 0; i < newin.length; ++i) {
 			// only implement for cpu mem and hdd here
-			switch(cols[i]){
+			switch (cols[i]) {
 			case "cpu":
-				if(newin[i]>Globals.CPUCRIT){
-					errorNotification(cols[i], cols[i]
-							+ " exceeded the critical value in "
-							+ comp.getTableName());
+				if (newin[i] > Globals.CPUCRIT) {
+					errorNotification(
+							cols[i],
+							cols[i] + " exceeded the critical value in "
+									+ comp.getTableName());
 					errorMail();
 					Logger.log("error state found in " + comp.getTableName());
-				};
+				}
+				;
 			case "mem":
-				if(newin[i]>Globals.MEMCRIT){
-					errorNotification(cols[i], cols[i]
-							+ " exceeded the critical value in "
-							+ comp.getTableName());
+				if (newin[i] > Globals.MEMCRIT) {
+					errorNotification(
+							cols[i],
+							cols[i] + " exceeded the critical value in "
+									+ comp.getTableName());
 					errorMail();
 					Logger.log("error state found in " + comp.getTableName());
-				};
+				}
+				;
 			case "hdd":
-				if(newin[i]>Globals.HDDCRIT){
-					errorNotification(cols[i], cols[i]
-							+ " exceeded the critical value in "
-							+ comp.getTableName());
+				if (newin[i] > Globals.HDDCRIT) {
+					errorNotification(
+							cols[i],
+							cols[i] + " exceeded the critical value in "
+									+ comp.getTableName());
 					errorMail();
 					Logger.log("error state found in " + comp.getTableName());
-				};
+				}
+				;
 			}
 		}
 	}

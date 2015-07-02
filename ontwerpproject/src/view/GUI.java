@@ -2,6 +2,7 @@ package view;
 
 //Imports are listed in full to show what's being used //could just import javax.swing.* and java.awt.* etc.. 
 import global.Globals;
+import global.Logger;
 
 import javax.swing.*;
 
@@ -29,8 +30,7 @@ public class GUI {
 						new InetSocketAddress("192.192.192.192", 123),
 						mod.createConnection(), mod));
 		} catch (ClosedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.log(e.getMessage());
 		}
 		new GUI(mod);
 

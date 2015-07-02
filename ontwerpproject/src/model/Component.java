@@ -281,7 +281,7 @@ public abstract class Component {
 
 	// help function for update
 	private void compressHEntries() throws SQLException {
-		int[] b = new int[collumnList.length];
+		long[] b = new long[collumnList.length];
 		delete.setString(1, "H");
 		getlimit.setString(1, "H");
 		getlimit.setInt(2, 24);
@@ -309,7 +309,7 @@ public abstract class Component {
 
 	// help function for update
 	private void compressMEntries() throws SQLException {
-		int[] b = new int[collumnList.length];
+		long[] b = new long[collumnList.length];
 		delete.setString(1, "M");
 		getlimit.setString(1, "M");
 		getlimit.setInt(2, 60);

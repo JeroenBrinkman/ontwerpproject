@@ -19,7 +19,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-//TODO Scheduler is multithreaded, but should probably be singlethreaded, The scheduledthreadtimer may be overkill, but to be fair, i like to keep my options open.
 public class Scheduler {
 
 	// TODO: OR make this class pretty OR move it from the class if possible
@@ -31,11 +30,12 @@ public class Scheduler {
 		}
 
 		@Override
-		//TODO: After InvokeAll, should there be a clean up?
-		public void run() {			
-			//The start sign
-			Logger.log_debug("---------- START - comps: " + retrieverMap.get(period).size() + " ----------");
-			
+		// TODO: After InvokeAll, should there be a clean up?
+		public void run() {
+			// The start sign
+			Logger.log_debug("---------- START - comps: "
+					+ retrieverMap.get(period).size() + " ----------");
+
 			queueMap.get(period).addAll(retrieverMap.get(period));
 			ConcurrentLinkedQueue<Retriever> queue = queueMap.get(period);
 			ConcurrentLinkedQueue<Retriever> failed = new ConcurrentLinkedQueue<Retriever>();
@@ -59,15 +59,18 @@ public class Scheduler {
 				PrintWriter pw = new PrintWriter(sw);
 				e2.printStackTrace(pw);
 				Logger.log_debug_con(sw.toString());
-			}		
-			
+			}
+
 			threadPool.shutdownNow();
-			
-			//TODO: When do retrievers fail and when should they be removed from the scheduler?
-			// Checks if there are any failed retrievers, if so, remove them from the scheduler
-			for(Retriever ret : failed) {
-				if(retrieverMap.get(period).contains(ret)) {
-					Logger.log("Connection with " + ret.getComponent().getTableName() + " failed");
+
+			// TODO: When do retrievers fail and when should they be removed
+			// from the scheduler?
+			// Checks if there are any failed retrievers, if so, remove them
+			// from the scheduler
+			for (Retriever ret : failed) {
+				if (retrieverMap.get(period).contains(ret)) {
+					Logger.log("Connection with "
+							+ ret.getComponent().getTableName() + " failed");
 					ret.getComponent().getIntelligence().connectionError();
 				}
 				removeRetriever(ret);
@@ -75,7 +78,7 @@ public class Scheduler {
 
 			// The stop sign
 			Logger.log_debug("----------------STOP----------------");
-		}		
+		}
 	}
 
 	private Map<Long, List<Retriever>> retrieverMap;
@@ -92,10 +95,14 @@ public class Scheduler {
 
 	/**
 	 * Adds the retriever to the scheduler
-	 * @require r != null and that milliseconds > {@link Globals#XMLRPCTIMEOUT_IN_SECONDS} * 1000
+	 * 
+	 * @require r != null and that milliseconds >
+	 *          {@link Globals#XMLRPCTIMEOUT_IN_SECONDS} * 1000
 	 * @ensure That the retriever will be called at the given milliseconds
-	 * @param milliseconds the period that the Retriever object should be called for
-	 * @param r the Retriever object that will be called
+	 * @param milliseconds
+	 *            the period that the Retriever object should be called for
+	 * @param r
+	 *            the Retriever object that will be called
 	 */
 	public void addRetriever(long milliseconds, Retriever r) {
 		synchronized (retrieverMap) {
@@ -106,6 +113,7 @@ public class Scheduler {
 
 	/**
 	 * See {link {@link #addRetriever(long, Retriever)}
+	 * 
 	 * @param milliseconds
 	 * @param rs
 	 */
@@ -120,6 +128,7 @@ public class Scheduler {
 
 	/**
 	 * See {link {@link #addRetriever(long, Retriever)}
+	 * 
 	 * @param milliseconds
 	 * @param rs
 	 */
@@ -131,8 +140,8 @@ public class Scheduler {
 	}
 
 	/**
-	 * Checks all retrievers the scheduler has, and returns a retriever
-	 * if the given hostname and port match
+	 * Checks all retrievers the scheduler has, and returns a retriever if the
+	 * given hostname and port match
 	 * 
 	 * @return the retriever Object with the same hostname and port or null
 	 */
@@ -148,18 +157,19 @@ public class Scheduler {
 
 		return null;
 	}
-	
+
 	/**
-	 * Returns all the retrievers that have a calling period of the
-	 * given milliseconds. Returns null if there are none
+	 * Returns all the retrievers that have a calling period of the given
+	 * milliseconds. Returns null if there are none
+	 * 
 	 * @param milliseconds
 	 * @return null or retrieverMap with size > 0
 	 */
 	public Retriever[] getAllRetrievers(long milliseconds) {
 		Retriever[] result = null;
-		if(retrieverMap.containsKey(milliseconds)) {
+		if (retrieverMap.containsKey(milliseconds)) {
 			result = new Retriever[retrieverMap.get(milliseconds).size()];
-			for(int index = 0; index < retrieverMap.get(milliseconds).size(); index++)
+			for (int index = 0; index < retrieverMap.get(milliseconds).size(); index++)
 				result[index] = retrieverMap.get(milliseconds).get(index);
 		}
 		return result;
@@ -167,6 +177,7 @@ public class Scheduler {
 
 	/**
 	 * Removes the given retriever from all possible calling periods
+	 * 
 	 * @param ret
 	 */
 	public void removeRetriever(Retriever ret) {
@@ -178,6 +189,7 @@ public class Scheduler {
 
 	/**
 	 * Removes the retriever at the calling period of the given milliseconds
+	 * 
 	 * @param milliseconds
 	 * @param ret
 	 */
@@ -188,12 +200,12 @@ public class Scheduler {
 			checkAndDestroy(milliseconds);
 		}
 	}
-	
+
 	/**
 	 * Destroys this retriever and all threads it has spawned
 	 */
 	public void destroy() {
-		for(long key : retrieverMap.keySet()) {
+		for (long key : retrieverMap.keySet()) {
 			retrieverMap.get(key).clear();
 			checkAndDestroy(key);
 		}
@@ -201,9 +213,9 @@ public class Scheduler {
 	}
 
 	/**
-	 * Checks if there the retrieverMap is empty at the
-	 * given milliseconds. If this is true, destroy the timer
-	 * and threads it has spawned
+	 * Checks if there the retrieverMap is empty at the given milliseconds. If
+	 * this is true, destroy the timer and threads it has spawned
+	 * 
 	 * @param milliseconds
 	 */
 	private void checkAndDestroy(long milliseconds) {
@@ -220,8 +232,9 @@ public class Scheduler {
 	}
 
 	/**
-	 * Checks if the timer already calls at the given milliseconds
-	 * If not, it creates it.
+	 * Checks if the timer already calls at the given milliseconds If not, it
+	 * creates it.
+	 * 
 	 * @param milliseconds
 	 */
 	private void checkAndCreate(long milliseconds) {
@@ -231,7 +244,7 @@ public class Scheduler {
 			taskMap.put(milliseconds, new SchedulerTimer(milliseconds));
 
 			Logger.log_debug("Schedule added at " + milliseconds
-						+ " milliseconds");
+					+ " milliseconds");
 			timer.scheduleAtFixedRate(taskMap.get(milliseconds), milliseconds,
 					milliseconds, TimeUnit.MILLISECONDS);
 		}

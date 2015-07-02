@@ -47,8 +47,7 @@ public class Controller {
 		try {
 			conn.close();
 		} catch (SQLException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
+			Logger.log(e2.getMessage());
 		}
 		
 		return true;
@@ -66,17 +65,14 @@ public class Controller {
 		try {
 			phm.load(Thread.currentThread().getContextClassLoader(), "server.properties");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.log(e.getMessage());
 		} catch (XmlRpcException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.log(e.getMessage());
 		}
 		try {
 			Logger.log("Server supports the following functions: " + Arrays.toString(phm.getListMethods()));
 		} catch (XmlRpcException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			Logger.log(e1.getMessage());
 		}
 	
 		server.setHandlerMapping(phm);
@@ -91,9 +87,7 @@ public class Controller {
 		try {
 			webServer.start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			Logger.log("Couldn't start the webserver!");
-			e.printStackTrace();
 			return;
 		}		
 	}
@@ -125,15 +119,14 @@ public class Controller {
 	
 	public static void quit() {		
 		scheduler.destroy();
-		model.destroy();
+		model.clear();
 		webServer.shutdown();
 		
 		while(Thread.activeCount()  <= 1) {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.log(e.getMessage());
 			}
 		}
 		
@@ -169,7 +162,6 @@ public class Controller {
 	        try {
 				line = br.readLine();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	        
