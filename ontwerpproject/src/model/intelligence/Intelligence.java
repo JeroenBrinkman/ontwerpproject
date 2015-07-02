@@ -105,8 +105,7 @@ public abstract class Intelligence {
 				//TODO create shit
 				String message = "";
 				String sql ="";
-				email.setText("Hello, this is sample for to check send "
-						+ "email using JavaMailAPI ");
+				email.setText(message);
 				Transport.send(email);
 			} catch (MessagingException e) {
 				e.printStackTrace();
