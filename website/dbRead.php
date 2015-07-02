@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html><head><title></title></head>
-	
-	<body>
+
 		<?php 
-		
+		include_once('session.php');
+		include_once('includeGraph.php');
 		$wname = strval($_POST['wname']);
 		$wwname = $_POST['wname'];
 		
-		$servername = "localhost";
-	$username = "anna";
-	$password = "karenina";
-	$dbname = "detail";
+	/*This PHP script retrieves all the components in the database and echoes it back to the client. */
 
 	// Create connection
 	$conn = new mysqli($servername, $username, $password, $dbname);
@@ -19,18 +14,17 @@
 		die("Connection failed: " . $conn->connect_error);
 	} 
 	
-	$sql = "SELECT * FROM " . $wwname;
+	$sql = "SELECT * FROM " . $wwname;		//SQL query to retrieve all components
 
 	$result = $conn->query($sql);
-	$columns = array();
+	$columns = array();						//An array to store the the component names
 	
 	while ($row = $result->fetch_assoc()) {
     if (empty($columns)) {
         $columns = array_keys($row);
       	}
    	}
-	echo json_encode($columns);
-	// echo $sql;
+	echo json_encode($columns);				//Echo back the results to the client
 		?>
 	</body>
 </html>

@@ -1,14 +1,17 @@
 <?php
-	session_start();
-	if(!isset($_SESSION['email'])){
-	  // header("location: login.php");
-		exit();
-	}
+	include_once('session.php');
 ?>
+
+<!--The profile page of the user. The user has the option to change his email addresses or change his passwords. -->
 <html><head><title>My Account</title>
+	<link rel="icon" 
+      type="image/ico" 
+      href="favicon.ico">
+	
 		<meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="custom.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<!--Load the AJAX API-->
@@ -16,6 +19,7 @@
 	
 	<script>
 	
+		//This function is not used anymore. This function restricts users from entering certain characters in the input fields. 
 	function restrict(elem){
 			var tf = document.getElementById(elem);
 			var test = tf.value;
@@ -29,6 +33,9 @@
 				if(tf.value != test){document.getElementById('status').innerHTML = "Please don't use any quotes."}
 			}
 	
+		/*
+			This function sends the input of the user to the server in order to update the information.
+		*/
 		function save(){
 			var e1 = document.getElementById('email1').value;	
 			var e2 = document.getElementById('email2').value;	
@@ -72,11 +79,46 @@
 				xmlhttp.send("e1="+e1+"&e2="+e2+"&p1="+p1+"&p2="+p2);		
 			}
 		}
+		
+		/*
+			This function retrieves the email addresses of the user so that they appear in the input fields. The user can then see his email addresses. 
+		*/
+		function getEmails(){
+				var xmlhttp;
+				if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+				  xmlhttp=new XMLHttpRequest();
+				  }
+				else  {// code for IE6, IE5
+				  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+				  }
+				xmlhttp.onreadystatechange=function(){
+				  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+					{
+						var tmp = xmlhttp.responseText;
+						tmp = tmp.replace('"','');
+						tmp = tmp.replace('"','');
+						tmp = tmp.replace('"','');
+						tmp = tmp.replace('"','');
+						tmp = tmp.replace(']','');
+						tmp = tmp.replace('[','');
+						tmp = tmp.split(",");
+						
+						document.getElementById('email1').value = tmp[0];
+						document.getElementById('email2').value = tmp[1];
+						
+					}
+				  }
+				xmlhttp.open("POST","update.php",true);
+				xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+				xmlhttp.send("fields=true");		
+		}
+		
 	</script>
 	</head>
 	
 
 <body>
+	<!--The input fields-->
 	<script src="globalLayout.js"></script>
 	<div class="container">
 		<form role="form">
@@ -98,7 +140,7 @@
 		</form>
 		<button class="btn btn-warning" onclick="save()">Save changes</button>
 		<div id="status"></div>
-		<span id="tmp">tmp</span>
+		<script>getEmails()</script>
 	</div>
 </body>
 
