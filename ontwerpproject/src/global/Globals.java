@@ -96,16 +96,16 @@ public class Globals {
 	public static boolean TO_CONSOLE = Default.TO_CONSOLE;
 
 	// Intelligence shit
-	public static final String MAILPASS = " ";
-	public static final String MAILACCOUNT = " ";
-	public static final String MAILTARGET = " ";
-	public final static double QUERYRATIO = 0.95;
-	public static long LAST_ERROR = -1;
-	public static final int MIN_ERROR_DELAY = 30000;// max 1 keer per
+	public static final String MAILPASS = " "; //TODO
+	public static final String MAILACCOUNT = " ";//TODO
+	public static final String MAILTARGET = " ";//TODO
+	public static long LAST_MAIL = -1;
+	public static final int MIN_MAIL_DELAY = 30000;// max 1 keer per
 	// critical values, ook intelligence// half uur
-	public static final long CPUCRIT = 99999999;
-	public static final long MEMCRIT = 99999999;
-	public static final long HDDCRIT = 99999999;
+	public static final long CPUCRIT = 99999999;//TODO
+	public static final long MEMCRIT = 99999999;//TODO
+	public static final long HDDCRIT = 99999999;//TODO
+	public final static double QUERYRATIO = 0.95;//TODO
 
 	// XMLRPC
 	public static int XMLRPCTIMEOUT_IN_SECONDS = Default.XMLRPCTIMEOUT_IN_SECONDS;

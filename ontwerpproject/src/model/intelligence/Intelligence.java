@@ -76,7 +76,7 @@ public abstract class Intelligence {
 	 * @requires subject != null
 	 */
 	public static void errorMail() {
-		if (System.currentTimeMillis() - Globals.LAST_ERROR > Globals.MIN_ERROR_DELAY) {
+		if (System.currentTimeMillis() - Globals.LAST_MAIL > Globals.MIN_MAIL_DELAY) {
 			String to = Globals.MAILTARGET;
 			String from = Globals.MAILACCOUNT;
 			final String username = Globals.MAILACCOUNT;
@@ -152,8 +152,8 @@ public abstract class Intelligence {
 	 */
 	public void databaseError(SQLException e) throws ClosedException {
 		Logger.log(e.getMessage());
-		if (Globals.LAST_ERROR == -1
-				|| (System.currentTimeMillis() - Globals.LAST_ERROR) > Globals.MIN_ERROR_DELAY) {
+		if (Globals.LAST_MAIL == -1
+				|| (System.currentTimeMillis() - Globals.LAST_MAIL) > Globals.MIN_MAIL_DELAY) {
 			errorNotification(
 					"cpu",
 					"Database fail in "
