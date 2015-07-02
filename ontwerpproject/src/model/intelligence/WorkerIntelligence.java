@@ -3,7 +3,6 @@ package model.intelligence;
 import global.Globals;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashMap;
 
 import model.Component;
@@ -24,12 +23,6 @@ public class WorkerIntelligence extends Intelligence {
 	public WorkerIntelligence(Component comp, Model mod, Connection conn)
 			throws ClosedException {
 		super(comp, mod, conn);
-		String sql = "SELECT value FROM workervalues WHERE name =  ? ";
-		try {
-			st = conn.prepareStatement(sql);
-		} catch (SQLException e) {
-			databaseError(e);
-		}
 		interval = 60 * 60 * 1000 / Globals.POLLINGINTERVAL;
 	}
 
@@ -79,8 +72,8 @@ public class WorkerIntelligence extends Intelligence {
 				String message = "Queries performed by worker "
 						+ comp.getTableName()
 						+ " have a disproportionate amount of failures";
-				errorMail(message, "High failure count");
 				errorNotification("ws_current_q_count", message);
+				errorMail();
 			}
 			lastsucces = succes;
 			lastfailed = failure;

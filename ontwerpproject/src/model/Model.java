@@ -2,8 +2,6 @@ package model;
 
 import java.sql.*;
 import java.util.ArrayList;
-
-import model.intelligence.Intelligence;
 import model.intelligence.Intelligence.ClosedException;
 import global.Globals;
 import global.Logger;
@@ -51,10 +49,6 @@ public class Model {
 			st.close();
 			conn.close();
 		} catch (SQLException e) {
-			Intelligence
-					.errorMail(
-							"Database failed on constructor, this will cause notifications on the site to stop working. "
-									+ e.getMessage(), "Database error");
 			Logger.log("database connection failed on Model constructor");
 		}
 
@@ -131,7 +125,7 @@ public class Model {
 				}
 			}
 		} catch (SQLException e) {
-			Intelligence.errorMail("Failed to create table for component, database related " + e.getMessage(), "database error");
+			//SQL not working, will generate other sql errors that can send mails
 		} finally {
 			try {
 				if (st != null)

@@ -135,7 +135,7 @@ public abstract class Component {
 			Statement s = conn.createStatement();
 			ResultSet v = s.executeQuery(sql);
 			v.next();
-			if (v.getInt(1) > 0) {
+			if (v.getLong(1) > 0) {
 				v.close();
 				// enter new entries until now
 				// first get the startpoint
@@ -255,11 +255,11 @@ public abstract class Component {
 			ResultSet v;
 			check.setString(1, "M");
 			v = check.executeQuery();
-			if (v.next() && v.getInt(1) == Globals.SQLMAXmin) {
+			if (v.next() && v.getLong(1) == Globals.SQLMAXmin) {
 				compressMEntries();
 				check.setString(1, "H");
 				v = check.executeQuery();
-				if (v.next() && v.getInt(1) == Globals.SQLMAXhour) {
+				if (v.next() && v.getLong(1) == Globals.SQLMAXhour) {
 					compressHEntries();
 				}
 			}
@@ -291,7 +291,7 @@ public abstract class Component {
 			for (int i = 0; i < b.length; ++i) {
 				// start at 3,because date and tag do not have to be
 				// averaged and are not relevant
-				b[i] += r.getInt(i + 3);
+				b[i] += r.getLong(i + 3);
 			}
 			delete.setString(2, r.getString(1));
 			delete.executeUpdate();
@@ -319,7 +319,7 @@ public abstract class Component {
 			for (int i = 0; i < b.length; ++i) {
 				// start at 3,because date and tag do not have to be
 				// averaged and are not relevant
-				b[i] += r.getInt(i + 3);
+				b[i] += r.getLong(i + 3);
 			}
 			delete.setString(2, r.getString(1));
 			delete.executeUpdate();
