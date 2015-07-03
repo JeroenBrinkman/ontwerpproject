@@ -114,6 +114,7 @@ public abstract class Intelligence {
 				email.setText(message);
 				Transport.send(email);
 				r.close();
+				Globals.LAST_MAIL = System.currentTimeMillis();
 			} catch (Exception e) {
 				Logger.log(e.getMessage());
 			}
