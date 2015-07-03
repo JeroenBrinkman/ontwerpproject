@@ -14,8 +14,8 @@ public class ConsoleScreen extends JScrollPane {
 
 	private static final long serialVersionUID = 8779438680651538749L;
 	private JTextArea textArea;
-	
-	public ConsoleScreen(){
+
+	public ConsoleScreen() {
 		super(new JTextArea(), VERTICAL_SCROLLBAR_ALWAYS,
 				HORIZONTAL_SCROLLBAR_NEVER);
 		this.textArea = (JTextArea) getViewport().getComponent(0);

@@ -161,7 +161,8 @@ public abstract class Component {
 			intel.databaseError(e);
 		}
 
-		Logger.log_debug("Jeroen klaar gekomen in " + (System.currentTimeMillis() - startTime) + "!");
+		Logger.log_debug("Jeroen klaar gekomen in "
+				+ (System.currentTimeMillis() - startTime) + "!");
 	}
 
 	/**
@@ -206,11 +207,11 @@ public abstract class Component {
 	public String[] getKeys() {
 		return this.collumnList;
 	}
-	
+
 	/**
 	 * 
 	 * @return the connection
-	 */ 
+	 */
 	public Connection getConnection() {
 		return this.conn;
 	}
@@ -342,7 +343,7 @@ public abstract class Component {
 	 * @ensure \result != null
 	 */
 	public abstract long[] parseInput(String message);
-	
+
 	/**
 	 * Returns the type of the component as defined in Globals
 	 */

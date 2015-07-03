@@ -108,8 +108,9 @@ public abstract class Intelligence {
 				String sql = "SELECT component, message FROM notifications LIMIT 10";
 				Statement st = con.createStatement();
 				ResultSet r = st.executeQuery(sql);
-				while(r.next()){
-					message += r.getString(1) + " : \t " + r.getString(2) + " \n";
+				while (r.next()) {
+					message += r.getString(1) + " : \t " + r.getString(2)
+							+ " \n";
 				}
 				email.setText(message);
 				Transport.send(email);

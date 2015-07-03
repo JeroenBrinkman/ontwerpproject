@@ -31,7 +31,7 @@ public class WorkerIntelligence extends Intelligence {
 		super.checkCritical(newin);
 		// check once per hour, to avoid false positives due to short trends
 		if (counter == 0) {
-			//create hashmap for easy extending
+			// create hashmap for easy extending
 			HashMap<String, Long> map = new HashMap<String, Long>();
 			String[] cols = comp.getKeys();
 			for (int i = 0; i < cols.length; ++i) {

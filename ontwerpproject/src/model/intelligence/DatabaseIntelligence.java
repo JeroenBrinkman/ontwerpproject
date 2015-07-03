@@ -7,6 +7,7 @@ import model.Model;
 
 /**
  * intelligence for the database
+ * 
  * @author Jeroen
  *
  */

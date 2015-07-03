@@ -10,14 +10,14 @@ public class Updater extends Thread {
 	}
 
 	@Override
-    public void run() {
-       while(true){
-    	   gui.updateCompList();
-    	   gui.updateMetaData();
-    	   try {
-			sleep(Globals.GUI_UPDATE);
-		} catch (InterruptedException e) {
+	public void run() {
+		while (true) {
+			gui.updateCompList();
+			gui.updateMetaData();
+			try {
+				sleep(Globals.GUI_UPDATE);
+			} catch (InterruptedException e) {
+			}
 		}
-       }
-    }
+	}
 }

@@ -13,17 +13,19 @@ import model.intelligence.Intelligence.ClosedException;
 
 /**
  * Represents a database in the query system
+ * 
  * @author Jeroen
  *
  */
 public class Database extends Component {
 
-	public Database(InetSocketAddress addr, Connection con, Model mod) throws ClosedException {
+	public Database(InetSocketAddress addr, Connection con, Model mod)
+			throws ClosedException {
 		super(addr, con);
 		intel = new DatabaseIntelligence(this, mod, con);
 		collumnList = Misc.concat(Globals.DATABASE_CALLS,
 				Globals.DATABASE_STATS);
-		
+
 		String sql = "INSERT INTO " + getTableName() + " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
 			sql += ",  ?";
@@ -34,7 +36,7 @@ public class Database extends Component {
 		} catch (SQLException e) {
 			intel.databaseError(e);
 		}
-		
+
 		Logger.log("Constructor for " + getTableName() + " completed");
 	}
 

@@ -21,18 +21,19 @@ public class Manager extends Component {
 
 	/**
 	 * Constructor
+	 * 
 	 * @requires addr != null
 	 * @requires con != null
 	 * @requires mod != null
-	 * @throws ClosedException if the database fails during the construction
+	 * @throws ClosedException
+	 *             if the database fails during the construction
 	 */
 	public Manager(InetSocketAddress addr, Connection con, Model mod)
 			throws ClosedException {
 		super(addr, con);
 		intel = new ManagerIntelligence(this, mod, con);
-		collumnList = Misc.concat(Globals.MANAGER_CALLS,
-				Globals.MANAGER_STATS);
-		
+		collumnList = Misc.concat(Globals.MANAGER_CALLS, Globals.MANAGER_STATS);
+
 		String sql = "INSERT INTO " + getTableName() + " VALUES( ?,  ?";
 		for (int i = 0; i < collumnList.length; ++i) {
 			sql += ",  ?";
@@ -47,7 +48,7 @@ public class Manager extends Component {
 	}
 
 	@Override
-	public long[] parseInput(String message) {		
+	public long[] parseInput(String message) {
 		String[] parts;
 		String[] lines = message.split("\n");
 		long[] result = new long[Globals.MANAGER_STATS.length];
@@ -60,7 +61,7 @@ public class Manager extends Component {
 			parts = currentLine.split(":");
 			currentLine = parts[1];
 			currentLine = currentLine.replaceAll("\\s+", "");
-			//niet toepasbaar als w[X] voorkomt voor relevante informatie
+			// niet toepasbaar als w[X] voorkomt voor relevante informatie
 			result[i] = Long.parseLong(currentLine);
 		}
 		return result;

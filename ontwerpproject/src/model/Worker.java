@@ -19,8 +19,9 @@ import model.intelligence.WorkerIntelligence;
  */
 public class Worker extends Component {
 
-	/** 
+	/**
 	 * creates a new worker AKA constructor
+	 * 
 	 * @requires addr != null
 	 * @requires con != null
 	 * @requires mod != null
@@ -50,11 +51,13 @@ public class Worker extends Component {
 		String[] parts;
 		String[] lines = message.split("\n");
 
-		long[] result = new long[Globals.WORKER_STATS.length]; //List<String> result = new ArrayList<String>();
+		long[] result = new long[Globals.WORKER_STATS.length]; // List<String>
+																// result = new
+																// ArrayList<String>();
 		int resultIndex = 0;
 		String currentLine;
 
-		for(int i = 0; i < lines.length; i++){
+		for (int i = 0; i < lines.length; i++) {
 			currentLine = lines[i];
 			if (!currentLine.contains("last")) {
 				parts = currentLine.split(":");
@@ -65,7 +68,7 @@ public class Worker extends Component {
 
 			}
 		}
-		
+
 		return result;
 	}
 
