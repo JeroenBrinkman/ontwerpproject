@@ -71,6 +71,20 @@ public class Globals {
 						MANAGER_STATS = split[1].split(","); break;
 					case "database_stats":
 						DATABASE_STATS = split[1].split(","); break;
+					case "mail_pass": 
+						MAILPASS = split[1]; break;
+					case "mail":
+						MAILACCOUNT = split[1]; break;
+					case "mail_target":
+						MAILTARGET = split[1]; break;
+					case "cpu_critical":
+						CPUCRIT = Long.parseLong(split[1]); break;
+					case "mem_critical":
+						MEMCRIT = Long.parseLong(split[1]); break;
+					case "hdd_critical":
+						HDDCRIT = Long.parseLong(split[1]); break;
+					case "query_ratio":
+						QUERYRATIO = Double.parseDouble(split[1]); break;
 					default:
 						Logger.log("Unrecognized setting: " + split[0]);
 				}
@@ -96,16 +110,16 @@ public class Globals {
 	public static boolean TO_CONSOLE = Default.TO_CONSOLE;
 
 	// Intelligence shit
-	public static final String MAILPASS = " "; //TODO
-	public static final String MAILACCOUNT = " ";//TODO
-	public static final String MAILTARGET = " ";//TODO
+	public static String MAILPASS = Default.MAILPASS; 
+	public static String MAILACCOUNT = Default.MAILACCOUNT;
+	public static String MAILTARGET = Default.MAILTARGET;
 	public static long LAST_MAIL = -1;
 	public static final int MIN_MAIL_DELAY = 30000;// max 1 keer per
 	// critical values, ook intelligence// half uur
-	public static final long CPUCRIT = 99999999;//TODO
-	public static final long MEMCRIT = 99999999;//TODO
-	public static final long HDDCRIT = 99999999;//TODO
-	public final static double QUERYRATIO = 0.95;//TODO
+	public static long CPUCRIT = Default.CPUCRIT;
+	public static long MEMCRIT = Default.MEMCRIT;
+	public static long HDDCRIT = Default.HDDCRIT;
+	public static double QUERYRATIO = Default.QUERYRATIO;
 
 	// XMLRPC
 	public static int XMLRPCTIMEOUT_IN_SECONDS = Default.XMLRPCTIMEOUT_IN_SECONDS;
@@ -154,7 +168,7 @@ public class Globals {
 		public static final boolean PRINT_DEBUG = false;
 		public static final boolean PRINT_DEBUG_CONCURRENT = false;
 		public static final boolean PRINT_DEBUG_RECEIVER = false;
-		public static final boolean TO_CONSOLE = true;
+		public static final boolean TO_CONSOLE = false;
 
 		public static final int XMLRPCTIMEOUT_IN_SECONDS = 1;
 		public static final int XMLRPC_PORT = 8000;
@@ -165,6 +179,15 @@ public class Globals {
 		public static final int CLIENT_THREADS = 16;
 		public static final int SCHEDULER_THREADS = 1;
 
+		public static final String MAILPASS = " "; 
+		public static final String MAILACCOUNT = " ";
+		public static final String MAILTARGET = " ";
+
+		public static final long CPUCRIT = 99999999;
+		public static final long MEMCRIT = 99999999;
+		public static final long HDDCRIT = 99999999;
+		public final static double QUERYRATIO = 0.95;
+		
 		// Stuff to call for the python client
 		public static final String[] WORKER_CALLS = { "time", "hdd", "mem",
 				"cpu" };
