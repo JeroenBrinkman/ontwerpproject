@@ -6,6 +6,7 @@ import global.Globals;
 import global.Logger;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
@@ -75,7 +76,7 @@ public abstract class Intelligence {
 	 * @requires message != null
 	 * @requires subject != null
 	 */
-	public static void errorMail() {
+	public void errorMail() {
 		if (System.currentTimeMillis() - Globals.LAST_MAIL > Globals.MIN_MAIL_DELAY) {
 			String to = Globals.MAILTARGET;
 			String from = Globals.MAILACCOUNT;
@@ -102,13 +103,19 @@ public abstract class Intelligence {
 				email.setRecipients(Message.RecipientType.TO,
 						InternetAddress.parse(to));
 				email.setSubject("Monitoring system notifications!");
-				//TODO create shit
-				String message = "";
-				String sql ="";
+				// create message with at most 10 errors
+				String message = "SELECT component, message FROM notifications LIMIT 10";
+				String sql = "SELECT component, message FROM notifications LIMIT 10";
+				Statement st = con.createStatement();
+				ResultSet r = st.executeQuery(sql);
+				while(r.next()){
+					message += r.getString(1) + " : \t " + r.getString(2) + " \n";
+				}
 				email.setText(message);
 				Transport.send(email);
-			} catch (MessagingException e) {
-				e.printStackTrace();
+				r.close();
+			} catch (Exception e) {
+				Logger.log(e.getMessage());
 			}
 		}
 	}

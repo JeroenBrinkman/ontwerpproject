@@ -1,6 +1,5 @@
 package view;
 
-//Imports are listed in full to show what's being used //could just import javax.swing.* and java.awt.* etc.. 
 import global.Globals;
 import global.Logger;
 
@@ -15,6 +14,11 @@ import java.awt.GridLayout;
 import java.net.InetSocketAddress;
 
 
+/**
+ * Quick and dirty debugging gui, prints console to the gui and shows amount of updates etc
+ * @author Jeroen
+ *
+ */
 public class GUI {
 	private Model mod;
 	private ScrollList complist;
